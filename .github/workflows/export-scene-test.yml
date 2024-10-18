@@ -1,0 +1,40 @@
+name: Export Scene Test
+
+on:
+  schedule:
+    - cron: "0 * * * *"  # every hour
+  workflow_dispatch:
+    inputs:
+      testCase:
+        description: "specify a case to run"
+        default: ""
+        required: false
+
+
+jobs:
+    export-scene-test:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Install Go
+          uses: actions/setup-go@v5
+          with:
+            go-version-file: './go.mod'
+
+        - name: Cache Dependencies
+          uses: actions/cache@v4
+          with:
+            path: ~/go/pkg/mod
+            key: ${{ runner.os }}-go-${{ matrix.golang }}-${{ hashFiles('**/go.sum') }}
+            restore-keys: |
+              ${{ runner.os }}-go-${{ matrix.golang }}-
+
+        - name: Run tests
+          run: |
+            export TIDB_CLOUD_PUBLIC_KEY=${{ secrets.TIDB_CLOUD_PUBLIC_KEY }}
+            export TIDB_CLOUD_PRIVATE_KEY=${{ secrets.TIDB_CLOUD_PRIVATE_KEY }}
+            export S3_ACCESS_KEY_ID=${{ secrets.S3_ACCESS_KEY_ID }}
+            export S3_SECRET_ACCESS_KEY=${{ secrets.S3_SECRET_ACCESS_KEY }}
+            go test -v sceneTest/export/export_test.go -cid 10501083436840068643 -s3.uri 's3://export-s3-test/scene-test/'
