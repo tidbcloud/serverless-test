@@ -143,7 +143,7 @@ func getConfig() {
 	if configContent != "" {
 		err := viper.ReadConfig(bytes.NewBuffer([]byte(configContent)))
 		if err != nil {
-			println("Error reading config file: ", err.Error())
+			println("Error reading config: ", err.Error())
 			return
 		}
 	} else {
