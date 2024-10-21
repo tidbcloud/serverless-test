@@ -33,12 +33,10 @@ jobs:
 
         - name: Run tests
           run: |
-            echo "${{ secrets.TEST_CONFIG }}"
-            echo ${{ github.event.inputs.testCase }}
             if [ ${{ github.event.inputs.testCase }} == "" ]; then
+              echo "Running all tests"
               go test -v sceneTest/export/export_test.go -cid 10501083436840068643 -config "${{ secrets.TEST_CONFIG }}"
             else
+              echo "Running test ${{ github.event.inputs.testCase }}"
               go test -v sceneTest/export/export_test.go -cid 10501083436840068643 -config "${{ secrets.TEST_CONFIG }}" -run ${{ github.event.inputs.testCase }}
             fi
-            
-             if [[ "$exitcode" != "0" ]]
