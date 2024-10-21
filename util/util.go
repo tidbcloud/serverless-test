@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
@@ -9,6 +10,7 @@ import (
 	"net/url"
 	"os"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/icholy/digest"
 )
 
@@ -88,4 +90,35 @@ func ValidateApiUrl(value string) (*url.URL, error) {
 		return nil, errors.New("invalid api url format: " + value)
 	}
 	return u, nil
+}
+
+func GetResponse(url string) (*http.Response, error) {
+	httpClient := resty.New()
+	resp, err := httpClient.GetClient().Get(url)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		// read the body to get the error message
+		body, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			return nil, fmt.Errorf("receiving status of %d", resp.StatusCode)
+		}
+		type AwsError struct {
+			Code    string `xml:"Code"`
+			Message string `xml:"Message"`
+		}
+		v := AwsError{}
+		err = xml.Unmarshal(body, &v)
+		if err != nil {
+			return nil, fmt.Errorf("receiving status of %d", resp.StatusCode)
+		}
+		return nil, fmt.Errorf("receiving status of %d. code: %s, message: %s", resp.StatusCode, v.Code, v.Message)
+	}
+	if resp.ContentLength <= 0 {
+		resp.Body.Close()
+		return nil, fmt.Errorf("file is empty")
+	}
+	return resp, nil
 }

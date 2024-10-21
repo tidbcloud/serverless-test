@@ -2,16 +2,13 @@ package export
 
 import (
 	"context"
-	"encoding/xml"
 	"flag"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"testing"
 	"time"
 
-	"github.com/go-resty/resty/v2"
 	"github.com/shiyuhang0/serverless-scene-test/config"
 	"github.com/shiyuhang0/serverless-scene-test/util"
 	"github.com/stretchr/testify/assert"
@@ -59,7 +56,7 @@ func TestExportToLocalAndDownload(t *testing.T) {
 	t.Log("start to download files")
 	for _, exportFile := range exportFilesRes.Files {
 		// download file
-		downloadRes, err := GetResponse(*exportFile.Url)
+		downloadRes, err := util.GetResponse(*exportFile.Url)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -377,35 +374,4 @@ func CreateExport(ctx context.Context, c *export.APIClient, clusterId string, bo
 	}
 	res, h, err := r.Execute()
 	return res, util.ParseError(err, h)
-}
-
-func GetResponse(url string) (*http.Response, error) {
-	httpClient := resty.New()
-	resp, err := httpClient.GetClient().Get(url)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		// read the body to get the error message
-		body, err := io.ReadAll(resp.Body)
-		resp.Body.Close()
-		if err != nil {
-			return nil, fmt.Errorf("receiving status of %d", resp.StatusCode)
-		}
-		type AwsError struct {
-			Code    string `xml:"Code"`
-			Message string `xml:"Message"`
-		}
-		v := AwsError{}
-		err = xml.Unmarshal(body, &v)
-		if err != nil {
-			return nil, fmt.Errorf("receiving status of %d", resp.StatusCode)
-		}
-		return nil, fmt.Errorf("receiving status of %d. code: %s, message: %s", resp.StatusCode, v.Code, v.Message)
-	}
-	if resp.ContentLength <= 0 {
-		resp.Body.Close()
-		return nil, fmt.Errorf("file is empty")
-	}
-	return resp, nil
 }
