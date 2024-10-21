@@ -33,7 +33,7 @@ jobs:
 
         - name: Run tests
           run: |
-            echo ${{ secrets.TEST_CONFIG }}
+            echo "${{ secrets.TEST_CONFIG }}"
             echo ${{ github.event.inputs.testCase }}
             if [ ${{ github.event.inputs.testCase }} == "" ]; then
               go test -v sceneTest/export/export_test.go -cid 10501083436840068643 -config ${{ secrets.TEST_CONFIG }}
