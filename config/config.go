@@ -141,6 +141,7 @@ func getDefault() {
 func getConfig() {
 	viper.SetConfigType("toml")
 	if configContent != "" {
+		println(configContent)
 		err := viper.ReadConfig(bytes.NewBuffer([]byte(configContent)))
 		if err != nil {
 			println("Error reading config: ", err.Error())
