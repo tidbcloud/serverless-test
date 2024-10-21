@@ -11,3 +11,5 @@ dist/
 
 .CHANGELOG.md
 node_modules/
+
+config.toml

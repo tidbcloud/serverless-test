@@ -1,0 +1,23 @@
+public-key="public key"
+private-key="private key"
+project-id="project id"
+
+[endpoint]
+serverless="https://serverless.tidbapi.com"
+iam="https://iam.tidbapi.com"
+
+[s3]
+uri="s3://serverless-e2e-test"
+access-key-id=""
+secret-access=""
+role-arn=""
+
+[azure]
+uri="azure://syhaccount.blob.core.windows.net/serverless-e2e-test"
+sas-token=""
+
+[gcs]
+uri="gcs://serverless-e2e-test"
+service-account-key=""
+
+

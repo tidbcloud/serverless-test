@@ -6,9 +6,11 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/lithammer/shortuuid/v4"
 	"github.com/shiyuhang0/serverless-scene-test/config"
 	"github.com/shiyuhang0/serverless-scene-test/util"
 	"github.com/stretchr/testify/assert"
@@ -36,6 +38,7 @@ func setup() {
 
 func TestExportToLocalAndDownload(t *testing.T) {
 	ctx := context.Background()
+
 	t.Log("start to create export")
 	res, err := CreateExport(ctx, exportClient, clusterId, nil)
 	if err != nil {
@@ -229,7 +232,7 @@ func TestExportWithTableFilter(t *testing.T) {
 	assert.Equal(t, exp.ExportOptions.Filter.Table.Patterns[1], table1)
 }
 
-func TestExportToS3(t *testing.T) {
+func TestExportToS3AccessKey(t *testing.T) {
 	ctx := context.Background()
 
 	exportType := export.EXPORTTARGETTYPEENUM_S3
@@ -238,6 +241,11 @@ func TestExportToS3(t *testing.T) {
 	exportS3Uri := config.S3URI
 	if s3AccessKeyId == "" || s3SecretKeyId == "" || exportS3Uri == "" {
 		t.Fatal("s3 access key or secret key or uri is empty")
+	}
+	if strings.HasSuffix(exportS3Uri, "/") {
+		exportS3Uri = exportS3Uri + shortuuid.New()
+	} else {
+		exportS3Uri = exportS3Uri + "/" + shortuuid.New()
 	}
 
 	body := export.NewExportServiceCreateExportBody()
@@ -250,7 +258,43 @@ func TestExportToS3(t *testing.T) {
 		},
 	}
 
-	t.Log("start to create export")
+	t.Logf("start to create export to s3: %s", exportS3Uri)
+	res, err := CreateExport(ctx, exportClient, clusterId, body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.Target.S3.Uri, exportS3Uri)
+}
+
+func TestExportToS3RoleArn(t *testing.T) {
+	ctx := context.Background()
+
+	exportType := export.EXPORTTARGETTYPEENUM_S3
+	roleArn := config.S3RoleArn
+	exportS3Uri := config.S3URI
+	if roleArn == "" || exportS3Uri == "" {
+		t.Fatal("s3 role arn or uri is empty")
+	}
+	if strings.HasSuffix(exportS3Uri, "/") {
+		exportS3Uri = exportS3Uri + shortuuid.New()
+	} else {
+		exportS3Uri = exportS3Uri + "/" + shortuuid.New()
+	}
+
+	body := export.NewExportServiceCreateExportBody()
+	body.Target = &export.ExportTarget{
+		Type: &exportType,
+		S3: &export.S3Target{
+			Uri:      &exportS3Uri,
+			AuthType: export.EXPORTS3AUTHTYPEENUM_ROLE_ARN,
+			RoleArn:  &roleArn,
+		},
+	}
+
+	t.Logf("start to create export to s3: %s", exportS3Uri)
 	res, err := CreateExport(ctx, exportClient, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
@@ -270,6 +314,11 @@ func TestExportToAzure(t *testing.T) {
 	if azureUri == "" || azureSASToken == "" {
 		t.Fatal("azure uri or sas token is empty")
 	}
+	if strings.HasSuffix(azureUri, "/") {
+		azureUri = azureUri + shortuuid.New()
+	} else {
+		azureUri = azureUri + "/" + shortuuid.New()
+	}
 
 	body := export.NewExportServiceCreateExportBody()
 	body.Target = &export.ExportTarget{
@@ -281,7 +330,7 @@ func TestExportToAzure(t *testing.T) {
 		},
 	}
 
-	t.Log("start to create export")
+	t.Logf("start to create export to %s", azureUri)
 	res, err := CreateExport(ctx, exportClient, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
@@ -301,6 +350,11 @@ func TestExportToGCS(t *testing.T) {
 	if gcsUri == "" || gcsServiceAccountKey == "" {
 		t.Fatal("gcs uri or service account key is empty")
 	}
+	if strings.HasSuffix(gcsUri, "/") {
+		gcsUri = gcsUri + shortuuid.New()
+	} else {
+		gcsUri = gcsUri + "/" + shortuuid.New()
+	}
 
 	body := export.NewExportServiceCreateExportBody()
 	body.Target = &export.ExportTarget{
@@ -312,7 +366,7 @@ func TestExportToGCS(t *testing.T) {
 		},
 	}
 
-	t.Log("start to create export")
+	t.Logf("start to create export to %s", gcsUri)
 	res, err := CreateExport(ctx, exportClient, clusterId, body)
 	if err != nil {
 		t.Fatal(err)

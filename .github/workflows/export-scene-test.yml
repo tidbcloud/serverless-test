@@ -7,7 +7,7 @@ on:
     inputs:
       testCase:
         description: "specify a case to run"
-        default: ""
+        default: "*"
         required: false
 
 
@@ -33,8 +33,8 @@ jobs:
 
         - name: Run tests
           run: |
-            export TIDB_CLOUD_PUBLIC_KEY=${{ secrets.TIDB_CLOUD_PUBLIC_KEY }}
-            export TIDB_CLOUD_PRIVATE_KEY=${{ secrets.TIDB_CLOUD_PRIVATE_KEY }}
-            export S3_ACCESS_KEY_ID=${{ secrets.S3_ACCESS_KEY_ID }}
-            export S3_SECRET_ACCESS_KEY=${{ secrets.S3_SECRET_ACCESS_KEY }}
-            go test -v sceneTest/export/export_test.go -cid 10501083436840068643 -s3.uri 's3://export-s3-test/scene-test/'
+            if [ -z "${{ github.event.inputs.testCase }}" ]; then
+              go test -v sceneTest/export/export_test.go -cid 10501083436840068643 -config ${{ secrets.TEST_CONFIG }}
+            else
+              go test -v sceneTest/export/export_test.go -cid 10501083436840068643 -config ${{ secrets.TEST_CONFIG }} -run ${{ github.event.inputs.testCase }}
+            fi
