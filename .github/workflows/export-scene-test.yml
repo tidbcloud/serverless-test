@@ -7,7 +7,7 @@ on:
     inputs:
       testCase:
         description: "specify a case to run"
-        default: "*"
+        default: ""
         required: false
 
 
@@ -23,13 +23,13 @@ jobs:
           with:
             go-version-file: './go.mod'
 
-        - name: Cache Dependencies
+        - name: Restore Go modules cache
           uses: actions/cache@v4
           with:
             path: ~/go/pkg/mod
-            key: ${{ runner.os }}-go-${{ matrix.golang }}-${{ hashFiles('**/go.sum') }}
+            key: go-${{ runner.os }}-${{ hashFiles('go.mod') }}
             restore-keys: |
-              ${{ runner.os }}-go-${{ matrix.golang }}-
+              go-${{ runner.os }}-
 
         - name: Run tests
           run: |
