@@ -1,4 +1,4 @@
-name: Export Scene Test
+name: Export Test
 
 on:
   schedule:
