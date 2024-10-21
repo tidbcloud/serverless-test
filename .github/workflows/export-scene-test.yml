@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       testCase:
-        description: "specify a case to run"
+        description: "specify a case or skip to run all tests"
         default: ""
         required: false
 
@@ -33,7 +33,7 @@ jobs:
 
         - name: Run tests
           run: |
-            if [ ${{ github.event.inputs.testCase }} == "" ]; then
+            if [ -z ${{ github.event.inputs.testCase }} ]; then
               echo "Running all tests"
               go test -v sceneTest/export/export_test.go -cid 10501083436840068643 -config "${{ secrets.TEST_CONFIG }}"
             else
