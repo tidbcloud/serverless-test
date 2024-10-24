@@ -20,3 +20,7 @@ The following features are tested in the serverless-test:
 - Common configurations: you can add common configurations in the `config` package.
 - Add tests: when you want to add tests for a new feature, create a new test file under sceneTest.
 - Add GitHub actions: after adding tests, you can add GitHub actions to run the tests automatically. e.g., [export-scene-test.yml](.github/workflows/export-scene-test.yml).
+
+## LICENSE
+
+Apache 2.0 license. See the [LICENSE](LICENSE) file for details.
