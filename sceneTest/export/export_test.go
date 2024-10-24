@@ -57,6 +57,7 @@ func TestExportToLocalAndDownload(t *testing.T) {
 	}
 
 	t.Log("start to download files")
+	path := shortuuid.New()
 	for _, exportFile := range exportFilesRes.Files {
 		// download file
 		downloadRes, err := util.GetResponse(*exportFile.Url)
@@ -66,17 +67,18 @@ func TestExportToLocalAndDownload(t *testing.T) {
 		if downloadRes.ContentLength <= 0 {
 			t.Fatal("file is empty")
 		}
-		file, err := os.Create(*exportFile.Name)
+		fileName := *exportFile.Name + path
+		file, err := os.Create(fileName)
 		if err != nil {
 			t.Fatal(err)
 		}
 		_, err = io.Copy(file, downloadRes.Body)
 		// check file
-		targetFileInfo, err := os.Stat(*exportFile.Name)
+		targetFileInfo, err := os.Stat(fileName)
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, targetFileInfo.Name(), *exportFile.Name)
+		assert.Equal(t, targetFileInfo.Name(), fileName)
 	}
 }
 
@@ -375,6 +377,23 @@ func TestExportToGCS(t *testing.T) {
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, exp.Target.Gcs.Uri, gcsUri)
+}
+
+func TestCancelExport(t *testing.T) {
+	ctx := context.Background()
+
+	t.Log("start to create export")
+	res, err := CreateExport(ctx, exportClient, clusterId, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log("start to cancel export")
+	cancelRes, h, err := exportClient.ExportServiceAPI.ExportServiceCancelExport(ctx, clusterId, *res.ExportId).Execute()
+	if util.ParseError(err, h) != nil {
+		t.Fatal(util.ParseError(err, h))
+	}
+	assert.Equal(t, *cancelRes.State, export.EXPORTSTATEENUM_CANCELED)
 }
 
 func TestMain(m *testing.M) {
