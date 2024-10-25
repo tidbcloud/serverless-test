@@ -23,12 +23,8 @@ var (
 // go test -v sceneTest/branch/* -project-id {project-id} -config {config}
 func TestMain(m *testing.M) {
 	setup()
-	var code int
-	defer func() {
-		teardown()
-		os.Exit(code)
-	}()
-	code = m.Run()
+	code := m.Run()
+	os.Exit(code)
 }
 
 func TestResetAndCreateFromBranch(t *testing.T) {
