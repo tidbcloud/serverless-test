@@ -12,7 +12,7 @@ on:
 
 
 jobs:
-    export-scene-test:
+    branch-scene-test:
         runs-on: ubuntu-latest
         steps:
         - name: Checkout
