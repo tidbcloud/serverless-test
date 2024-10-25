@@ -1,10 +1,11 @@
-module github.com/shiyuhang0/serverless-scene-test
+module github.com/tidbcloud/serverless-test
 
 go 1.22.2
 
 require (
 	github.com/go-resty/resty/v2 v2.15.3
 	github.com/icholy/digest v0.1.23
+	github.com/lithammer/shortuuid/v4 v4.0.0
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
 	github.com/tidbcloud/tidbcloud-cli/pkg v0.0.0-20241021045020-64b4ca4d3c97
@@ -15,7 +16,6 @@ require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/google/uuid v1.4.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/lithammer/shortuuid/v4 v4.0.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect

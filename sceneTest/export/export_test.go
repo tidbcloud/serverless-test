@@ -11,9 +11,9 @@ import (
 	"time"
 
 	"github.com/lithammer/shortuuid/v4"
-	"github.com/shiyuhang0/serverless-scene-test/config"
-	"github.com/shiyuhang0/serverless-scene-test/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/tidbcloud/serverless-test/config"
+	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/export"
 )
 
