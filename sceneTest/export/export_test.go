@@ -443,6 +443,7 @@ func CreateExport(ctx context.Context, clusterId string, body *export.ExportServ
 }
 
 func DeleteExport(ctx context.Context, clusterId, exportId string) error {
+	time.Sleep(time.Second * 1)
 	_, h, err := exportClient.ExportServiceAPI.ExportServiceDeleteExport(ctx, clusterId, exportId).Execute()
 	return util.ParseError(err, h)
 }
