@@ -3,7 +3,8 @@ name: Serverless E2E Test Notify
 on:
   workflow_run:
     workflows:
-      - "Export Test"
+      - "Export Scene Test"
+      - "Branch Scene Test"
     types:
       - completed
 

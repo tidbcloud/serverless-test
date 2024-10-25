@@ -1,8 +1,8 @@
-name: Export Scene Test
+name: Branch Scene Test
 
 on:
   schedule:
-    - cron: "0 */3 * * *"  # every 3 hours
+    - cron: "0 * * * *"  # every hour
   workflow_dispatch:
     inputs:
       testCase:
@@ -35,8 +35,8 @@ jobs:
           run: |
             if [ -z ${{ github.event.inputs.testCase }} ]; then
               echo "Running all tests"
-              go test -v sceneTest/export/* -cid 10501083436840068643 -config "${{ secrets.TEST_CONFIG }}"
+              go test -v sceneTest/branch/* -project-id 1372813089454562808 -config "${{ secrets.TEST_CONFIG }}"
             else
               echo "Running test ${{ github.event.inputs.testCase }}"
-              go test -v sceneTest/export/* -cid 10501083436840068643 -config "${{ secrets.TEST_CONFIG }}" -run ${{ github.event.inputs.testCase }}
+              go test -v sceneTest/branch/* -project-id 1372813089454562808 -config "${{ secrets.TEST_CONFIG }}" -run ${{ github.event.inputs.testCase }}
             fi

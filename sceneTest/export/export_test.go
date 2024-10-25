@@ -2,9 +2,7 @@ package export
 
 import (
 	"context"
-	"flag"
 	"io"
-	"net/http"
 	"os"
 	"strings"
 	"testing"
@@ -22,25 +20,17 @@ var (
 	exportClient *export.APIClient
 )
 
-func init() {
-	flag.StringVar(&clusterId, "cid", "", "")
-}
-
-func setup() {
-	var err error
-	config.InitializeConfig()
-	exportClient, err = NewExportClient()
-	if err != nil {
-		println(err.Error())
-		os.Exit(1)
-	}
+func TestMain(m *testing.M) {
+	setup()
+	code := m.Run()
+	os.Exit(code)
 }
 
 func TestExportToLocalAndDownload(t *testing.T) {
 	ctx := context.Background()
 
 	t.Log("start to create export")
-	res, err := CreateExport(ctx, exportClient, clusterId, nil)
+	res, err := CreateExport(ctx, clusterId, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -80,6 +70,8 @@ func TestExportToLocalAndDownload(t *testing.T) {
 		}
 		assert.Equal(t, targetFileInfo.Name(), fileName)
 	}
+
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func TestExportWithParquetFile(t *testing.T) {
@@ -97,7 +89,7 @@ func TestExportWithParquetFile(t *testing.T) {
 	}
 
 	t.Log("start to create export")
-	res, err := CreateExport(ctx, exportClient, clusterId, body)
+	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -106,6 +98,8 @@ func TestExportWithParquetFile(t *testing.T) {
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.ExportOptions.FileType, fileType)
 	assert.Equal(t, *exp.ExportOptions.ParquetFormat.Compression, parquetCompressionType)
+
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func TestExportWithCSVFile(t *testing.T) {
@@ -128,7 +122,7 @@ func TestExportWithCSVFile(t *testing.T) {
 		},
 	}
 	t.Log("start to create export")
-	res, err := CreateExport(ctx, exportClient, clusterId, body)
+	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -140,6 +134,8 @@ func TestExportWithCSVFile(t *testing.T) {
 	assert.Equal(t, *exp.ExportOptions.CsvFormat.Separator, separator)
 	assert.Equal(t, *exp.ExportOptions.CsvFormat.Delimiter.Get(), delimiter)
 	assert.Equal(t, *exp.ExportOptions.CsvFormat.NullValue.Get(), nullValue)
+
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func TestExportWithSQLFile(t *testing.T) {
@@ -152,7 +148,7 @@ func TestExportWithSQLFile(t *testing.T) {
 		},
 	}
 	t.Log("start to create export")
-	res, err := CreateExport(ctx, exportClient, clusterId, body)
+	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -160,6 +156,8 @@ func TestExportWithSQLFile(t *testing.T) {
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.ExportOptions.FileType, fileType)
+
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func TestExportWithCompression(t *testing.T) {
@@ -172,7 +170,7 @@ func TestExportWithCompression(t *testing.T) {
 		},
 	}
 	t.Log("start to create export")
-	res, err := CreateExport(ctx, exportClient, clusterId, body)
+	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -180,6 +178,8 @@ func TestExportWithCompression(t *testing.T) {
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.ExportOptions.Compression, compression)
+
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func TestExportWithSQLFilter(t *testing.T) {
@@ -194,7 +194,7 @@ func TestExportWithSQLFilter(t *testing.T) {
 		},
 	}
 	t.Log("start to create export")
-	res, err := CreateExport(ctx, exportClient, clusterId, body)
+	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -202,6 +202,8 @@ func TestExportWithSQLFilter(t *testing.T) {
 
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.ExportOptions.Filter.Sql, sql)
+
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func TestExportWithTableFilter(t *testing.T) {
@@ -222,7 +224,7 @@ func TestExportWithTableFilter(t *testing.T) {
 		},
 	}
 	t.Log("start to create export")
-	res, err := CreateExport(ctx, exportClient, clusterId, body)
+	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -232,6 +234,8 @@ func TestExportWithTableFilter(t *testing.T) {
 	assert.Equal(t, *exp.ExportOptions.Filter.Table.Where, where)
 	assert.Equal(t, exp.ExportOptions.Filter.Table.Patterns[0], table0)
 	assert.Equal(t, exp.ExportOptions.Filter.Table.Patterns[1], table1)
+
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func TestExportToS3AccessKey(t *testing.T) {
@@ -261,7 +265,7 @@ func TestExportToS3AccessKey(t *testing.T) {
 	}
 
 	t.Logf("start to create export to s3: %s", exportS3Uri)
-	res, err := CreateExport(ctx, exportClient, clusterId, body)
+	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -269,6 +273,8 @@ func TestExportToS3AccessKey(t *testing.T) {
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.Target.S3.Uri, exportS3Uri)
+
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func TestExportToS3RoleArn(t *testing.T) {
@@ -297,7 +303,7 @@ func TestExportToS3RoleArn(t *testing.T) {
 	}
 
 	t.Logf("start to create export to s3: %s", exportS3Uri)
-	res, err := CreateExport(ctx, exportClient, clusterId, body)
+	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -305,6 +311,8 @@ func TestExportToS3RoleArn(t *testing.T) {
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.Target.S3.Uri, exportS3Uri)
+
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func TestExportToAzure(t *testing.T) {
@@ -333,7 +341,7 @@ func TestExportToAzure(t *testing.T) {
 	}
 
 	t.Logf("start to create export to %s", azureUri)
-	res, err := CreateExport(ctx, exportClient, clusterId, body)
+	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -341,6 +349,8 @@ func TestExportToAzure(t *testing.T) {
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, exp.Target.AzureBlob.Uri, azureUri)
+
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func TestExportToGCS(t *testing.T) {
@@ -369,7 +379,7 @@ func TestExportToGCS(t *testing.T) {
 	}
 
 	t.Logf("start to create export to %s", gcsUri)
-	res, err := CreateExport(ctx, exportClient, clusterId, body)
+	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -377,13 +387,15 @@ func TestExportToGCS(t *testing.T) {
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, exp.Target.Gcs.Uri, gcsUri)
+
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func TestCancelExport(t *testing.T) {
 	ctx := context.Background()
 
 	t.Log("start to create export")
-	res, err := CreateExport(ctx, exportClient, clusterId, nil)
+	res, err := CreateExport(ctx, clusterId, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -394,12 +406,8 @@ func TestCancelExport(t *testing.T) {
 		t.Fatal(util.ParseError(err, h))
 	}
 	assert.Equal(t, *cancelRes.State, export.EXPORTSTATEENUM_CANCELED)
-}
 
-func TestMain(m *testing.M) {
-	setup()
-	code := m.Run()
-	os.Exit(code)
+	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
 func checkServerlessExportState(ctx context.Context, t *testing.T, clusterId, exportId string) *export.Export {
@@ -423,23 +431,8 @@ func checkServerlessExportState(ctx context.Context, t *testing.T, clusterId, ex
 	}
 }
 
-func NewExportClient() (*export.APIClient, error) {
-	httpclient := &http.Client{
-		Transport: util.NewDigestTransport(config.PublicKey, config.PrivateKey),
-	}
-	serverlessURL, err := util.ValidateApiUrl(config.ServerlessEndpoint)
-	if err != nil {
-		return nil, err
-	}
-	exportCfg := export.NewConfiguration()
-	exportCfg.HTTPClient = httpclient
-	exportCfg.Host = serverlessURL.Host
-	exportCfg.UserAgent = util.UserAgent
-	return export.NewAPIClient(exportCfg), nil
-}
-
-func CreateExport(ctx context.Context, c *export.APIClient, clusterId string, body *export.ExportServiceCreateExportBody) (*export.Export, error) {
-	r := c.ExportServiceAPI.ExportServiceCreateExport(ctx, clusterId)
+func CreateExport(ctx context.Context, clusterId string, body *export.ExportServiceCreateExportBody) (*export.Export, error) {
+	r := exportClient.ExportServiceAPI.ExportServiceCreateExport(ctx, clusterId)
 	if body != nil {
 		r = r.Body(*body)
 	} else {
@@ -447,4 +440,9 @@ func CreateExport(ctx context.Context, c *export.APIClient, clusterId string, bo
 	}
 	res, h, err := r.Execute()
 	return res, util.ParseError(err, h)
+}
+
+func DeleteExport(ctx context.Context, clusterId, exportId string) error {
+	_, h, err := exportClient.ExportServiceAPI.ExportServiceDeleteExport(ctx, clusterId, exportId).Execute()
+	return util.ParseError(err, h)
 }
