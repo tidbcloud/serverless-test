@@ -93,7 +93,6 @@ func TestSpecifyTimestamp(t *testing.T) {
 	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
 	assert.Equal(t, *bran.ParentTimestamp.Get(), parentTimeStamp)
 }
-}
 
 func createBranch(ctx context.Context, clusterId string, body *branch.Branch) (*branch.Branch, error) {
 	req := branchClient.BranchServiceAPI.BranchServiceCreateBranch(ctx, clusterId)
