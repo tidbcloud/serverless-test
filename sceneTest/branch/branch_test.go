@@ -73,41 +73,6 @@ func TestResetAndCreateFromBranch(t *testing.T) {
 	assert.Equal(t, *bran.ParentId, parentId)
 }
 
-func TestCreateFromBranch(t *testing.T) {
-	ctx := context.Background()
-
-	name := "test-" + shortuuid.New()
-	body := &branch.Branch{DisplayName: name}
-	t.Logf("create branch: %s", name)
-	bran, err := createBranch(ctx, clusterId, body)
-	if err != nil {
-		t.Fatal(err)
-	}
-	bran, err = checkBranchState(ctx, clusterId, *bran.BranchId, t)
-	if err != nil {
-		t.Fatal(err)
-	}
-	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
-
-	t.Log("create branch from branch")
-	parentId := *bran.BranchId
-	name2 := "test-" + shortuuid.New()
-	body2 := &branch.Branch{
-		DisplayName: name2,
-		ParentId:    &parentId,
-	}
-	bran, err = createBranch(ctx, clusterId, body2)
-	if err != nil {
-		t.Fatal(err)
-	}
-	bran, err = checkBranchState(ctx, clusterId, *bran.BranchId, t)
-	if err != nil {
-		t.Fatal(err)
-	}
-	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
-	assert.Equal(t, *bran.ParentId, parentId)
-}
-
 func TestSpecifyTimestamp(t *testing.T) {
 	ctx := context.Background()
 
@@ -126,6 +91,8 @@ func TestSpecifyTimestamp(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
+	assert.Equal(t, *bran.ParentTimestamp.Get(), parentTimeStamp)
+}
 }
 
 func createBranch(ctx context.Context, clusterId string, body *branch.Branch) (*branch.Branch, error) {
