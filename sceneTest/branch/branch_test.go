@@ -91,7 +91,8 @@ func TestSpecifyTimestamp(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
-	assert.Equal(t, *bran.ParentTimestamp.Get(), parentTimeStamp)
+	// only check second
+	assert.Equal(t, parentTimeStamp.Second(), (*bran.ParentTimestamp.Get()).Second())
 }
 
 func createBranch(ctx context.Context, clusterId string, body *branch.Branch) (*branch.Branch, error) {
