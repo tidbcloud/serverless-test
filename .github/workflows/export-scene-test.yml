@@ -35,7 +35,7 @@ jobs:
           run: |
             if [ -z ${{ github.event.inputs.testCase }} ]; then
               echo "Running all tests"
-              go test -v sceneTest/export/* -cid 10501083436840068643 -config "${{ secrets.TEST_CONFIG }} -timeout 20m"
+              go test -v sceneTest/export/* -cid 10501083436840068643 -config "${{ secrets.TEST_CONFIG }}" -timeout 20m
             else
               echo "Running test ${{ github.event.inputs.testCase }}"
               go test -v sceneTest/export/* -cid 10501083436840068643 -config "${{ secrets.TEST_CONFIG }}" -run ${{ github.event.inputs.testCase }}
