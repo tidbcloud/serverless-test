@@ -81,7 +81,7 @@ func TestSpecifyTimestamp(t *testing.T) {
 	name := "test-" + shortuuid.New()
 	body := &branch.Branch{DisplayName: name}
 	body.SetParentTimestamp(parentTimeStamp)
-	t.Logf("create branch: %s", name)
+	t.Logf("create branch: %s with timestap %s", name, parentTimeStamp.String())
 	bran, err := createBranch(ctx, clusterId, body)
 	if err != nil {
 		t.Fatal(err)
