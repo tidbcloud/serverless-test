@@ -76,7 +76,7 @@ func TestResetAndCreateFromBranch(t *testing.T) {
 func TestSpecifyTimestamp(t *testing.T) {
 	ctx := context.Background()
 
-	parentTimeStamp := time.Now()
+	parentTimeStamp := time.Now().UTC()
 	time.Sleep(time.Second * 1)
 	name := "test-" + shortuuid.New()
 	body := &branch.Branch{DisplayName: name}
