@@ -13,12 +13,12 @@ import (
 	"go.uber.org/zap"
 )
 
-func TestParquetImport(t *testing.T) {
+func TestS3ArnNoPrivilegeImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eParquetImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS ppp")
+	logger := log.WithContextL(ctx).With(zap.String("test", "e2eS3ArnNoPrivilegeImport"))
+	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
-		t.Fatal("failed to drop table -> ", err)
+		logger.Fatal("failed to drop table -> ", zap.Error(err))
 	}
 
 	logger.Info("start import")
@@ -27,14 +27,146 @@ func TestParquetImport(t *testing.T) {
 
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
-			FileType: imp.IMPORTFILETYPEENUM_PARQUET,
+			FileType: imp.IMPORTFILETYPEENUM_CSV,
+			CsvFormat: &imp.CSVFormat{
+				Separator: pointer.ToString(";"),
+			},
 		},
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      config.ImportS3ParquetURI,
+				Uri:      config.ImportS3URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				RoleArn:  &config.ImportS3RoleArnNoPrivilege,
+			},
+		},
+	}
+	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
+	if body != nil {
+		r = r.Body(*body)
+	}
+	i, resp, err := r.Execute()
+	err = util.ParseError(err, resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = waitImport(ctx, *i.ImportId)
+	expectFail(err, "is not authorized to perform: s3:ListBucket", logger, t)
+}
+
+func TestS3ArnDiffExternalIDImport(t *testing.T) {
+	ctx := context.Background()
+	logger := log.WithContextL(ctx).With(zap.String("test", "e2eS3ArnDiffExternalIDImport"))
+	_, err := db.Exec("DROP TABLE IF EXISTS a")
+	if err != nil {
+		logger.Fatal("failed to drop table -> ", zap.Error(err))
+	}
+
+	logger.Info("start import")
+	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
+	defer cancel()
+
+	body := &imp.ImportServiceCreateImportBody{
+		ImportOptions: imp.ImportOptions{
+			FileType: imp.IMPORTFILETYPEENUM_CSV,
+			CsvFormat: &imp.CSVFormat{
+				Separator: pointer.ToString(";"),
+			},
+		},
+		Source: imp.ImportSource{
+			Type: imp.IMPORTSOURCETYPEENUM_S3,
+			S3: &imp.S3Source{
+				Uri:      config.ImportS3URI,
+				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
+				RoleArn:  &config.ImportS3RoleArnDiffExternalID,
+			},
+		},
+	}
+	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
+	if body != nil {
+		r = r.Body(*body)
+	}
+	i, resp, err := r.Execute()
+	err = util.ParseError(err, resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = waitImport(ctx, *i.ImportId)
+	expectFail(err, "is not authorized to perform: sts:AssumeRole on resource", logger, t)
+}
+
+func TestS3AccessKeyNoPrivilegeImport(t *testing.T) {
+	ctx := context.Background()
+	logger := log.WithContextL(ctx).With(zap.String("test", "e2eS3AccessKeyNoPrivilegeImport"))
+	_, err := db.Exec("DROP TABLE IF EXISTS a")
+	if err != nil {
+		logger.Fatal("failed to drop table -> ", zap.Error(err))
+	}
+
+	logger.Info("start import")
+	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
+	defer cancel()
+
+	body := &imp.ImportServiceCreateImportBody{
+		ImportOptions: imp.ImportOptions{
+			FileType: imp.IMPORTFILETYPEENUM_CSV,
+			CsvFormat: &imp.CSVFormat{
+				Separator: pointer.ToString(";"),
+			},
+		},
+		Source: imp.ImportSource{
+			Type: imp.IMPORTSOURCETYPEENUM_S3,
+			S3: &imp.S3Source{
+				Uri:      config.ImportS3URI,
+				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &imp.S3SourceAccessKey{
+					Id:     config.ImportS3AccessKeyIdNoPrivilege,
+					Secret: config.ImportS3SecretAccessKeyNoPrivilege,
+				},
+			},
+		},
+	}
+	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
+	if body != nil {
+		r = r.Body(*body)
+	}
+	i, resp, err := r.Execute()
+	err = util.ParseError(err, resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = waitImport(ctx, *i.ImportId)
+	expectFail(err, "AccessDenied", logger, t)
+}
+
+func TestS3AccessKeyImport(t *testing.T) {
+	ctx := context.Background()
+	logger := log.WithContextL(ctx).With(zap.String("test", "e2eS3AccessKeyImport"))
+	_, err := db.Exec("DROP TABLE IF EXISTS a")
+	if err != nil {
+		logger.Fatal("failed to drop table -> ", zap.Error(err))
+	}
+
+	logger.Info("start import")
+	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
+	defer cancel()
+
+	body := &imp.ImportServiceCreateImportBody{
+		ImportOptions: imp.ImportOptions{
+			FileType: imp.IMPORTFILETYPEENUM_CSV,
+			CsvFormat: &imp.CSVFormat{
+				Separator: pointer.ToString(";"),
+			},
+		},
+		Source: imp.ImportSource{
+			Type: imp.IMPORTSOURCETYPEENUM_S3,
+			S3: &imp.S3Source{
+				Uri:      config.ImportS3URI,
+				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &imp.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 			},
 		},
 	}
@@ -49,17 +181,17 @@ func TestParquetImport(t *testing.T) {
 	}
 	err = waitImport(ctx, *i.ImportId)
 	if err != nil {
-		t.Fatal("import failed -> ", err)
+		logger.Fatal("import failed -> ", zap.Error(err))
 	}
 	logger.Info("import finished")
 }
 
-func TestSchemaCompressImport(t *testing.T) {
+func TestS3ArnImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eSchemaCompressImport"))
+	logger := log.WithContextL(ctx).With(zap.String("test", "e2eS3ArnImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
-		t.Fatal("failed to drop table -> ", err)
+		logger.Fatal("failed to drop table -> ", zap.Error(err))
 	}
 
 	logger.Info("start import")
@@ -76,7 +208,7 @@ func TestSchemaCompressImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      config.ImportS3SchemaCompressURI,
+				Uri:      config.ImportS3URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
 				RoleArn:  &config.ImportS3RoleArn,
 			},
@@ -91,94 +223,9 @@ func TestSchemaCompressImport(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	err = waitImport(ctx, *i.ImportId)
 	if err != nil {
-		t.Fatal("import failed -> ", err)
+		logger.Fatal("import failed -> ", zap.Error(err))
 	}
 	logger.Info("import finished")
-}
-
-func TestSchemaTypeMisMatchedImport(t *testing.T) {
-	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eSchemaTypeMisMatchedImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS a")
-	if err != nil {
-		t.Fatal("failed to drop table -> ", err)
-	}
-
-	logger.Info("start import")
-	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
-	defer cancel()
-
-	body := &imp.ImportServiceCreateImportBody{
-		ImportOptions: imp.ImportOptions{
-			FileType: imp.IMPORTFILETYPEENUM_CSV,
-			CsvFormat: &imp.CSVFormat{
-				Separator: pointer.ToString(";"),
-			},
-		},
-		Source: imp.ImportSource{
-			Type: imp.IMPORTSOURCETYPEENUM_S3,
-			S3: &imp.S3Source{
-				Uri:      config.ImportS3SchemaTypeMisMatchedURI,
-				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
-			},
-		},
-	}
-	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
-	if body != nil {
-		r = r.Body(*body)
-	}
-	i, resp, err := r.Execute()
-	err = util.ParseError(err, resp)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = waitImport(ctx, *i.ImportId)
-	expectFail(err, "failed to cast value as int(11) for column `name`", logger, t)
-}
-
-func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
-	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eSchemaColumnNumberMismatchedImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS a")
-	if err != nil {
-		t.Fatal("failed to drop table -> ", err)
-	}
-
-	logger.Info("start import")
-	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
-	defer cancel()
-
-	body := &imp.ImportServiceCreateImportBody{
-		ImportOptions: imp.ImportOptions{
-			FileType: imp.IMPORTFILETYPEENUM_CSV,
-			CsvFormat: &imp.CSVFormat{
-				Separator: pointer.ToString(";"),
-			},
-		},
-		Source: imp.ImportSource{
-			Type: imp.IMPORTSOURCETYPEENUM_S3,
-			S3: &imp.S3Source{
-				Uri:      config.ImportS3SchemaColumnNumberMismatchedURI,
-				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
-			},
-		},
-	}
-	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
-	if body != nil {
-		r = r.Body(*body)
-	}
-	i, resp, err := r.Execute()
-	err = util.ParseError(err, resp)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = waitImport(ctx, *i.ImportId)
-	expectFail(err, "TiDB schema `test`.`a` doesn't have the default value for number", logger, t)
 }
