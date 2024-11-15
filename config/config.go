@@ -29,6 +29,33 @@ var (
 	ProjectId string
 )
 
+// import vars
+var (
+	ImportClusterHost     string
+	ImportClusterUser     string
+	ImportClusterPassWord string
+
+	ImportS3RoleArn                         string
+	ImportS3ParquetURI                      string
+	ImportS3SchemaCompressURI               string
+	ImportS3SchemaTypeMisMatchedURI         string
+	ImportS3SchemaColumnNumberMismatchedURI string
+
+	ImportAzureURI                 string
+	ImportAzureSASToken            string
+	ImportAzureSASTokenNoPrivilege string
+
+	ImportGCSURI                          string
+	ImportGCSServiceAccountKey            string
+	ImportGCSServiceAccountKeyNoPrivilege string
+
+	ImportS3URI                        string
+	ImportS3RoleArnNoPrivilege         string
+	ImportS3RoleArnDiffExternalID      string
+	ImportS3AccessKeyIdNoPrivilege     string
+	ImportS3SecretAccessKeyNoPrivilege string
+)
+
 var (
 	configContent string
 	configAddress string
@@ -195,6 +222,64 @@ func getConfig() {
 	}
 	if ProjectId == "" {
 		ProjectId = viper.GetString("project-id")
+	}
+
+	if ImportClusterHost == "" {
+		ImportClusterHost = viper.GetString("import.cluster-host")
+	}
+	if ImportClusterUser == "" {
+		ImportClusterUser = viper.GetString("import.cluster-user")
+	}
+	if ImportClusterPassWord == "" {
+		ImportClusterPassWord = viper.GetString("import.cluster-password")
+	}
+	if ImportS3RoleArn == "" {
+		ImportS3RoleArn = viper.GetString("import.s3.role-arn")
+	}
+	if ImportS3ParquetURI == "" {
+		ImportS3ParquetURI = viper.GetString("import.s3.parquet-uri")
+	}
+	if ImportS3SchemaCompressURI == "" {
+		ImportS3SchemaCompressURI = viper.GetString("import.s3.schema-compress-uri")
+	}
+	if ImportS3SchemaTypeMisMatchedURI == "" {
+		ImportS3SchemaTypeMisMatchedURI = viper.GetString("import.s3.schema-type-mismatched-uri")
+	}
+	if ImportS3SchemaColumnNumberMismatchedURI == "" {
+		ImportS3SchemaColumnNumberMismatchedURI = viper.GetString("import.s3.schema-column-number-mismatched-uri")
+	}
+	if ImportAzureURI == "" {
+		ImportAzureURI = viper.GetString("import.azure.uri")
+	}
+	if ImportAzureSASToken == "" {
+		ImportAzureSASToken = viper.GetString("import.azure.sas-token")
+	}
+	if ImportAzureSASTokenNoPrivilege == "" {
+		ImportAzureSASTokenNoPrivilege = viper.GetString("import.azure.sas-token-no-privilege")
+	}
+	if ImportGCSURI == "" {
+		ImportGCSURI = viper.GetString("import.gcs.uri")
+	}
+	if ImportGCSServiceAccountKey == "" {
+		ImportGCSServiceAccountKey = viper.GetString("import.gcs.service-account-key")
+	}
+	if ImportGCSServiceAccountKeyNoPrivilege == "" {
+		ImportGCSServiceAccountKeyNoPrivilege = viper.GetString("import.gcs.service-account-key-no-privilege")
+	}
+	if ImportS3URI == "" {
+		ImportS3URI = viper.GetString("import.s3.uri")
+	}
+	if ImportS3RoleArnNoPrivilege == "" {
+		ImportS3RoleArnNoPrivilege = viper.GetString("import.s3.role-arn-no-privilege")
+	}
+	if ImportS3RoleArnDiffExternalID == "" {
+		ImportS3RoleArnDiffExternalID = viper.GetString("import.s3.role-arn-diff-external-id")
+	}
+	if ImportS3AccessKeyIdNoPrivilege == "" {
+		ImportS3AccessKeyIdNoPrivilege = viper.GetString("import.s3.access-key-id-no-privilege")
+	}
+	if ImportS3SecretAccessKeyNoPrivilege == "" {
+		ImportS3SecretAccessKeyNoPrivilege = viper.GetString("import.s3.secret-access-key-no-privilege")
 	}
 }
 
