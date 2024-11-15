@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/AlekSi/pointer"
-	"github.com/tidbcloud/pkgv2/log"
+	"github.com/pingcap/log"
 	"github.com/tidbcloud/serverless-test/config"
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/imp"
@@ -15,7 +15,7 @@ import (
 
 func TestAzureImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eAzureImport"))
+	logger := log.L().With(zap.String("test", "e2eAzureImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))
@@ -60,7 +60,7 @@ func TestAzureImport(t *testing.T) {
 
 func TestAzureNoPrivilegeImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eAzureNoPrivilegeImport"))
+	logger := log.L().With(zap.String("test", "e2eAzureNoPrivilegeImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))

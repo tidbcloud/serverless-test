@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/AlekSi/pointer"
-	"github.com/tidbcloud/pkgv2/log"
+	"github.com/pingcap/log"
 	"github.com/tidbcloud/serverless-test/config"
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/imp"
@@ -15,7 +15,7 @@ import (
 
 func TestS3ArnNoPrivilegeImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eS3ArnNoPrivilegeImport"))
+	logger := log.L().With(zap.String("test", "e2eS3ArnNoPrivilegeImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))
@@ -56,7 +56,7 @@ func TestS3ArnNoPrivilegeImport(t *testing.T) {
 
 func TestS3ArnDiffExternalIDImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eS3ArnDiffExternalIDImport"))
+	logger := log.L().With(zap.String("test", "e2eS3ArnDiffExternalIDImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))
@@ -97,7 +97,7 @@ func TestS3ArnDiffExternalIDImport(t *testing.T) {
 
 func TestS3AccessKeyNoPrivilegeImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eS3AccessKeyNoPrivilegeImport"))
+	logger := log.L().With(zap.String("test", "e2eS3AccessKeyNoPrivilegeImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))
@@ -141,7 +141,7 @@ func TestS3AccessKeyNoPrivilegeImport(t *testing.T) {
 
 func TestS3AccessKeyImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eS3AccessKeyImport"))
+	logger := log.L().With(zap.String("test", "e2eS3AccessKeyImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))
@@ -188,7 +188,7 @@ func TestS3AccessKeyImport(t *testing.T) {
 
 func TestS3ArnImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eS3ArnImport"))
+	logger := log.L().With(zap.String("test", "e2eS3ArnImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))

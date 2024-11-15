@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/AlekSi/pointer"
-	"github.com/tidbcloud/pkgv2/log"
+	"github.com/pingcap/log"
 	"github.com/tidbcloud/serverless-test/config"
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/imp"
@@ -15,7 +15,7 @@ import (
 
 func TestParquetImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eParquetImport"))
+	logger := log.L().With(zap.String("test", "e2eParquetImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS ppp")
 	if err != nil {
 		t.Fatal("failed to drop table -> ", err)
@@ -56,7 +56,7 @@ func TestParquetImport(t *testing.T) {
 
 func TestSchemaCompressImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eSchemaCompressImport"))
+	logger := log.L().With(zap.String("test", "e2eSchemaCompressImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
 		t.Fatal("failed to drop table -> ", err)
@@ -101,7 +101,7 @@ func TestSchemaCompressImport(t *testing.T) {
 
 func TestSchemaTypeMisMatchedImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eSchemaTypeMisMatchedImport"))
+	logger := log.L().With(zap.String("test", "e2eSchemaTypeMisMatchedImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
 		t.Fatal("failed to drop table -> ", err)
@@ -143,7 +143,7 @@ func TestSchemaTypeMisMatchedImport(t *testing.T) {
 
 func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.WithContextL(ctx).With(zap.String("test", "e2eSchemaColumnNumberMismatchedImport"))
+	logger := log.L().With(zap.String("test", "e2eSchemaColumnNumberMismatchedImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS a")
 	if err != nil {
 		t.Fatal("failed to drop table -> ", err)

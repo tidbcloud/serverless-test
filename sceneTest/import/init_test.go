@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/tidbcloud/pkgv2/log"
+	"github.com/pingcap/log"
 	"github.com/tidbcloud/serverless-test/config"
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/imp"
@@ -47,20 +47,19 @@ func setup() {
 }
 
 func NewDB() (*sql.DB, error) {
-	ctx := context.Background()
 	err := mysql.RegisterTLSConfig("tidb", &tls.Config{
 		MinVersion: tls.VersionTLS12,
 		ServerName: config.ImportClusterHost,
 	})
 	if err != nil {
-		log.Fatal(ctx, "failed to register tls config -> ", zap.Error(err))
+		log.Fatal("failed to register tls config -> ", zap.Error(err))
 	}
 	db, err = sql.Open("mysql", fmt.Sprintf(
 		"%s:%s@tcp(%s:4000)/test?tls=tidb",
 		config.ImportClusterUser, config.ImportClusterPassWord, config.ImportClusterHost),
 	)
 	if err != nil {
-		log.Fatal(ctx, "failed to connect database -> ", zap.Error(err))
+		log.Fatal("failed to connect database -> ", zap.Error(err))
 	}
 	return db, nil
 }

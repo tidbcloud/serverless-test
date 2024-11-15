@@ -14,7 +14,7 @@ on:
       - master
 
 jobs:
-    export-scene-test:
+    import-scene-test:
         runs-on: ubuntu-latest
         steps:
         - name: Checkout
