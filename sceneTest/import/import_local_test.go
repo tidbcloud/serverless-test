@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	localFilePath = "./test.a.csv"
+	localFilePath = "../../data/test.a.csv"
 )
 
 func TestLocalImport(t *testing.T) {
