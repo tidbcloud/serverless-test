@@ -16,7 +16,7 @@ import (
 func TestParquetImport(t *testing.T) {
 	ctx := context.Background()
 	logger := log.L().With(zap.String("test", "e2eParquetImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS ppp")
+	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`ppp`")
 	if err != nil {
 		t.Fatal("failed to drop table -> ", err)
 	}
@@ -57,7 +57,7 @@ func TestParquetImport(t *testing.T) {
 func TestSchemaCompressImport(t *testing.T) {
 	ctx := context.Background()
 	logger := log.L().With(zap.String("test", "e2eSchemaCompressImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS a")
+	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		t.Fatal("failed to drop table -> ", err)
 	}
@@ -102,7 +102,7 @@ func TestSchemaCompressImport(t *testing.T) {
 func TestSchemaTypeMisMatchedImport(t *testing.T) {
 	ctx := context.Background()
 	logger := log.L().With(zap.String("test", "e2eSchemaTypeMisMatchedImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS a")
+	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		t.Fatal("failed to drop table -> ", err)
 	}
@@ -144,7 +144,7 @@ func TestSchemaTypeMisMatchedImport(t *testing.T) {
 func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 	ctx := context.Background()
 	logger := log.L().With(zap.String("test", "e2eSchemaColumnNumberMismatchedImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS a")
+	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		t.Fatal("failed to drop table -> ", err)
 	}

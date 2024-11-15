@@ -16,7 +16,7 @@ import (
 func TestGcsImport(t *testing.T) {
 	ctx := context.Background()
 	logger := log.L().With(zap.String("test", "e2eGcsImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS a")
+	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))
 	}
@@ -61,7 +61,7 @@ func TestGcsImport(t *testing.T) {
 func TestGcsNoPrivilegeImport(t *testing.T) {
 	ctx := context.Background()
 	logger := log.L().With(zap.String("test", "e2eGcsNoPrivilegeImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS a")
+	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))
 	}

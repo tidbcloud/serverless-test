@@ -23,7 +23,7 @@ const (
 func TestLocalImport(t *testing.T) {
 	ctx := context.Background()
 	logger := log.L().With(zap.String("test", "e2eLocalImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS a")
+	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))
 	}

@@ -16,7 +16,7 @@ import (
 func TestAzureImport(t *testing.T) {
 	ctx := context.Background()
 	logger := log.L().With(zap.String("test", "e2eAzureImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS a")
+	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))
 	}
@@ -61,7 +61,7 @@ func TestAzureImport(t *testing.T) {
 func TestAzureNoPrivilegeImport(t *testing.T) {
 	ctx := context.Background()
 	logger := log.L().With(zap.String("test", "e2eAzureNoPrivilegeImport"))
-	_, err := db.Exec("DROP TABLE IF EXISTS a")
+	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		logger.Fatal("failed to drop table -> ", zap.Error(err))
 	}
