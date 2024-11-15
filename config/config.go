@@ -45,8 +45,8 @@ var (
 	ImportAzureSASToken            string
 	ImportAzureSASTokenNoPrivilege string
 
-	ImportGcsURI                          string
-	ImportGcsServiceAccountKey            string
+	ImportGCSURI                          string
+	ImportGCSServiceAccountKey            string
 	ImportGCSServiceAccountKeyNoPrivilege string
 
 	ImportS3URI                        string
@@ -257,11 +257,11 @@ func getConfig() {
 	if ImportAzureSASTokenNoPrivilege == "" {
 		ImportAzureSASTokenNoPrivilege = viper.GetString("import.azure.sas-token-no-privilege")
 	}
-	if ImportGcsURI == "" {
-		ImportGcsURI = viper.GetString("import.gcs.uri")
+	if ImportGCSURI == "" {
+		ImportGCSURI = viper.GetString("import.gcs.uri")
 	}
-	if ImportGcsServiceAccountKey == "" {
-		ImportGcsServiceAccountKey = viper.GetString("import.gcs.service-account-key")
+	if ImportGCSServiceAccountKey == "" {
+		ImportGCSServiceAccountKey = viper.GetString("import.gcs.service-account-key")
 	}
 	if ImportGCSServiceAccountKeyNoPrivilege == "" {
 		ImportGCSServiceAccountKeyNoPrivilege = viper.GetString("import.gcs.service-account-key-no-privilege")
