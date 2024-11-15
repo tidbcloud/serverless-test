@@ -5,6 +5,7 @@ on:
     workflows:
       - "Export Scene Test"
       - "Branch Scene Test"
+      - "Import Scene Test"
     types:
       - completed
 
