@@ -10,10 +10,8 @@ import (
 	"time"
 
 	"github.com/AlekSi/pointer"
-	"github.com/pingcap/log"
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/imp"
-	"go.uber.org/zap"
 )
 
 const (
@@ -22,13 +20,12 @@ const (
 
 func TestLocalImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.L().With(zap.String("test", "e2eLocalImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
-		logger.Fatal("failed to drop table -> ", zap.Error(err))
+		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
-	logger.Info("start upload")
+	t.Log("start upload")
 	targetDatabase := "test"
 	targetTable := "a"
 	startUploadContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
@@ -54,7 +51,7 @@ func TestLocalImport(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	logger.Info("start import")
+	t.Log("start import")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 	body := &imp.ImportServiceCreateImportBody{
@@ -84,9 +81,9 @@ func TestLocalImport(t *testing.T) {
 	}
 	err = waitImport(ctx, *i.ImportId)
 	if err != nil {
-		logger.Fatal("import failed -> ", zap.Error(err))
+		t.Fatalf("import failed, importId: %s, error: %s", *i.ImportId, err.Error())
 	}
-	logger.Info("import finished")
+	t.Log("import finished")
 }
 
 func uploadFile(filePath string, url string) error {

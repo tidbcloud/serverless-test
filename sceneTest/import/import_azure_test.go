@@ -6,22 +6,19 @@ import (
 	"time"
 
 	"github.com/AlekSi/pointer"
-	"github.com/pingcap/log"
 	"github.com/tidbcloud/serverless-test/config"
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/imp"
-	"go.uber.org/zap"
 )
 
 func TestAzureImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.L().With(zap.String("test", "e2eAzureImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
-		logger.Fatal("failed to drop table -> ", zap.Error(err))
+		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
-	logger.Info("start import")
+	t.Log("start import")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
@@ -53,20 +50,19 @@ func TestAzureImport(t *testing.T) {
 
 	err = waitImport(ctx, *i.ImportId)
 	if err != nil {
-		t.Fatal("import failed -> ", err)
+		t.Fatalf("import failed, importId: %s, error: %s", *i.ImportId, err.Error())
 	}
-	logger.Info("import finished")
+	t.Log("import finished")
 }
 
 func TestAzureNoPrivilegeImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.L().With(zap.String("test", "e2eAzureNoPrivilegeImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
-		logger.Fatal("failed to drop table -> ", zap.Error(err))
+		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
-	logger.Info("start import")
+	t.Log("start import")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
@@ -96,5 +92,10 @@ func TestAzureNoPrivilegeImport(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = waitImport(ctx, *i.ImportId)
-	expectFail(err, "error", logger, t)
+	err = expectFail(err, "error")
+	if err != nil {
+		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
+	} else {
+		t.Log("import failed as expected")
+	}
 }
