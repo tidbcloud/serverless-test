@@ -49,7 +49,7 @@ func TestParquetImport(t *testing.T) {
 	}
 	err = waitImport(ctx, *i.ImportId)
 	if err != nil {
-		t.Fatal("import failed -> ", err)
+		t.Fatal("import failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
 	}
 	logger.Info("import finished")
 }
@@ -94,7 +94,7 @@ func TestSchemaCompressImport(t *testing.T) {
 
 	err = waitImport(ctx, *i.ImportId)
 	if err != nil {
-		t.Fatal("import failed -> ", err)
+		t.Fatal("import failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
 	}
 	logger.Info("import finished")
 }
@@ -138,7 +138,12 @@ func TestSchemaTypeMisMatchedImport(t *testing.T) {
 	}
 
 	err = waitImport(ctx, *i.ImportId)
-	expectFail(err, "failed to cast value as int(11) for column `name`", logger, t)
+	err = expectFail(err, "failed to cast value as int(11) for column `name`")
+	if err != nil {
+		t.Fatal("test failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
+	} else {
+		logger.Info("import failed as expected")
+	}
 }
 
 func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
@@ -180,5 +185,10 @@ func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 	}
 
 	err = waitImport(ctx, *i.ImportId)
-	expectFail(err, "TiDB schema `test`.`a` doesn't have the default value for number", logger, t)
+	err = expectFail(err, "TiDB schema `test`.`a` doesn't have the default value for number")
+	if err != nil {
+		t.Fatal("test failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
+	} else {
+		logger.Info("import failed as expected")
+	}
 }

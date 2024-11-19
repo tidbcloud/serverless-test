@@ -18,7 +18,7 @@ func TestGcsImport(t *testing.T) {
 	logger := log.L().With(zap.String("test", "e2eGcsImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
-		logger.Fatal("failed to drop table -> ", zap.Error(err))
+		t.Fatal("failed to drop table -> ", zap.Error(err))
 	}
 
 	logger.Info("start import")
@@ -53,7 +53,7 @@ func TestGcsImport(t *testing.T) {
 
 	err = waitImport(ctx, *i.ImportId)
 	if err != nil {
-		t.Fatal("import failed -> ", err)
+		t.Fatal("import failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
 	}
 	logger.Info("import finished")
 }
@@ -63,7 +63,7 @@ func TestGcsNoPrivilegeImport(t *testing.T) {
 	logger := log.L().With(zap.String("test", "e2eGcsNoPrivilegeImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
-		logger.Fatal("failed to drop table -> ", zap.Error(err))
+		t.Fatal("failed to drop table -> ", zap.Error(err))
 	}
 
 	logger.Info("start import")
@@ -96,5 +96,10 @@ func TestGcsNoPrivilegeImport(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = waitImport(ctx, *i.ImportId)
-	expectFail(err, "Permission 'storage.objects.list' denied on resource", logger, t)
+	err = expectFail(err, "Permission 'storage.objects.list' denied on resource")
+	if err != nil {
+		t.Fatal("test failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
+	} else {
+		logger.Info("import failed as expected")
+	}
 }

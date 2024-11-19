@@ -18,7 +18,7 @@ func TestAzureImport(t *testing.T) {
 	logger := log.L().With(zap.String("test", "e2eAzureImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
-		logger.Fatal("failed to drop table -> ", zap.Error(err))
+		t.Fatal("failed to drop table -> ", zap.Error(err))
 	}
 
 	logger.Info("start import")
@@ -53,7 +53,7 @@ func TestAzureImport(t *testing.T) {
 
 	err = waitImport(ctx, *i.ImportId)
 	if err != nil {
-		t.Fatal("import failed -> ", err)
+		t.Fatal("import failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
 	}
 	logger.Info("import finished")
 }
@@ -63,7 +63,7 @@ func TestAzureNoPrivilegeImport(t *testing.T) {
 	logger := log.L().With(zap.String("test", "e2eAzureNoPrivilegeImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
-		logger.Fatal("failed to drop table -> ", zap.Error(err))
+		t.Fatal("failed to drop table -> ", zap.Error(err))
 	}
 
 	logger.Info("start import")
@@ -96,5 +96,10 @@ func TestAzureNoPrivilegeImport(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = waitImport(ctx, *i.ImportId)
-	expectFail(err, "error", logger, t)
+	err = expectFail(err, "error")
+	if err != nil {
+		t.Fatal("test failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
+	} else {
+		logger.Info("import failed as expected")
+	}
 }

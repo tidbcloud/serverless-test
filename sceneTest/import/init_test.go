@@ -122,13 +122,12 @@ func waitImport(ctx context.Context, importID string) error {
 	}
 }
 
-func expectFail(err error, errorMsg string, logger *zap.Logger, t *testing.T) {
+func expectFail(err error, errorMsg string) error {
 	if err != nil {
 		if strings.Contains(err.Error(), errorMsg) {
-			logger.Info("import failed as expected")
-			return
+			return nil
 		}
-		t.Fatal(fmt.Sprintf("import failed, but not as expected. expected: %s, actual: %s", errorMsg, err.Error()))
+		return fmt.Errorf("import failed, but not as expected. expected: %s, actual: %s", errorMsg, err.Error())
 	}
-	t.Fatal("import should fail, but succeeded")
+	return errors.New("import should fail, but succeeded")
 }
