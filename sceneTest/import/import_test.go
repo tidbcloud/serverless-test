@@ -18,7 +18,7 @@ func TestParquetImport(t *testing.T) {
 	logger := log.L().With(zap.String("test", "e2eParquetImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`ppp`")
 	if err != nil {
-		t.Fatal("failed to drop table -> ", err)
+		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
 	logger.Info("start import")
@@ -49,7 +49,7 @@ func TestParquetImport(t *testing.T) {
 	}
 	err = waitImport(ctx, *i.ImportId)
 	if err != nil {
-		t.Fatal("import failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
+		t.Fatalf("import failed, importId: %s, error: %s", *i.ImportId, err.Error())
 	}
 	logger.Info("import finished")
 }
@@ -59,7 +59,7 @@ func TestSchemaCompressImport(t *testing.T) {
 	logger := log.L().With(zap.String("test", "e2eSchemaCompressImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
-		t.Fatal("failed to drop table -> ", err)
+		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
 	logger.Info("start import")
@@ -94,7 +94,7 @@ func TestSchemaCompressImport(t *testing.T) {
 
 	err = waitImport(ctx, *i.ImportId)
 	if err != nil {
-		t.Fatal("import failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
+		t.Fatalf("import failed, importId: %s, error: %s", *i.ImportId, err.Error())
 	}
 	logger.Info("import finished")
 }
@@ -104,7 +104,7 @@ func TestSchemaTypeMisMatchedImport(t *testing.T) {
 	logger := log.L().With(zap.String("test", "e2eSchemaTypeMisMatchedImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
-		t.Fatal("failed to drop table -> ", err)
+		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
 	logger.Info("start import")
@@ -140,7 +140,7 @@ func TestSchemaTypeMisMatchedImport(t *testing.T) {
 	err = waitImport(ctx, *i.ImportId)
 	err = expectFail(err, "failed to cast value as int(11) for column `name`")
 	if err != nil {
-		t.Fatal("test failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
+		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
 	} else {
 		logger.Info("import failed as expected")
 	}
@@ -151,7 +151,7 @@ func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 	logger := log.L().With(zap.String("test", "e2eSchemaColumnNumberMismatchedImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
-		t.Fatal("failed to drop table -> ", err)
+		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
 	logger.Info("start import")
@@ -187,7 +187,7 @@ func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 	err = waitImport(ctx, *i.ImportId)
 	err = expectFail(err, "TiDB schema `test`.`a` doesn't have the default value for number")
 	if err != nil {
-		t.Fatal("test failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
+		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
 	} else {
 		logger.Info("import failed as expected")
 	}

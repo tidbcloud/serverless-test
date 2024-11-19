@@ -25,7 +25,7 @@ func TestLocalImport(t *testing.T) {
 	logger := log.L().With(zap.String("test", "e2eLocalImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
-		t.Fatal("failed to drop table -> ", zap.Error(err))
+		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
 	logger.Info("start upload")
@@ -84,7 +84,7 @@ func TestLocalImport(t *testing.T) {
 	}
 	err = waitImport(ctx, *i.ImportId)
 	if err != nil {
-		t.Fatal("import failed -> ", zap.Error(err), zap.String("importId", *i.ImportId))
+		t.Fatalf("import failed, importId: %s, error: %s", *i.ImportId, err.Error())
 	}
 	logger.Info("import finished")
 }
