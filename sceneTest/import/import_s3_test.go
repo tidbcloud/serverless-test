@@ -6,22 +6,19 @@ import (
 	"time"
 
 	"github.com/AlekSi/pointer"
-	"github.com/pingcap/log"
 	"github.com/tidbcloud/serverless-test/config"
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/imp"
-	"go.uber.org/zap"
 )
 
 func TestS3ArnNoPrivilegeImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.L().With(zap.String("test", "e2eS3ArnNoPrivilegeImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
-	logger.Info("start import")
+	t.Log("start import")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
@@ -55,19 +52,18 @@ func TestS3ArnNoPrivilegeImport(t *testing.T) {
 	if err != nil {
 		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
 	} else {
-		logger.Info("import failed as expected")
+		t.Log("import failed as expected")
 	}
 }
 
 func TestS3ArnDiffExternalIDImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.L().With(zap.String("test", "e2eS3ArnDiffExternalIDImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
-	logger.Info("start import")
+	t.Log("start import")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
@@ -101,19 +97,18 @@ func TestS3ArnDiffExternalIDImport(t *testing.T) {
 	if err != nil {
 		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
 	} else {
-		logger.Info("import failed as expected")
+		t.Log("import failed as expected")
 	}
 }
 
 func TestS3AccessKeyNoPrivilegeImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.L().With(zap.String("test", "e2eS3AccessKeyNoPrivilegeImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
-	logger.Info("start import")
+	t.Log("start import")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
@@ -150,19 +145,18 @@ func TestS3AccessKeyNoPrivilegeImport(t *testing.T) {
 	if err != nil {
 		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
 	} else {
-		logger.Info("import failed as expected")
+		t.Log("import failed as expected")
 	}
 }
 
 func TestS3AccessKeyImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.L().With(zap.String("test", "e2eS3AccessKeyImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
-	logger.Info("start import")
+	t.Log("start import")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
@@ -198,18 +192,17 @@ func TestS3AccessKeyImport(t *testing.T) {
 	if err != nil {
 		t.Fatalf("import failed, importId: %s, error: %s", *i.ImportId, err.Error())
 	}
-	logger.Info("import finished")
+	t.Log("import finished")
 }
 
 func TestS3ArnImport(t *testing.T) {
 	ctx := context.Background()
-	logger := log.L().With(zap.String("test", "e2eS3ArnImport"))
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	if err != nil {
 		t.Fatalf("failed to drop table, err: %s", err.Error())
 	}
 
-	logger.Info("start import")
+	t.Log("start import")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
@@ -242,5 +235,5 @@ func TestS3ArnImport(t *testing.T) {
 	if err != nil {
 		t.Fatalf("import failed, importId: %s, error: %s", *i.ImportId, err.Error())
 	}
-	logger.Info("import finished")
+	t.Log("import finished")
 }
