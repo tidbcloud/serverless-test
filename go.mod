@@ -1,6 +1,6 @@
 module github.com/tidbcloud/serverless-test
 
-go 1.23
+go 1.23.0
 
 require (
 	github.com/AlekSi/pointer v1.2.0
