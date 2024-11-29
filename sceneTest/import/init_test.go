@@ -117,7 +117,7 @@ func waitImport(ctx context.Context, importID string) error {
 				return errors.New("import task cancelled")
 			}
 		case <-timeout:
-			return errors.New("import task timed out")
+			return errors.New("timed out to wait import task complete")
 		}
 	}
 }
