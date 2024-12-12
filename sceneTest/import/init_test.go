@@ -58,6 +58,9 @@ func NewDB() (*sql.DB, error) {
 		"%s:%s@tcp(%s:4000)/test?tls=tidb",
 		config.ImportClusterUser, config.ImportClusterPassWord, config.ImportClusterHost),
 	)
+	db.SetConnMaxLifetime(3 * time.Minute)
+	db.SetMaxOpenConns(3)
+	db.SetMaxIdleConns(3)
 	if err != nil {
 		log.Fatal("failed to connect database -> ", zap.Error(err))
 	}
