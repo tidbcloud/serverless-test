@@ -411,6 +411,7 @@ func TestCancelExport(t *testing.T) {
 }
 
 func checkServerlessExportState(ctx context.Context, t *testing.T, clusterId, exportId string) *export.Export {
+	t.Logf("start to check the state of %s", exportId)
 	ticker := time.NewTicker(time.Second * 10)
 	timeout := time.After(time.Minute * 3)
 	for {
