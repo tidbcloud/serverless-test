@@ -3,6 +3,7 @@ package export
 import (
 	"context"
 	"io"
+	"net/http"
 	"os"
 	"strings"
 	"testing"
@@ -401,8 +402,16 @@ func TestCancelExport(t *testing.T) {
 	}
 
 	t.Log("start to cancel export")
-	cancelRes, h, err := exportClient.ExportServiceAPI.ExportServiceCancelExport(ctx, clusterId, *res.ExportId).Execute()
-	if util.ParseError(err, h) != nil {
+	var cancelRes *export.Export
+	var h *http.Response
+	for i := 0; i < 3; i++ {
+		cancelRes, h, err = exportClient.ExportServiceAPI.ExportServiceCancelExport(ctx, clusterId, *res.ExportId).Execute()
+		if err == nil || !strings.Contains(err.Error(), "Internal Server Error") {
+			break
+		}
+		time.Sleep(time.Millisecond * 10)
+	}
+	if err != nil {
 		t.Fatal(util.ParseError(err, h))
 	}
 	assert.Equal(t, *cancelRes.State, export.EXPORTSTATEENUM_CANCELED)
