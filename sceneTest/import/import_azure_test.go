@@ -92,7 +92,7 @@ func TestAzureNoPrivilegeImport(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = waitImport(ctx, *i.ImportId)
-	err = expectFail(err, "error")
+	err = expectFail(err, "AzBlobAccessDenied")
 	if err != nil {
 		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
 	} else {
