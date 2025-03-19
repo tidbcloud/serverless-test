@@ -30,8 +30,11 @@ func TestParquetImport(t *testing.T) {
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
 				Uri:      config.ImportS3ParquetURI,
-				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &imp.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 			},
 		},
 	}
@@ -73,8 +76,11 @@ func TestSchemaCompressImport(t *testing.T) {
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
 				Uri:      config.ImportS3SchemaCompressURI,
-				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &imp.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 			},
 		},
 	}
@@ -117,8 +123,11 @@ func TestSchemaTypeMisMatchedImport(t *testing.T) {
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
 				Uri:      config.ImportS3SchemaTypeMisMatchedURI,
-				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &imp.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 			},
 		},
 	}
@@ -163,8 +172,11 @@ func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
 				Uri:      config.ImportS3SchemaColumnNumberMismatchedURI,
-				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &imp.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 			},
 		},
 	}

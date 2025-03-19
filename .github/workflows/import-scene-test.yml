@@ -30,11 +30,12 @@ jobs:
             restore-keys: |
               go-${{ runner.os }}-
 
+        # TODO enable TestOSSAccessKeyNoPrivilegeImport after the PR is published in prod
         - name: Run tests
           run: |
             if [ -z ${{ github.event.inputs.testCase }} ]; then
               echo "Running all tests"
-              go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/import/* -cid 10278121821273448857 -config "${{ secrets.TEST_CONFIG }}" -timeout 30m
+              go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/import/* -cid 10278121821273448857 -config "${{ secrets.TEST_CONFIG }}" -skip "TestOSSAccessKeyNoPrivilegeImport" -timeout 30m
             else
               echo "Running test ${{ github.event.inputs.testCase }}"
               go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/import/* -cid 10278121821273448857 -config "${{ secrets.TEST_CONFIG }}" -run ${{ github.event.inputs.testCase }}

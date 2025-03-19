@@ -54,6 +54,12 @@ var (
 	ImportS3RoleArnDiffExternalID      string
 	ImportS3AccessKeyIdNoPrivilege     string
 	ImportS3SecretAccessKeyNoPrivilege string
+
+	ImportOSSURI                        string
+	ImportOSSAccessKeyId                string
+	ImportOSSSecretAccessKey            string
+	ImportOSSAccessKeyIdNoPrivilege     string
+	ImportOSSSecretAccessKeyNoPrivilege string
 )
 
 var (
@@ -280,6 +286,21 @@ func getConfig() {
 	}
 	if ImportS3SecretAccessKeyNoPrivilege == "" {
 		ImportS3SecretAccessKeyNoPrivilege = viper.GetString("import.s3.secret-access-key-no-privilege")
+	}
+	if ImportOSSURI == "" {
+		ImportOSSURI = viper.GetString("import.oss.uri")
+	}
+	if ImportOSSAccessKeyId == "" {
+		ImportOSSAccessKeyId = viper.GetString("import.oss.access-key-id")
+	}
+	if ImportOSSSecretAccessKey == "" {
+		ImportOSSSecretAccessKey = viper.GetString("import.oss.secret-access-key")
+	}
+	if ImportOSSAccessKeyIdNoPrivilege == "" {
+		ImportOSSAccessKeyIdNoPrivilege = viper.GetString("import.oss.access-key-id-no-privilege")
+	}
+	if ImportOSSSecretAccessKeyNoPrivilege == "" {
+		ImportOSSSecretAccessKeyNoPrivilege = viper.GetString("import.oss.secret-access-key-no-privilege")
 	}
 }
 

@@ -1,0 +1,37 @@
+name: Import Scene Test
+
+on:
+# TODO uncomment the following line to enable scheduled runs
+#  schedule:
+#    - cron: "0 */2 * * *"  # every 2 hours
+  workflow_dispatch:
+    inputs:
+      testCase:
+        description: "specify a case or skip to run all tests"
+        default: ""
+        required: false
+
+jobs:
+    import-scene-test:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Install Go
+          uses: actions/setup-go@v5
+          with:
+            go-version-file: './go.mod'
+
+        - name: Restore Go modules cache
+          uses: actions/cache@v4
+          with:
+            path: ~/go/pkg/mod
+            key: go-${{ runner.os }}-${{ hashFiles('go.mod') }}
+            restore-keys: |
+              go-${{ runner.os }}-
+
+        - name: Run tests on alicloud
+          run : |
+            echo "Running all tests on alicloud"
+            go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/import/* -cid 10430525713440175381 -config "${{ secrets.TEST_CONFIG_ALICLOUD }}" -timeout 30m -skip "TestS3Arn.*"
