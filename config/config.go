@@ -294,13 +294,13 @@ func getConfig() {
 		ImportOSSAccessKeyId = viper.GetString("import.oss.access-key-id")
 	}
 	if ImportOSSSecretAccessKey == "" {
-		ImportOSSSecretAccessKey = viper.GetString("import.oss.access-key-secret")
+		ImportOSSSecretAccessKey = viper.GetString("import.oss.secret-access-key")
 	}
 	if ImportOSSAccessKeyIdNoPrivilege == "" {
 		ImportOSSAccessKeyIdNoPrivilege = viper.GetString("import.oss.access-key-id-no-privilege")
 	}
 	if ImportOSSSecretAccessKeyNoPrivilege == "" {
-		ImportOSSSecretAccessKeyNoPrivilege = viper.GetString("import.oss.access-key-secret-no-privilege")
+		ImportOSSSecretAccessKeyNoPrivilege = viper.GetString("import.oss.secret-access-key-no-privilege")
 	}
 }
 
