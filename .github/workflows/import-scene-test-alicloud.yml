@@ -33,4 +33,4 @@ jobs:
         - name: Run tests on alicloud
           run : |
             echo "Running all tests on alicloud"
-            go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/import/* -cid 10278121821273448857 -config "${{ secrets.TEST_CONFIG_ALICLOUD }}" -timeout 30m -run "^(Test(?!S3Arn).*)$"
+            go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/import/* -cid 10278121821273448857 -config "${{ secrets.TEST_CONFIG_ALICLOUD }}" -timeout 30m -skip "TestS3Arn.*"
