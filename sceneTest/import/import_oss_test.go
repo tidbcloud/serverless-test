@@ -47,11 +47,7 @@ func TestOSSAccessKeyNoPrivilegeImport(t *testing.T) {
 	}
 	i, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = waitImport(ctx, *i.ImportId)
-	err = expectFail(err, "AccessDenied")
+	err = expectFail(err, "OSS access deny")
 	if err != nil {
 		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
 	} else {
