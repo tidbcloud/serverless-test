@@ -1,8 +1,9 @@
 name: Import Scene Test
 
 on:
-  schedule:
-    - cron: "0 */2 * * *"  # every 2 hours
+# TODO uncomment the following line to enable scheduled runs
+#  schedule:
+#    - cron: "0 */2 * * *"  # every 2 hours
   workflow_dispatch:
     inputs:
       testCase:
