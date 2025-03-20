@@ -1,9 +1,8 @@
 name: Import Scene Test Alicloud
 
 on:
-# TODO uncomment the following line to enable scheduled runs
-#  schedule:
-#    - cron: "0 */2 * * *"  # every 2 hours
+  schedule:
+    - cron: "0 */2 * * *"  # every 2 hours
   workflow_dispatch:
     inputs:
       testCase:
@@ -12,7 +11,7 @@ on:
         required: false
 
 jobs:
-    import-scene-test:
+    import-scene-test-alicloud:
         runs-on: ubuntu-latest
         steps:
         - name: Checkout

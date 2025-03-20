@@ -6,6 +6,7 @@ on:
       - "Export Scene Test"
       - "Branch Scene Test"
       - "Import Scene Test"
+      - "Import Scene Test Alicloud"
     types:
       - completed
 
