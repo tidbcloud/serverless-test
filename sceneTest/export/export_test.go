@@ -35,7 +35,8 @@ func TestExportToLocalAndDownload(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	// the firtst export may run slowly
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 6*time.Minute)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 
 	t.Log("start to list download files")
@@ -94,7 +95,7 @@ func TestExportWithParquetFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.ExportOptions.FileType, fileType)
@@ -127,7 +128,7 @@ func TestExportWithCSVFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.ExportOptions.FileType, fileType)
@@ -154,7 +155,7 @@ func TestExportWithSQLFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.ExportOptions.FileType, fileType)
 
@@ -176,7 +177,7 @@ func TestExportWithCompression(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.ExportOptions.Compression, compression)
 
@@ -199,7 +200,7 @@ func TestExportWithSQLFilter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.ExportOptions.Filter.Sql, sql)
@@ -229,7 +230,7 @@ func TestExportWithTableFilter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.ExportOptions.Filter.Table.Where, where)
@@ -271,7 +272,7 @@ func TestExportToS3AccessKey(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.Target.S3.Uri, exportS3Uri)
 
@@ -309,7 +310,7 @@ func TestExportToS3RoleArn(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, *exp.Target.S3.Uri, exportS3Uri)
 
@@ -347,7 +348,7 @@ func TestExportToAzure(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, exp.Target.AzureBlob.Uri, azureUri)
 
@@ -385,7 +386,7 @@ func TestExportToGCS(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId)
+	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 	assert.Equal(t, exp.Target.Gcs.Uri, gcsUri)
 
@@ -419,10 +420,10 @@ func TestCancelExport(t *testing.T) {
 	DeleteExport(ctx, clusterId, *res.ExportId)
 }
 
-func checkServerlessExportState(ctx context.Context, t *testing.T, clusterId, exportId string) *export.Export {
+func checkServerlessExportState(ctx context.Context, t *testing.T, clusterId, exportId string, timeoutDur time.Duration) *export.Export {
 	t.Logf("start to check the state of %s", exportId)
 	ticker := time.NewTicker(time.Second * 10)
-	timeout := time.After(time.Minute * 3)
+	timeout := time.After(timeoutDur)
 	for {
 		select {
 		case <-ticker.C:
