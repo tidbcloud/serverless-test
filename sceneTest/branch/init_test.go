@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/tidbcloud/serverless-test/config"
@@ -93,12 +94,21 @@ func CreateCluster() (*cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) 
 	region := config.GetRandomRegion()
 	clusterBody := cluster.TidbCloudOpenApiserverlessv1beta1Cluster{
 		DisplayName: clusterName,
-		SpendingLimit: &cluster.ClusterSpendingLimit{
-			Monthly: &spendLimit,
-		},
 		Region: cluster.Commonv1beta1Region{
 			Name: &region,
 		},
+	}
+	if strings.Contains(region, "aws") {
+		clusterBody.SpendingLimit = &cluster.ClusterSpendingLimit{
+			Monthly: &spendLimit,
+		}
+	} else {
+		minRcu := int64(2000)
+		maxRcu := int64(4000)
+		clusterBody.AutoScaling = &cluster.V1beta1ClusterAutoScaling{
+			MinRcu: &minRcu,
+			MaxRcu: &maxRcu,
+		}
 	}
 	if config.ProjectId != "" {
 		clusterBody.Labels = &map[string]string{"tidb.cloud/project": config.ProjectId}
