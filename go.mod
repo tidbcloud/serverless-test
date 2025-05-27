@@ -11,7 +11,7 @@ require (
 	github.com/pingcap/log v1.1.0
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
-	github.com/tidbcloud/tidbcloud-cli/pkg v0.0.0-20250319053145-e9d18716d22c
+	github.com/tidbcloud/tidbcloud-cli/pkg v0.0.0-20250523131939-fffd1c1c99b1
 	go.uber.org/zap v1.27.0
 )
 
