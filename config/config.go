@@ -312,8 +312,6 @@ func GetRandomRegion() string {
 		"regions/aws-ap-southeast-1",
 		"regions/aws-eu-central-1",
 		"regions/alicloud-ap-southeast-1",
-		"regions/alicloud-ap-northeast-1",
-		"regions/alicloud-na-south-1",
 	}
 	size := len(regionLists)
 	return regionLists[time.Now().Unix()%int64(size)]
