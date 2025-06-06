@@ -45,11 +45,11 @@ func TestOSSAccessKeyNoPrivilegeImport(t *testing.T) {
 	if body != nil {
 		r = r.Body(*body)
 	}
-	i, resp, err := r.Execute()
+	_, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 	err = expectFail(err, "OSS access deny")
 	if err != nil {
-		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
+		t.Fatalf("create import failed, err: %s", err.Error())
 	} else {
 		t.Log("import failed as expected")
 	}
