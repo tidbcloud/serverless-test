@@ -1,0 +1,6601 @@
+openapi: 3.0.1
+info:
+  description: notably uses gRPC-Gateway with OpenAPI
+  title: gRPC for our DBaaS central service
+  version: "0.1"
+externalDocs:
+  description: DBaaS central
+  url: https://github.com/tidbcloud/core-svc
+servers:
+- url: /
+security:
+- bearer: []
+tags:
+- name: ClusterService
+- name: TenantService
+- name: TestTokenService
+paths:
+  /api/v1/orgs/{org_id}/projects/{project_id}/aws-cmek:
+    get:
+      operationId: GetAwsCmek
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: query
+        name: region_name
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetAwsCmekResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    post:
+      operationId: CreateAwsCmek
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAwsCmek_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCreateAwsCmekResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/aws_account:
+    get:
+      operationId: GetProjectAWSAccount
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralProjectAWSAccount'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: CMEK related APIs
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/aws_vpc_peerings:
+    get:
+      operationId: ListAwsVpcPeerings
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: query
+        name: region
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralAwsVpcPeerings'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    post:
+      operationId: CreateAWSVpcPeering
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAWSVpcPeering_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCreateAWSVpcPeeringResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/aws_vpc_peerings/{id}:
+    delete:
+      operationId: DeleteAwsVpcPeering
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    get:
+      operationId: GetAwsVpcPeering
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralAwsVpcPeering'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/cidr/regions:
+    get:
+      operationId: GetProjectRegionCIDR
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: query
+        name: provider
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetProjectRegionCIDRResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/cidrs:
+    get:
+      operationId: ListCidrs
+      parameters:
+      - description: Required. The ID of the org.
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - description: Required. The ID of the project.
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - description: |2-
+           - CLOUD_PROVIDER_UNSPECIFIED: Unspecified cloud provider.
+           - AWS: Amazon Web Services.
+           - GCP: Google Cloud Platform.
+        in: query
+        name: provider
+        schema:
+          $ref: '#/components/schemas/ListCidrs_provider_parameter'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralListCidrsResponse'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: Retrieves a list of CIDRs for regions in a project.
+      tags:
+      - ClusterService
+    post:
+      operationId: CreateCidr
+      parameters:
+      - description: Required. The ID of the org.
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - description: Required. The ID of the project.
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCidr_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCreateCidrResponse'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: Creates a CIDR for a region in a project.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/cidrs/{cidr_id}:
+    delete:
+      operationId: DeleteCidr
+      parameters:
+      - description: Required. The ID of the org.
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - description: Required. The ID of the project.
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - description: Required. The ID of the CIDR to be deleted.
+        in: path
+        name: cidr_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDefaultResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: Deletes a CIDR of a region in a project.
+      tags:
+      - ClusterService
+    get:
+      operationId: GetCidr
+      parameters:
+      - description: Required. The ID of the org.
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - description: Required. The ID of the project.
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - description: Required. The ID of the CIDR to be retrieved.
+        in: path
+        name: cidr_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetCidrResponse'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: Retrieves details of a specific CIDR in a project.
+      tags:
+      - ClusterService
+    patch:
+      operationId: UpdateCidr
+      parameters:
+      - description: Required. The ID of the org.
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - description: Required. The ID of the project.
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - description: Required. The ID of the CIDR to be updated.
+        in: path
+        name: cidr_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCidr_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralUpdateCidrResponse'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: Updates CIDR of a region in a project.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/cloud_providers/query:
+    post:
+      operationId: ListCloudProvidersV2
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListCloudProvidersV2_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCloudProviders'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/cluster_fee/query:
+    post:
+      operationId: CalcClusterFee
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalcClusterFee_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCalcClusterFeeResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters:
+    get:
+      operationId: ListClusters
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: query
+        name: page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - in: query
+        name: per_page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - in: query
+        name: provider
+        required: true
+        schema:
+          type: string
+      - explode: true
+        in: query
+        name: filter.statuses
+        schema:
+          items:
+            $ref: '#/components/schemas/ListClusters_filter_statuses_parameter_inner'
+          type: array
+        style: form
+      - in: query
+        name: filter.is_serverless
+        schema:
+          type: boolean
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralClusters'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/names:
+    post:
+      operationId: GenClusterName
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGenClusterNameResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}:
+    delete:
+      operationId: DeleteCluster
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDefaultResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    patch:
+      operationId: ChangeClusterName
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeClusterName_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/accesspoints:
+    get:
+      operationId: ListAccesspoints
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralListAccesspointsResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: List all accesspoints for a cluster.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/audit_log:
+    get:
+      operationId: ClusterService_GetAuditLogStatus
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetAuditLogStatusResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    put:
+      operationId: ClusterService_UpdateAuditLogStatus
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClusterService_UpdateAuditLogStatus_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralUpdateAuditLogStatusResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/audit_log/access_records:
+    get:
+      operationId: ClusterService_GetAuditLogAccessRecords
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetAuditLogAccessRecordsResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    post:
+      operationId: ClusterService_CreateAuditLogAccessRecord
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClusterService_CreateAuditLogAccessRecord_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCreateAuditLogAccessRecordResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/audit_log/access_records/{id}:
+    delete:
+      operationId: ClusterService_DeleteAuditLogAccessRecord
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDeleteAuditLogAccessRecordResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/audit_log/plugin_status:
+    get:
+      operationId: ClusterService_CheckAuditLogPluginStatus
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCheckAuditLogPluginStatusResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/audit_log/precheck:
+    post:
+      operationId: ClusterService_PrecheckAuditLogConfig
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClusterService_PrecheckAuditLogConfig_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralPrecheckAuditLogConfigResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/ca_cert:
+    get:
+      operationId: GetClusterCACertificate
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: query
+        name: type
+        required: true
+        schema:
+          $ref: '#/components/schemas/GetClusterCACertificate_type_parameter'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetClusterCACertificateResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: GetClusterCACertificate get the CA certificate of the cluster
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/connections:
+    get:
+      operationId: GetPrivateEndpoint
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetPrivateEndpointResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    post:
+      operationId: CreatePrivateEndpoint
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/password:
+    put:
+      operationId: ChangePassword
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDefaultResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/pause:
+    post:
+      operationId: PauseCluster
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDefaultResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/privatelink_endpoints:
+    post:
+      operationId: CreatePrivateLinkEndpoint
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/centralPrivateLinkEndpoint'
+        description: Only endpoint_name or endpoint_id(DEPRECATED) is required
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCreatePrivateLinkEndpointResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: privatelink_endpoint
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/privatelink_endpoints/{endpoint_id}:
+    delete:
+      operationId: DeletePrivateLinkEndpoint
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: endpoint_id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDefaultResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/privatelink_service:
+    delete:
+      operationId: DeletePrivateLinkService
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDefaultResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    get:
+      operationId: GetPrivateLinkService
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetPrivateLinkServiceResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    post:
+      operationId: CreatePrivateLinkService
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/centralPrivateLinkService'
+        description: Not required
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCreatePrivateLinkServiceResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: PrivateLink Service
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: privatelink_service
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/resume:
+    post:
+      operationId: ResumeCluster
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDefaultResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/tidb_nodes:
+    get:
+      operationId: GetTiDBNodes
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: query
+        name: page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - in: query
+        name: per_page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralTiDBNodes'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/tiflash_nodes:
+    get:
+      operationId: GetTiFlashNodes
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: query
+        name: page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - in: query
+        name: per_page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralTiFlashNodes'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/tikv_nodes:
+    get:
+      operationId: GetTiKVNodes
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: query
+        name: page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - in: query
+        name: per_page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralTiKVNodes'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/traffic_filter:
+    get:
+      operationId: GetTrafficFilter
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralTrafficFilterResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    post:
+      operationId: UpdateTrafficFilter
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTrafficFilter_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralUpdateTrafficFilterResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/writable:
+    patch:
+      operationId: MakeClusterWritable
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/clusters/{id}:
+    get:
+      operationId: GetCluster
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetClusterResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/clustersv2:
+    post:
+      operationId: CreateClusterV2
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClusterV2_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCreateClusterResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/clustersv2/{cluster_id}/components:
+    put:
+      operationId: ScaleClusterV2
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: cluster_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScaleClusterV2_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDefaultResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/cross_account_deployments:
+    get:
+      operationId: ListCrossAccountDeployments
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralListCrossAccountDeploymentResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - TenantService
+    post:
+      operationId: CreateCrossAccountDeployment
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCrossAccountDeployment_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCreateCrossAccountDeploymentResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: Cross account deployment
+      tags:
+      - TenantService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/cross_account_deployments/delegation_info:
+    get:
+      operationId: GetTiDBCloudDelegationInfo
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetTiDBCloudDelegationInfoResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: Give TiDB Cloud delegation info to customers
+      tags:
+      - TenantService
+  /api/v1/orgs/{org_id}/projects/{project_id}/cross_account_deployments/{id}:
+    delete:
+      operationId: DeleteCrossAccountDeployment
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDefaultResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - TenantService
+  /api/v1/orgs/{org_id}/projects/{project_id}/defaultCidr:
+    get:
+      operationId: GetDefaultCidr
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - description: |2-
+           - CLOUD_PROVIDER_UNSPECIFIED: Unspecified cloud provider.
+           - AWS: Amazon Web Services.
+           - GCP: Google Cloud Platform.
+        in: query
+        name: provider
+        required: true
+        schema:
+          $ref: '#/components/schemas/ListCidrs_provider_parameter'
+      - in: query
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetDefaultCidrResponse'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/gcp_vpc_peerings:
+    get:
+      operationId: ListGcpVpcPeerings
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: query
+        name: region
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGcpVpcPeerings'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    post:
+      operationId: CreateGcpVpcPeering
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGcpVpcPeering_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCreateGcpVpcPeeringResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/gcp_vpc_peerings/{id}:
+    delete:
+      operationId: DeleteGcpVpcPeering
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    get:
+      operationId: GetGcpVpcPeering
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGcpVpcPeering'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/iam_roles:
+    get:
+      operationId: ListIamRoles
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralListIamRolesResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - TenantService
+    post:
+      operationId: CreateIamRole
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateIamRole_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCreateIamRoleResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: IAM roles
+      tags:
+      - TenantService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/iam_roles/{id}:
+    delete:
+      operationId: DeleteIamRole
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDefaultResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - TenantService
+  /api/v1/orgs/{org_id}/projects/{project_id}/maintenance-tasks:
+    get:
+      operationId: ListProjectMaintenanceTasks
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: query
+        name: page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - in: query
+        name: per_page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralListProjectMaintenanceTasksResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/maintenance-tasks/{task_id}/defer:
+    post:
+      operationId: DeferMaintenanceTask
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: task_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDefaultResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/maintenance-window:
+    get:
+      operationId: GetProjectMaintenanceWindow
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGetProjectMaintenanceWindowResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+    put:
+      operationId: UpdateProjectMaintenanceWindow
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectMaintenanceWindow_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralUpdateProjectMaintenanceWindowResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/node_profiles/query:
+    post:
+      operationId: CalcNodeProfilesV2
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalcNodeProfilesV2_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralCalcNodeProfilesResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/privatelink_endpoints:
+    get:
+      operationId: ListPrivateLinkEndpointsOfProject
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralListPrivateLinkEndpointsOfProjectResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/recycle-bin:
+    get:
+      operationId: ListDeletedClusters
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: query
+        name: page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - in: query
+        name: per_page
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - in: query
+        name: provider
+        required: true
+        schema:
+          type: string
+      - explode: true
+        in: query
+        name: filter.statuses
+        schema:
+          items:
+            $ref: '#/components/schemas/ListClusters_filter_statuses_parameter_inner'
+          type: array
+        style: form
+      - in: query
+        name: filter.is_serverless
+        schema:
+          type: boolean
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralDeletedClusters'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/orgs/{org_id}/projects/{project_id}/{provider}/cidr:
+    get:
+      operationId: ClusterService_GetProjectCIDRWithoutRegion
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: provider
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralProjectCIDR'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      summary: |-
+        in the frontend, we'll call the CIDR API with URLs like `/api/v1/orgs/1/projects/1/aws//cidr`,
+        but in the API gate-way, this URL will be normalized to `/api/v1/orgs/1/projects/1/aws/cidr`,
+        so we need to add a route for this URL.
+      tags:
+      - ClusterService
+    post:
+      operationId: CreateProjectCIDR
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: provider
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectCIDR_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralProjectCIDR'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/{provider}/cidr/validation/query:
+    post:
+      operationId: ValidateProjectCIDR
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: provider
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectCIDR_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+      x-codegen-request-body-name: body
+  /api/v1/orgs/{org_id}/projects/{project_id}/{provider}/{region}/cidr:
+    get:
+      operationId: GetProjectCIDR
+      parameters:
+      - in: path
+        name: org_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: project_id
+        required: true
+        schema:
+          format: uint64
+          type: string
+      - in: path
+        name: provider
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralProjectCIDR'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - ClusterService
+  /api/v1/test-token:
+    post:
+      operationId: TestTokenService_GenerateTestToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/centralGenerateTestTokenReq'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/centralGenerateTestTokenResp'
+          description: A successful response.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+          description: An unexpected error response.
+      tags:
+      - TestTokenService
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    ClusterClusterType:
+      default: COMMON
+      enum:
+      - COMMON
+      - PRIMARY
+      - SECONDARY
+      type: string
+    ClusterCreateProgress:
+      default: INITIALIZING
+      enum:
+      - INITIALIZING
+      - PREPARING
+      - LAUNCHING
+      - COMPLETED
+      - BACKUPING
+      - RESTORING
+      - REPLICATION_PREPARING
+      - HIBERNATED
+      type: string
+    ClusterDisplayStatus:
+      default: DISPLAY_UNSPECIFIED
+      enum:
+      - DISPLAY_UNSPECIFIED
+      - DISPLAY_CREATING
+      - DISPLAY_RESTORING
+      - DISPLAY_AVAILABLE
+      - DISPLAY_IMPORTING
+      - DISPLAY_MODIFYING
+      - DISPLAY_PAUSED
+      - DISPLAY_RESUMING
+      - DISPLAY_UNAVAILABLE
+      - DISPLAY_MAINTAINING
+      - DISPLAY_PAUSING
+      title: Used for UI to display the cluster status
+      type: string
+    ClusterListReqFilter:
+      properties:
+        statuses:
+          items:
+            $ref: '#/components/schemas/centralClusterStatus'
+          type: array
+        is_serverless:
+          type: boolean
+      type: object
+    ClusterSecondaryStatus:
+      default: HEALTHY
+      enum:
+      - HEALTHY
+      - UNHEALTHY
+      type: string
+    centralAccesspoint:
+      example:
+        cluster_id: cluster_id
+        project_id: project_id
+        id: id
+        display_name: display_name
+      properties:
+        id:
+          format: uint64
+          type: string
+        project_id:
+          format: uint64
+          type: string
+        cluster_id:
+          format: uint64
+          type: string
+        display_name:
+          type: string
+      required:
+      - cluster_id
+      - display_name
+      - id
+      - project_id
+      type: object
+    centralAuditLogAccessRecord:
+      example:
+        db_expr: db_expr
+        access_type_list:
+        - access_type_list
+        - access_type_list
+        id: id
+        table_expr: table_expr
+        user_expr: user_expr
+      properties:
+        id:
+          format: uint64
+          type: string
+        user_expr:
+          type: string
+        db_expr:
+          type: string
+        table_expr:
+          type: string
+        access_type_list:
+          items:
+            type: string
+          type: array
+      required:
+      - access_type_list
+      - db_expr
+      - id
+      - table_expr
+      - user_expr
+      type: object
+    centralAuditLogConfig:
+      example:
+        role_arn: role_arn
+        bucket_url: bucket_url
+        data_source_type: 0
+        region: region
+      properties:
+        bucket_url:
+          type: string
+        region:
+          type: string
+        role_arn:
+          type: string
+        data_source_type:
+          format: int64
+          title: |-
+            1: aws s3
+            2: GCS
+          type: integer
+      required:
+      - bucket_url
+      - data_source_type
+      - region
+      - role_arn
+      type: object
+    centralAwsCmek:
+      example:
+        kms_arn: kms_arn
+        project_id: project_id
+        created_at: 2000-01-23T04:56:07.000+00:00
+        region_name: region_name
+        id: id
+      properties:
+        id:
+          format: uint64
+          type: string
+        project_id:
+          format: uint64
+          type: string
+        region_name:
+          type: string
+        kms_arn:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+      type: object
+    centralAwsCmekSpec:
+      properties:
+        region_name:
+          type: string
+        kms_arn:
+          type: string
+      type: object
+    centralAwsVpcPeering:
+      example:
+        tenant_vpc_id: tenant_vpc_id
+        private_host_zone: private_host_zone
+        vpc_cidr: vpc_cidr
+        tenant_vpc_cidr: tenant_vpc_cidr
+        vpc_peering_id: vpc_peering_id
+        region_name: region_name
+        id: id
+        region: region
+        status: status
+      properties:
+        region:
+          type: string
+        private_host_zone:
+          type: string
+        vpc_peering_id:
+          type: string
+        vpc_cidr:
+          type: string
+        tenant_vpc_cidr:
+          type: string
+        tenant_vpc_id:
+          type: string
+        status:
+          type: string
+        id:
+          format: uint64
+          type: string
+        region_name:
+          type: string
+      required:
+      - id
+      - private_host_zone
+      - region
+      - region_name
+      - status
+      - tenant_vpc_cidr
+      - tenant_vpc_id
+      - vpc_cidr
+      - vpc_peering_id
+      type: object
+    centralAwsVpcPeerings:
+      example:
+        total: 0
+        items:
+        - tenant_vpc_id: tenant_vpc_id
+          private_host_zone: private_host_zone
+          vpc_cidr: vpc_cidr
+          tenant_vpc_cidr: tenant_vpc_cidr
+          vpc_peering_id: vpc_peering_id
+          region_name: region_name
+          id: id
+          region: region
+          status: status
+        - tenant_vpc_id: tenant_vpc_id
+          private_host_zone: private_host_zone
+          vpc_cidr: vpc_cidr
+          tenant_vpc_cidr: tenant_vpc_cidr
+          vpc_peering_id: vpc_peering_id
+          region_name: region_name
+          id: id
+          region: region
+          status: status
+      properties:
+        total:
+          format: int32
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/centralAwsVpcPeering'
+          type: array
+      required:
+      - items
+      - total
+      type: object
+    centralBaseResp:
+      example:
+        err_msg: err_msg
+        err_code: err_code
+      properties:
+        err_code:
+          format: int64
+          type: string
+        err_msg:
+          type: string
+      type: object
+    centralCalcClusterFeeResp:
+      example:
+        costs:
+        - compute: 0.8008281904610115
+          component_type: COMPONENT_TYPE_UNSPECIFIED
+          raw_compute: 1.4658129805029452
+          storage: 6.027456183070403
+          raw_storage: 5.962133916683182
+        - compute: 0.8008281904610115
+          component_type: COMPONENT_TYPE_UNSPECIFIED
+          raw_compute: 1.4658129805029452
+          storage: 6.027456183070403
+          raw_storage: 5.962133916683182
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+      properties:
+        costs:
+          items:
+            $ref: '#/components/schemas/centralCalcClusterFeeRespComponentCost'
+          type: array
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - costs
+      type: object
+    centralCalcClusterFeeRespComponentCost:
+      example:
+        compute: 0.8008281904610115
+        component_type: COMPONENT_TYPE_UNSPECIFIED
+        raw_compute: 1.4658129805029452
+        storage: 6.027456183070403
+        raw_storage: 5.962133916683182
+      properties:
+        component_type:
+          $ref: '#/components/schemas/centralComponentType'
+        compute:
+          format: double
+          type: number
+        storage:
+          format: double
+          type: number
+        raw_compute:
+          format: double
+          type: number
+        raw_storage:
+          format: double
+          type: number
+      type: object
+    centralCalcNodeProfilesResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        node_profiles:
+        - component_type: COMPONENT_TYPE_UNSPECIFIED
+          profiles:
+          - min_storage_size_gi: 6
+            max_storage_size_gi: 1
+            default_storage_size_gi: 5
+            name: name
+            default_node_num: 0
+            cpu_num: 5
+            memory_gi: 2
+            display_name: display_name
+          - min_storage_size_gi: 6
+            max_storage_size_gi: 1
+            default_storage_size_gi: 5
+            name: name
+            default_node_num: 0
+            cpu_num: 5
+            memory_gi: 2
+            display_name: display_name
+          default_profile_name: default_profile_name
+        - component_type: COMPONENT_TYPE_UNSPECIFIED
+          profiles:
+          - min_storage_size_gi: 6
+            max_storage_size_gi: 1
+            default_storage_size_gi: 5
+            name: name
+            default_node_num: 0
+            cpu_num: 5
+            memory_gi: 2
+            display_name: display_name
+          - min_storage_size_gi: 6
+            max_storage_size_gi: 1
+            default_storage_size_gi: 5
+            name: name
+            default_node_num: 0
+            cpu_num: 5
+            memory_gi: 2
+            display_name: display_name
+          default_profile_name: default_profile_name
+      properties:
+        node_profiles:
+          items:
+            $ref: '#/components/schemas/centralComponentNodeProfiles'
+          type: array
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - node_profiles
+      type: object
+    centralCheckAuditLogPluginStatusResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        enabled: true
+      properties:
+        enabled:
+          type: boolean
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - enabled
+      type: object
+    centralCidr:
+      description: Message for describing a CIDR.
+      example:
+        project_id: project_id
+        provider: null
+        vpc_id: vpc_id
+        cidr: cidr
+        id: id
+        state: STATE_UNSPECIFIED
+        region:
+          provider: CLOUD_PROVIDER_UNSPECIFIED
+          name: name
+          display_name: display_name
+      properties:
+        id:
+          description: Output_only. The unique ID of the CIDR.
+          format: uint64
+          type: string
+        project_id:
+          description: Required. The ID of the project.
+          format: uint64
+          type: string
+        cidr:
+          description: Required. The CIDR setting by user.
+          type: string
+        region:
+          $ref: '#/components/schemas/centralCloudRegion'
+        provider:
+          $ref: '#/components/schemas/centralCloudRegionCloudProvider'
+        state:
+          $ref: '#/components/schemas/centralCidrState'
+        vpc_id:
+          description: Output_only. The ID of the VPC that the CIDR belongs to.
+          type: string
+      type: object
+    centralCidrOverlap:
+      example:
+        regions:
+        - provider: CLOUD_PROVIDER_UNSPECIFIED
+          name: name
+          display_name: display_name
+        - provider: CLOUD_PROVIDER_UNSPECIFIED
+          name: name
+          display_name: display_name
+        project_id: project_id
+      properties:
+        regions:
+          description: The list of regions that their CIDRs overlap with the CIDR
+            to be created.
+          items:
+            $ref: '#/components/schemas/centralCloudRegion'
+          type: array
+        project_id:
+          description: The ID of the project that the CIDR overlaps with.
+          format: uint64
+          type: string
+      type: object
+    centralCidrState:
+      default: STATE_UNSPECIFIED
+      description: |-
+        Enum for CIDR state.
+
+         - STATE_UNSPECIFIED: Unspecified state.
+         - STATE_ACTIVE: The CIDR is active.
+         - STATE_INACTIVE: The CIDR is inactive.
+      enum:
+      - STATE_UNSPECIFIED
+      - STATE_ACTIVE
+      - STATE_INACTIVE
+      type: string
+    centralCloudProvider:
+      example:
+        regions:
+        - cross_account_deployment_id: cross_account_deployment_id
+          area: area
+          country_code: country_code
+          name: name
+          display_name: display_name
+        - cross_account_deployment_id: cross_account_deployment_id
+          area: area
+          country_code: country_code
+          name: name
+          display_name: display_name
+        name: name
+      properties:
+        name:
+          type: string
+        regions:
+          items:
+            $ref: '#/components/schemas/centralRegion'
+          type: array
+      required:
+      - name
+      - regions
+      type: object
+    centralCloudProviders:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        cloud_providers:
+        - regions:
+          - cross_account_deployment_id: cross_account_deployment_id
+            area: area
+            country_code: country_code
+            name: name
+            display_name: display_name
+          - cross_account_deployment_id: cross_account_deployment_id
+            area: area
+            country_code: country_code
+            name: name
+            display_name: display_name
+          name: name
+        - regions:
+          - cross_account_deployment_id: cross_account_deployment_id
+            area: area
+            country_code: country_code
+            name: name
+            display_name: display_name
+          - cross_account_deployment_id: cross_account_deployment_id
+            area: area
+            country_code: country_code
+            name: name
+            display_name: display_name
+          name: name
+      properties:
+        cloud_providers:
+          items:
+            $ref: '#/components/schemas/centralCloudProvider'
+          type: array
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - cloud_providers
+      type: object
+    centralCloudRegion:
+      description: Message for describing a region for deploying TiDB Dedicated clusters.
+      example:
+        provider: CLOUD_PROVIDER_UNSPECIFIED
+        name: name
+        display_name: display_name
+      properties:
+        name:
+          description: Required. Immutable. The unique name of the region.
+          type: string
+        display_name:
+          description: Output_only. Immutable. User-friendly display name of the region.
+          type: string
+        provider:
+          $ref: '#/components/schemas/centralCloudRegionCloudProvider'
+      type: object
+    centralCloudRegionCloudProvider:
+      default: CLOUD_PROVIDER_UNSPECIFIED
+      description: |-
+        Enum for cloud providers for the region.
+
+         - CLOUD_PROVIDER_UNSPECIFIED: Unspecified cloud provider.
+         - AWS: Amazon Web Services.
+         - GCP: Google Cloud Platform.
+      enum:
+      - CLOUD_PROVIDER_UNSPECIFIED
+      - AWS
+      - GCP
+      type: string
+    centralCluster:
+      example:
+        created_at: 2000-01-23T04:56:07.000+00:00
+        is_dev_tier: true
+        privateEndpoint:
+          address: address
+          port: 6
+          ready: true
+          token: token
+        cluster_type: COMMON
+        secondary_status: HEALTHY
+        capacity: 1
+        dev_tier_type: DEVTIER_UNSPECIFIED
+        features:
+        - DISABLE_PUBLIC_LB
+        - DISABLE_PUBLIC_LB
+        endpoint:
+          address: address
+          port: 6
+          ready: true
+          token: token
+        provider: provider
+        region_name: region_name
+        id: id
+        display_status: DISPLAY_UNSPECIFIED
+        vpc_cidr_block: vpc_cidr_block
+        prometheus_ready: true
+        create_progress: INITIALIZING
+        has_set_pwd: true
+        import_id: import_id
+        version: version
+        created_by:
+          name: name
+          id: id
+          email: email
+        cross_account_deployment_id: cross_account_deployment_id
+        replications:
+        - creation_time: 2000-01-23T04:56:07.000+00:00
+          secondary_cluster_id: secondary_cluster_id
+          detach_user: detach_user
+          creator: creator
+          create_progress: null
+          secondary_write_status: null
+          replication_lag: replication_lag
+          primary_write_status: WRITABLE
+          replication_id: replication_id
+          detached_time: 2000-01-23T04:56:07.000+00:00
+          secondary_cluster_name: secondary_cluster_name
+          primary_cluster_name: primary_cluster_name
+          detached_tso: detached_tso
+          status: status
+          primary_cluster_id: primary_cluster_id
+        - creation_time: 2000-01-23T04:56:07.000+00:00
+          secondary_cluster_id: secondary_cluster_id
+          detach_user: detach_user
+          creator: creator
+          create_progress: null
+          secondary_write_status: null
+          replication_lag: replication_lag
+          primary_write_status: WRITABLE
+          replication_id: replication_id
+          detached_time: 2000-01-23T04:56:07.000+00:00
+          secondary_cluster_name: secondary_cluster_name
+          primary_cluster_name: primary_cluster_name
+          detached_tso: detached_tso
+          status: status
+          primary_cluster_id: primary_cluster_id
+        write_status: null
+        cluster_components:
+          tiflash:
+            node_profile:
+              compute:
+                memory_mi: 2
+                cpu: 5.637377
+              name: name
+              display_name: display_name
+              storage_gi: 7
+            modify_progress:
+              expected_quantity: 9
+              uptodate_quantity: 3
+              pending: true
+              remaining_deletion_quantity: 2
+            replicas: 5
+          tidb:
+            node_profile:
+              compute:
+                memory_mi: 2
+                cpu: 5.637377
+              name: name
+              display_name: display_name
+              storage_gi: 7
+            modify_progress:
+              expected_quantity: 9
+              uptodate_quantity: 3
+              pending: true
+              remaining_deletion_quantity: 2
+            replicas: 5
+          tikv:
+            node_profile:
+              compute:
+                memory_mi: 2
+                cpu: 5.637377
+              name: name
+              display_name: display_name
+              storage_gi: 7
+            modify_progress:
+              expected_quantity: 9
+              uptodate_quantity: 3
+              pending: true
+              remaining_deletion_quantity: 2
+            replicas: 5
+        name: name
+        restored: true
+        region: region
+        status: NORMAL
+        lastErrors:
+        - codes:
+          - INFRA_RESOURCES_DEPLETED
+          - INFRA_RESOURCES_DEPLETED
+        - codes:
+          - INFRA_RESOURCES_DEPLETED
+          - INFRA_RESOURCES_DEPLETED
+      properties:
+        id:
+          format: uint64
+          type: string
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/centralClusterStatus'
+        secondary_status:
+          $ref: '#/components/schemas/ClusterSecondaryStatus'
+        version:
+          type: string
+        provider:
+          type: string
+        region:
+          type: string
+        region_name:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        created_by:
+          $ref: '#/components/schemas/centralUser'
+        endpoint:
+          $ref: '#/components/schemas/centralEndpoint'
+        vpc_cidr_block:
+          type: string
+        capacity:
+          format: int64
+          type: integer
+        cluster_components:
+          $ref: '#/components/schemas/centralClusterComponents'
+        create_progress:
+          $ref: '#/components/schemas/ClusterCreateProgress'
+        prometheus_ready:
+          type: boolean
+        privateEndpoint:
+          $ref: '#/components/schemas/centralEndpoint'
+        restored:
+          type: boolean
+        import_id:
+          format: uint64
+          type: string
+        lastErrors:
+          items:
+            $ref: '#/components/schemas/centralLastError'
+          type: array
+        replications:
+          items:
+            $ref: '#/components/schemas/centralReplication'
+          title: Deprecated
+          type: array
+        cluster_type:
+          $ref: '#/components/schemas/ClusterClusterType'
+        write_status:
+          $ref: '#/components/schemas/centralWriteStatus'
+        is_dev_tier:
+          type: boolean
+        cross_account_deployment_id:
+          format: uint64
+          type: string
+        display_status:
+          $ref: '#/components/schemas/ClusterDisplayStatus'
+        has_set_pwd:
+          title: Used for UI
+          type: boolean
+        dev_tier_type:
+          $ref: '#/components/schemas/centralClusterDevTierClusterType'
+        features:
+          items:
+            $ref: '#/components/schemas/centralClusterAvailableFeature'
+          title: Used for UI
+          type: array
+      required:
+      - capacity
+      - cluster_components
+      - cluster_type
+      - create_progress
+      - created_at
+      - created_by
+      - endpoint
+      - id
+      - import_id
+      - lastErrors
+      - name
+      - privateEndpoint
+      - prometheus_ready
+      - provider
+      - region
+      - region_name
+      - replications
+      - restored
+      - secondary_status
+      - status
+      - version
+      - vpc_cidr_block
+      - write_status
+      type: object
+    centralClusterAvailableFeature:
+      default: DISABLE_PUBLIC_LB
+      enum:
+      - DISABLE_PUBLIC_LB
+      - PRIVATELINK
+      - DELEGATE_USER
+      - VECTOR_TYPE
+      title: Available feature for a cluster
+      type: string
+    centralClusterComponent:
+      properties:
+        component_type:
+          $ref: '#/components/schemas/centralComponentType'
+        node_profile_name:
+          description: required when creating/updating a cluster
+          title: "uint64 node_profile_id = 2; deprecated: use node_profile_name to\
+            \ instead"
+          type: string
+        replicas:
+          format: int32
+          type: integer
+        storage_size_gi:
+          format: int32
+          type: integer
+      required:
+      - component_type
+      - node_profile_name
+      - replicas
+      - storage_size_gi
+      type: object
+    centralClusterComponents:
+      example:
+        tiflash:
+          node_profile:
+            compute:
+              memory_mi: 2
+              cpu: 5.637377
+            name: name
+            display_name: display_name
+            storage_gi: 7
+          modify_progress:
+            expected_quantity: 9
+            uptodate_quantity: 3
+            pending: true
+            remaining_deletion_quantity: 2
+          replicas: 5
+        tidb:
+          node_profile:
+            compute:
+              memory_mi: 2
+              cpu: 5.637377
+            name: name
+            display_name: display_name
+            storage_gi: 7
+          modify_progress:
+            expected_quantity: 9
+            uptodate_quantity: 3
+            pending: true
+            remaining_deletion_quantity: 2
+          replicas: 5
+        tikv:
+          node_profile:
+            compute:
+              memory_mi: 2
+              cpu: 5.637377
+            name: name
+            display_name: display_name
+            storage_gi: 7
+          modify_progress:
+            expected_quantity: 9
+            uptodate_quantity: 3
+            pending: true
+            remaining_deletion_quantity: 2
+          replicas: 5
+      properties:
+        tikv:
+          $ref: '#/components/schemas/centralComponent'
+        tidb:
+          $ref: '#/components/schemas/centralComponent'
+        tiflash:
+          $ref: '#/components/schemas/centralComponent'
+      required:
+      - tidb
+      - tiflash
+      - tikv
+      type: object
+    centralClusterDevTierClusterType:
+      default: DEVTIER_UNSPECIFIED
+      enum:
+      - DEVTIER_UNSPECIFIED
+      - DEVTIER_CLASSIC
+      - DEVTIER_SERVERLESS
+      title: Used for Dev Tier & UI
+      type: string
+    centralClusterNodeProfile:
+      example:
+        min_storage_size_gi: 6
+        max_storage_size_gi: 1
+        default_storage_size_gi: 5
+        name: name
+        default_node_num: 0
+        cpu_num: 5
+        memory_gi: 2
+        display_name: display_name
+      properties:
+        name:
+          title: uint64 id = 1; deprecated
+          type: string
+        display_name:
+          type: string
+        default_node_num:
+          format: int32
+          type: integer
+        min_storage_size_gi:
+          format: int32
+          type: integer
+        max_storage_size_gi:
+          format: int32
+          type: integer
+        default_storage_size_gi:
+          format: int32
+          type: integer
+        cpu_num:
+          format: int32
+          type: integer
+        memory_gi:
+          format: int32
+          type: integer
+      type: object
+    centralClusterStatus:
+      default: NORMAL
+      enum:
+      - NORMAL
+      - CREATING
+      - SCALING
+      - UPGRADING
+      - UNAVAILABLE
+      - RECOVERING
+      - IMPORTING
+      - PAUSED
+      - RESUMING
+      - DELETED
+      - MAINTAINING
+      - PAUSING
+      type: string
+    centralClusters:
+      example:
+        total: 0
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        items:
+        - created_at: 2000-01-23T04:56:07.000+00:00
+          is_dev_tier: true
+          privateEndpoint:
+            address: address
+            port: 6
+            ready: true
+            token: token
+          cluster_type: COMMON
+          secondary_status: HEALTHY
+          capacity: 1
+          dev_tier_type: DEVTIER_UNSPECIFIED
+          features:
+          - DISABLE_PUBLIC_LB
+          - DISABLE_PUBLIC_LB
+          endpoint:
+            address: address
+            port: 6
+            ready: true
+            token: token
+          provider: provider
+          region_name: region_name
+          id: id
+          display_status: DISPLAY_UNSPECIFIED
+          vpc_cidr_block: vpc_cidr_block
+          prometheus_ready: true
+          create_progress: INITIALIZING
+          has_set_pwd: true
+          import_id: import_id
+          version: version
+          created_by:
+            name: name
+            id: id
+            email: email
+          cross_account_deployment_id: cross_account_deployment_id
+          replications:
+          - creation_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_id: secondary_cluster_id
+            detach_user: detach_user
+            creator: creator
+            create_progress: null
+            secondary_write_status: null
+            replication_lag: replication_lag
+            primary_write_status: WRITABLE
+            replication_id: replication_id
+            detached_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_name: secondary_cluster_name
+            primary_cluster_name: primary_cluster_name
+            detached_tso: detached_tso
+            status: status
+            primary_cluster_id: primary_cluster_id
+          - creation_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_id: secondary_cluster_id
+            detach_user: detach_user
+            creator: creator
+            create_progress: null
+            secondary_write_status: null
+            replication_lag: replication_lag
+            primary_write_status: WRITABLE
+            replication_id: replication_id
+            detached_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_name: secondary_cluster_name
+            primary_cluster_name: primary_cluster_name
+            detached_tso: detached_tso
+            status: status
+            primary_cluster_id: primary_cluster_id
+          write_status: null
+          cluster_components:
+            tiflash:
+              node_profile:
+                compute:
+                  memory_mi: 2
+                  cpu: 5.637377
+                name: name
+                display_name: display_name
+                storage_gi: 7
+              modify_progress:
+                expected_quantity: 9
+                uptodate_quantity: 3
+                pending: true
+                remaining_deletion_quantity: 2
+              replicas: 5
+            tidb:
+              node_profile:
+                compute:
+                  memory_mi: 2
+                  cpu: 5.637377
+                name: name
+                display_name: display_name
+                storage_gi: 7
+              modify_progress:
+                expected_quantity: 9
+                uptodate_quantity: 3
+                pending: true
+                remaining_deletion_quantity: 2
+              replicas: 5
+            tikv:
+              node_profile:
+                compute:
+                  memory_mi: 2
+                  cpu: 5.637377
+                name: name
+                display_name: display_name
+                storage_gi: 7
+              modify_progress:
+                expected_quantity: 9
+                uptodate_quantity: 3
+                pending: true
+                remaining_deletion_quantity: 2
+              replicas: 5
+          name: name
+          restored: true
+          region: region
+          status: NORMAL
+          lastErrors:
+          - codes:
+            - INFRA_RESOURCES_DEPLETED
+            - INFRA_RESOURCES_DEPLETED
+          - codes:
+            - INFRA_RESOURCES_DEPLETED
+            - INFRA_RESOURCES_DEPLETED
+        - created_at: 2000-01-23T04:56:07.000+00:00
+          is_dev_tier: true
+          privateEndpoint:
+            address: address
+            port: 6
+            ready: true
+            token: token
+          cluster_type: COMMON
+          secondary_status: HEALTHY
+          capacity: 1
+          dev_tier_type: DEVTIER_UNSPECIFIED
+          features:
+          - DISABLE_PUBLIC_LB
+          - DISABLE_PUBLIC_LB
+          endpoint:
+            address: address
+            port: 6
+            ready: true
+            token: token
+          provider: provider
+          region_name: region_name
+          id: id
+          display_status: DISPLAY_UNSPECIFIED
+          vpc_cidr_block: vpc_cidr_block
+          prometheus_ready: true
+          create_progress: INITIALIZING
+          has_set_pwd: true
+          import_id: import_id
+          version: version
+          created_by:
+            name: name
+            id: id
+            email: email
+          cross_account_deployment_id: cross_account_deployment_id
+          replications:
+          - creation_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_id: secondary_cluster_id
+            detach_user: detach_user
+            creator: creator
+            create_progress: null
+            secondary_write_status: null
+            replication_lag: replication_lag
+            primary_write_status: WRITABLE
+            replication_id: replication_id
+            detached_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_name: secondary_cluster_name
+            primary_cluster_name: primary_cluster_name
+            detached_tso: detached_tso
+            status: status
+            primary_cluster_id: primary_cluster_id
+          - creation_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_id: secondary_cluster_id
+            detach_user: detach_user
+            creator: creator
+            create_progress: null
+            secondary_write_status: null
+            replication_lag: replication_lag
+            primary_write_status: WRITABLE
+            replication_id: replication_id
+            detached_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_name: secondary_cluster_name
+            primary_cluster_name: primary_cluster_name
+            detached_tso: detached_tso
+            status: status
+            primary_cluster_id: primary_cluster_id
+          write_status: null
+          cluster_components:
+            tiflash:
+              node_profile:
+                compute:
+                  memory_mi: 2
+                  cpu: 5.637377
+                name: name
+                display_name: display_name
+                storage_gi: 7
+              modify_progress:
+                expected_quantity: 9
+                uptodate_quantity: 3
+                pending: true
+                remaining_deletion_quantity: 2
+              replicas: 5
+            tidb:
+              node_profile:
+                compute:
+                  memory_mi: 2
+                  cpu: 5.637377
+                name: name
+                display_name: display_name
+                storage_gi: 7
+              modify_progress:
+                expected_quantity: 9
+                uptodate_quantity: 3
+                pending: true
+                remaining_deletion_quantity: 2
+              replicas: 5
+            tikv:
+              node_profile:
+                compute:
+                  memory_mi: 2
+                  cpu: 5.637377
+                name: name
+                display_name: display_name
+                storage_gi: 7
+              modify_progress:
+                expected_quantity: 9
+                uptodate_quantity: 3
+                pending: true
+                remaining_deletion_quantity: 2
+              replicas: 5
+          name: name
+          restored: true
+          region: region
+          status: NORMAL
+          lastErrors:
+          - codes:
+            - INFRA_RESOURCES_DEPLETED
+            - INFRA_RESOURCES_DEPLETED
+          - codes:
+            - INFRA_RESOURCES_DEPLETED
+            - INFRA_RESOURCES_DEPLETED
+      properties:
+        total:
+          format: int32
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/centralCluster'
+          type: array
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - items
+      - total
+      type: object
+    centralComponent:
+      example:
+        node_profile:
+          compute:
+            memory_mi: 2
+            cpu: 5.637377
+          name: name
+          display_name: display_name
+          storage_gi: 7
+        modify_progress:
+          expected_quantity: 9
+          uptodate_quantity: 3
+          pending: true
+          remaining_deletion_quantity: 2
+        replicas: 5
+      properties:
+        replicas:
+          format: int64
+          type: integer
+        node_profile:
+          $ref: '#/components/schemas/centralNodeProfile'
+        modify_progress:
+          $ref: '#/components/schemas/centralComponentModifyProgress'
+      required:
+      - node_profile
+      - replicas
+      type: object
+    centralComponentModifyProgress:
+      example:
+        expected_quantity: 9
+        uptodate_quantity: 3
+        pending: true
+        remaining_deletion_quantity: 2
+      properties:
+        pending:
+          description: the following fields SHOULDN't be used if `pending` is true.
+          type: boolean
+        expected_quantity:
+          format: int32
+          type: integer
+        uptodate_quantity:
+          format: int32
+          type: integer
+        remaining_deletion_quantity:
+          format: int32
+          title: available if some nodes are deleting
+          type: integer
+      type: object
+    centralComponentNodeProfiles:
+      example:
+        component_type: COMPONENT_TYPE_UNSPECIFIED
+        profiles:
+        - min_storage_size_gi: 6
+          max_storage_size_gi: 1
+          default_storage_size_gi: 5
+          name: name
+          default_node_num: 0
+          cpu_num: 5
+          memory_gi: 2
+          display_name: display_name
+        - min_storage_size_gi: 6
+          max_storage_size_gi: 1
+          default_storage_size_gi: 5
+          name: name
+          default_node_num: 0
+          cpu_num: 5
+          memory_gi: 2
+          display_name: display_name
+        default_profile_name: default_profile_name
+      properties:
+        component_type:
+          $ref: '#/components/schemas/centralComponentType'
+        profiles:
+          items:
+            $ref: '#/components/schemas/centralClusterNodeProfile'
+          type: array
+        default_profile_name:
+          title: uint64 default_profile_id = 3; deprecated
+          type: string
+      required:
+      - component_type
+      - default_profile_name
+      - profiles
+      type: object
+    centralComponentType:
+      default: COMPONENT_TYPE_UNSPECIFIED
+      enum:
+      - COMPONENT_TYPE_UNSPECIFIED
+      - COMPONENT_TYPE_TIDB
+      - COMPONENT_TYPE_TIKV
+      - COMPONENT_TYPE_TIFLASH
+      - COMPONENT_TYPE_PD
+      - COMPONENT_TYPE_TICDC
+      type: string
+    centralCompute:
+      example:
+        memory_mi: 2
+        cpu: 5.637377
+      properties:
+        cpu:
+          format: float
+          type: number
+        memory_mi:
+          format: int64
+          type: integer
+      required:
+      - cpu
+      - memory_mi
+      type: object
+    centralCreateAWSVpcPeeringResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        private_host_zone: private_host_zone
+        vpc_cidr: vpc_cidr
+        vpc_peering_id: vpc_peering_id
+        id: id
+        region: region
+      properties:
+        vpc_peering_id:
+          type: string
+        vpc_cidr:
+          type: string
+        private_host_zone:
+          type: string
+        region:
+          type: string
+        id:
+          format: uint64
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - id
+      - private_host_zone
+      - region
+      - vpc_cidr
+      - vpc_peering_id
+      type: object
+    centralCreateAuditLogAccessRecordResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+      properties:
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      type: object
+    centralCreateAwsCmekResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+      properties:
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      type: object
+    centralCreateCidrResponse:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        max_node_ip: 0
+        overlaps:
+        - regions:
+          - provider: CLOUD_PROVIDER_UNSPECIFIED
+            name: name
+            display_name: display_name
+          - provider: CLOUD_PROVIDER_UNSPECIFIED
+            name: name
+            display_name: display_name
+          project_id: project_id
+        - regions:
+          - provider: CLOUD_PROVIDER_UNSPECIFIED
+            name: name
+            display_name: display_name
+          - provider: CLOUD_PROVIDER_UNSPECIFIED
+            name: name
+            display_name: display_name
+          project_id: project_id
+        id: id
+      properties:
+        id:
+          format: uint64
+          type: string
+        overlaps:
+          items:
+            $ref: '#/components/schemas/centralCidrOverlap'
+          type: array
+        max_node_ip:
+          description: The max node IP of the CIDR.
+          format: int64
+          type: integer
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - id
+      type: object
+    centralCreateClusterResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        id: id
+      properties:
+        id:
+          format: uint64
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - id
+      type: object
+    centralCreateCrossAccountDeploymentResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        id: id
+      properties:
+        id:
+          format: uint64
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - id
+      type: object
+    centralCreateGcpVpcPeeringResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        project_id: project_id
+        network_name: network_name
+        id: id
+        region: region
+      properties:
+        project_id:
+          type: string
+        network_name:
+          type: string
+        region:
+          type: string
+        id:
+          format: uint64
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - id
+      - network_name
+      - project_id
+      - region
+      type: object
+    centralCreateIamRoleResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        id: id
+      properties:
+        id:
+          format: uint64
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - id
+      type: object
+    centralCreatePrivateLinkEndpointResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        privatelink_endpoint:
+          cluster_name: cluster_name
+          cluster_id: cluster_id
+          cluster_status: NORMAL
+          service_name: service_name
+          endpoint_name: endpoint_name
+          service_status: NOT_CONFIGURE
+          endpoint_id: endpoint_id
+          cloud_provider: cloud_provider
+          region_name: region_name
+          id: id
+          message: message
+          status: NOT_CONFIGURE
+      properties:
+        privatelink_endpoint:
+          $ref: '#/components/schemas/centralPrivateLinkEndpoint'
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - privatelink_endpoint
+      type: object
+    centralCreatePrivateLinkServiceResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        privatelink_service:
+          port: 0
+          name: name
+          az_ids:
+          - az_ids
+          - az_ids
+          cloud_provider: cloud_provider
+          status: NOT_CONFIGURE
+          dns_name: dns_name
+      properties:
+        privatelink_service:
+          $ref: '#/components/schemas/centralPrivateLinkService'
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - privatelink_service
+      type: object
+    centralCrossAccountDeployment:
+      example:
+        tidb_client_cert: tidb_client_cert
+        vpc_id: vpc_id
+        bucket_name: bucket_name
+        created_at: 2000-01-23T04:56:07.000+00:00
+        security_group_id: security_group_id
+        pca_arn_client: pca_arn_client
+        role_arn_eks: role_arn_eks
+        pca_arn_cluster_components: pca_arn_cluster_components
+        project_id: project_id
+        provider: provider
+        is_mtls_on: true
+        subnet_ids:
+        - subnet_ids
+        - subnet_ids
+        role_arn_tidb_cloud: role_arn_tidb_cloud
+        role_arn_node: role_arn_node
+        region_name: region_name
+        tidb_cacert: tidb_cacert
+        id: id
+        tidb_client_key: tidb_client_key
+        region: region
+        kms_key_arn: kms_key_arn
+        status: status
+      properties:
+        id:
+          format: uint64
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        project_id:
+          format: uint64
+          type: string
+        provider:
+          type: string
+        region:
+          type: string
+        vpc_id:
+          type: string
+        security_group_id:
+          type: string
+        subnet_ids:
+          items:
+            type: string
+          type: array
+        bucket_name:
+          type: string
+        kms_key_arn:
+          type: string
+        pca_arn_cluster_components:
+          type: string
+        pca_arn_client:
+          type: string
+        role_arn_tidb_cloud:
+          type: string
+        role_arn_eks:
+          type: string
+        role_arn_node:
+          type: string
+        status:
+          type: string
+        region_name:
+          type: string
+        tidb_cacert:
+          type: string
+        tidb_client_cert:
+          type: string
+        tidb_client_key:
+          type: string
+        is_mtls_on:
+          type: boolean
+      required:
+      - bucket_name
+      - created_at
+      - id
+      - kms_key_arn
+      - pca_arn_client
+      - pca_arn_cluster_components
+      - project_id
+      - provider
+      - region
+      - region_name
+      - role_arn_eks
+      - role_arn_node
+      - role_arn_tidb_cloud
+      - security_group_id
+      - status
+      - subnet_ids
+      - vpc_id
+      type: object
+    centralDefaultResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+      properties:
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      type: object
+    centralDeleteAuditLogAccessRecordResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+      properties:
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      type: object
+    centralDeletedCluster:
+      example:
+        cross_account_deployment_id: cross_account_deployment_id
+        delete_time: 2000-01-23T04:56:07.000+00:00
+        provider: provider
+        name: name
+        region_name: region_name
+        latest_backup_size: latest_backup_size
+        id: id
+        region: region
+      properties:
+        id:
+          format: uint64
+          type: string
+        name:
+          type: string
+        provider:
+          type: string
+        region:
+          type: string
+        region_name:
+          type: string
+        delete_time:
+          format: date-time
+          type: string
+        latest_backup_size:
+          format: uint64
+          title: Deprecated
+          type: string
+        cross_account_deployment_id:
+          format: uint64
+          type: string
+      required:
+      - delete_time
+      - id
+      - latest_backup_size
+      - name
+      - provider
+      - region
+      - region_name
+      type: object
+    centralDeletedClusters:
+      example:
+        total: 0
+        items:
+        - cross_account_deployment_id: cross_account_deployment_id
+          delete_time: 2000-01-23T04:56:07.000+00:00
+          provider: provider
+          name: name
+          region_name: region_name
+          latest_backup_size: latest_backup_size
+          id: id
+          region: region
+        - cross_account_deployment_id: cross_account_deployment_id
+          delete_time: 2000-01-23T04:56:07.000+00:00
+          provider: provider
+          name: name
+          region_name: region_name
+          latest_backup_size: latest_backup_size
+          id: id
+          region: region
+      properties:
+        total:
+          format: int32
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/centralDeletedCluster'
+          type: array
+      required:
+      - items
+      - total
+      type: object
+    centralEndpoint:
+      example:
+        address: address
+        port: 6
+        ready: true
+        token: token
+      properties:
+        ready:
+          type: boolean
+        address:
+          type: string
+        port:
+          format: int32
+          type: integer
+        token:
+          type: string
+      required:
+      - address
+      - port
+      - ready
+      type: object
+    centralGcpVpcPeering:
+      example:
+        tenant_project_id: tenant_project_id
+        project_id: project_id
+        vpc_cidr: vpc_cidr
+        tenant_vpc_cidr: tenant_vpc_cidr
+        network_name: network_name
+        region_name: region_name
+        id: id
+        region: region
+        tenant_network_name: tenant_network_name
+        status: status
+      properties:
+        region:
+          type: string
+        network_name:
+          type: string
+        project_id:
+          type: string
+        tenant_project_id:
+          type: string
+        tenant_network_name:
+          type: string
+        status:
+          type: string
+        vpc_cidr:
+          type: string
+        id:
+          format: uint64
+          type: string
+        tenant_vpc_cidr:
+          type: string
+        region_name:
+          type: string
+      required:
+      - id
+      - network_name
+      - project_id
+      - region
+      - region_name
+      - status
+      - tenant_network_name
+      - tenant_project_id
+      - vpc_cidr
+      type: object
+    centralGcpVpcPeerings:
+      example:
+        total: 0
+        items:
+        - tenant_project_id: tenant_project_id
+          project_id: project_id
+          vpc_cidr: vpc_cidr
+          tenant_vpc_cidr: tenant_vpc_cidr
+          network_name: network_name
+          region_name: region_name
+          id: id
+          region: region
+          tenant_network_name: tenant_network_name
+          status: status
+        - tenant_project_id: tenant_project_id
+          project_id: project_id
+          vpc_cidr: vpc_cidr
+          tenant_vpc_cidr: tenant_vpc_cidr
+          network_name: network_name
+          region_name: region_name
+          id: id
+          region: region
+          tenant_network_name: tenant_network_name
+          status: status
+      properties:
+        total:
+          format: int32
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/centralGcpVpcPeering'
+          type: array
+      required:
+      - items
+      - total
+      type: object
+    centralGenClusterNameResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        name: name
+      properties:
+        name:
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - name
+      type: object
+    centralGenerateTestTokenReq:
+      properties:
+        email:
+          type: string
+        auth0_domain:
+          type: string
+        auth0_client_id:
+          type: string
+        auth0_client_secret:
+          type: string
+      type: object
+    centralGenerateTestTokenResp:
+      example:
+        expire_at: expire_at
+        token: token
+      properties:
+        token:
+          type: string
+        expire_at:
+          format: int64
+          type: string
+      type: object
+    centralGetAuditLogAccessRecordsResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        records:
+        - db_expr: db_expr
+          access_type_list:
+          - access_type_list
+          - access_type_list
+          id: id
+          table_expr: table_expr
+          user_expr: user_expr
+        - db_expr: db_expr
+          access_type_list:
+          - access_type_list
+          - access_type_list
+          id: id
+          table_expr: table_expr
+          user_expr: user_expr
+      properties:
+        records:
+          items:
+            $ref: '#/components/schemas/centralAuditLogAccessRecord'
+          type: array
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - records
+      type: object
+    centralGetAuditLogStatusResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        audit_log_config:
+          role_arn: role_arn
+          bucket_url: bucket_url
+          data_source_type: 0
+          region: region
+        enabled: true
+      properties:
+        enabled:
+          type: boolean
+        audit_log_config:
+          $ref: '#/components/schemas/centralAuditLogConfig'
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - audit_log_config
+      - enabled
+      type: object
+    centralGetAwsCmekResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        cmeks:
+        - kms_arn: kms_arn
+          project_id: project_id
+          created_at: 2000-01-23T04:56:07.000+00:00
+          region_name: region_name
+          id: id
+        - kms_arn: kms_arn
+          project_id: project_id
+          created_at: 2000-01-23T04:56:07.000+00:00
+          region_name: region_name
+          id: id
+      properties:
+        cmeks:
+          items:
+            $ref: '#/components/schemas/centralAwsCmek'
+          type: array
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      type: object
+    centralGetCidrResponse:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        cidr:
+          project_id: project_id
+          provider: null
+          vpc_id: vpc_id
+          cidr: cidr
+          id: id
+          state: STATE_UNSPECIFIED
+          region:
+            provider: CLOUD_PROVIDER_UNSPECIFIED
+            name: name
+            display_name: display_name
+      properties:
+        cidr:
+          $ref: '#/components/schemas/centralCidr'
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - cidr
+      type: object
+    centralGetClusterCACertificateReqType:
+      default: DOWNLOAD_URL
+      enum:
+      - DOWNLOAD_URL
+      - PEM
+      type: string
+    centralGetClusterCACertificateResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        certificate: certificate
+        download_url: download_url
+      properties:
+        certificate:
+          format: byte
+          pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          type: string
+        download_url:
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - certificate
+      type: object
+    centralGetClusterResp:
+      example:
+        cluster:
+          created_at: 2000-01-23T04:56:07.000+00:00
+          is_dev_tier: true
+          privateEndpoint:
+            address: address
+            port: 6
+            ready: true
+            token: token
+          cluster_type: COMMON
+          secondary_status: HEALTHY
+          capacity: 1
+          dev_tier_type: DEVTIER_UNSPECIFIED
+          features:
+          - DISABLE_PUBLIC_LB
+          - DISABLE_PUBLIC_LB
+          endpoint:
+            address: address
+            port: 6
+            ready: true
+            token: token
+          provider: provider
+          region_name: region_name
+          id: id
+          display_status: DISPLAY_UNSPECIFIED
+          vpc_cidr_block: vpc_cidr_block
+          prometheus_ready: true
+          create_progress: INITIALIZING
+          has_set_pwd: true
+          import_id: import_id
+          version: version
+          created_by:
+            name: name
+            id: id
+            email: email
+          cross_account_deployment_id: cross_account_deployment_id
+          replications:
+          - creation_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_id: secondary_cluster_id
+            detach_user: detach_user
+            creator: creator
+            create_progress: null
+            secondary_write_status: null
+            replication_lag: replication_lag
+            primary_write_status: WRITABLE
+            replication_id: replication_id
+            detached_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_name: secondary_cluster_name
+            primary_cluster_name: primary_cluster_name
+            detached_tso: detached_tso
+            status: status
+            primary_cluster_id: primary_cluster_id
+          - creation_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_id: secondary_cluster_id
+            detach_user: detach_user
+            creator: creator
+            create_progress: null
+            secondary_write_status: null
+            replication_lag: replication_lag
+            primary_write_status: WRITABLE
+            replication_id: replication_id
+            detached_time: 2000-01-23T04:56:07.000+00:00
+            secondary_cluster_name: secondary_cluster_name
+            primary_cluster_name: primary_cluster_name
+            detached_tso: detached_tso
+            status: status
+            primary_cluster_id: primary_cluster_id
+          write_status: null
+          cluster_components:
+            tiflash:
+              node_profile:
+                compute:
+                  memory_mi: 2
+                  cpu: 5.637377
+                name: name
+                display_name: display_name
+                storage_gi: 7
+              modify_progress:
+                expected_quantity: 9
+                uptodate_quantity: 3
+                pending: true
+                remaining_deletion_quantity: 2
+              replicas: 5
+            tidb:
+              node_profile:
+                compute:
+                  memory_mi: 2
+                  cpu: 5.637377
+                name: name
+                display_name: display_name
+                storage_gi: 7
+              modify_progress:
+                expected_quantity: 9
+                uptodate_quantity: 3
+                pending: true
+                remaining_deletion_quantity: 2
+              replicas: 5
+            tikv:
+              node_profile:
+                compute:
+                  memory_mi: 2
+                  cpu: 5.637377
+                name: name
+                display_name: display_name
+                storage_gi: 7
+              modify_progress:
+                expected_quantity: 9
+                uptodate_quantity: 3
+                pending: true
+                remaining_deletion_quantity: 2
+              replicas: 5
+          name: name
+          restored: true
+          region: region
+          status: NORMAL
+          lastErrors:
+          - codes:
+            - INFRA_RESOURCES_DEPLETED
+            - INFRA_RESOURCES_DEPLETED
+          - codes:
+            - INFRA_RESOURCES_DEPLETED
+            - INFRA_RESOURCES_DEPLETED
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+      properties:
+        cluster:
+          $ref: '#/components/schemas/centralCluster'
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - cluster
+      type: object
+    centralGetDefaultCidrResponse:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        provider: CLOUD_PROVIDER_UNSPECIFIED
+        project_id: project_id
+        name: name
+        cidr: cidr
+        region:
+          provider: CLOUD_PROVIDER_UNSPECIFIED
+          name: name
+          display_name: display_name
+      properties:
+        name:
+          type: string
+        provider:
+          $ref: '#/components/schemas/centralCloudRegionCloudProvider'
+        region:
+          $ref: '#/components/schemas/centralCloudRegion'
+        cidr:
+          type: string
+        project_id:
+          format: uint64
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - cidr
+      - name
+      - provider
+      - region
+      type: object
+    centralGetPrivateEndpointResp:
+      example:
+        port: port
+        domain: domain
+        status: NO_VPC_PEERING
+      properties:
+        status:
+          $ref: '#/components/schemas/centralPrivateEndpointStatus'
+        domain:
+          type: string
+        port:
+          format: uint64
+          type: string
+      required:
+      - domain
+      - port
+      - status
+      type: object
+    centralGetPrivateLinkServiceResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        privatelink_service:
+          port: 0
+          name: name
+          az_ids:
+          - az_ids
+          - az_ids
+          cloud_provider: cloud_provider
+          status: NOT_CONFIGURE
+          dns_name: dns_name
+      properties:
+        privatelink_service:
+          $ref: '#/components/schemas/centralPrivateLinkService'
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - privatelink_service
+      type: object
+    centralGetProjectMaintenanceWindowResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        maintenance_window:
+          minute_of_hour: 1
+          hour_of_day: 6
+          day_of_week: 0
+        next_maintenance_date: 2000-01-23T04:56:07.000+00:00
+      properties:
+        maintenance_window:
+          $ref: '#/components/schemas/centralMaintenanceWindow'
+        next_maintenance_date:
+          format: date-time
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - maintenance_window
+      - next_maintenance_date
+      type: object
+    centralGetProjectRegionCIDRResp:
+      example:
+        project_region_cidrs:
+        - regions:
+          - active: true
+            region_name: region_name
+            cidr: cidr
+            region: region
+          - active: true
+            region_name: region_name
+            cidr: cidr
+            region: region
+          provider: provider
+          cidr: cidr
+        - regions:
+          - active: true
+            region_name: region_name
+            cidr: cidr
+            region: region
+          - active: true
+            region_name: region_name
+            cidr: cidr
+            region: region
+          provider: provider
+          cidr: cidr
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+      properties:
+        project_region_cidrs:
+          items:
+            $ref: '#/components/schemas/centralProjectRegionCIDR'
+          type: array
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      type: object
+    centralGetTiDBCloudDelegationInfoResp:
+      example:
+        account_id: account_id
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        external_id: external_id
+      properties:
+        account_id:
+          type: string
+        external_id:
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - account_id
+      - base_resp
+      - external_id
+      type: object
+    centralIamRole:
+      example:
+        created_at: 2000-01-23T04:56:07.000+00:00
+        id: id
+        usages:
+        - service_name: service_name
+          region_name: region_name
+          provider_name: provider_name
+          region: region
+        - service_name: service_name
+          region_name: region_name
+          provider_name: provider_name
+          region: region
+        arn: arn
+      properties:
+        id:
+          format: uint64
+          type: string
+        arn:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        usages:
+          items:
+            $ref: '#/components/schemas/centralIamRoleUsage'
+          type: array
+      required:
+      - arn
+      - created_at
+      - id
+      - usages
+      title: cross account deployment service
+      type: object
+    centralIamRoleUsage:
+      example:
+        service_name: service_name
+        region_name: region_name
+        provider_name: provider_name
+        region: region
+      properties:
+        service_name:
+          type: string
+        provider_name:
+          type: string
+        region:
+          type: string
+        region_name:
+          type: string
+      required:
+      - provider_name
+      - region_name
+      - service_name
+      type: object
+    centralInfraErrorCode:
+      default: INFRA_RESOURCES_DEPLETED
+      enum:
+      - INFRA_RESOURCES_DEPLETED
+      type: string
+    centralLastError:
+      example:
+        codes:
+        - INFRA_RESOURCES_DEPLETED
+        - INFRA_RESOURCES_DEPLETED
+      properties:
+        codes:
+          items:
+            $ref: '#/components/schemas/centralInfraErrorCode'
+          type: array
+      required:
+      - codes
+      type: object
+    centralListAccesspointsResp:
+      example:
+        total: 0
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        items:
+        - cluster_id: cluster_id
+          project_id: project_id
+          id: id
+          display_name: display_name
+        - cluster_id: cluster_id
+          project_id: project_id
+          id: id
+          display_name: display_name
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/centralAccesspoint'
+          type: array
+        total:
+          format: int32
+          type: integer
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - items
+      - total
+      type: object
+    centralListCidrsResponse:
+      example:
+        total: 0
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        items:
+        - project_id: project_id
+          provider: null
+          vpc_id: vpc_id
+          cidr: cidr
+          id: id
+          state: STATE_UNSPECIFIED
+          region:
+            provider: CLOUD_PROVIDER_UNSPECIFIED
+            name: name
+            display_name: display_name
+        - project_id: project_id
+          provider: null
+          vpc_id: vpc_id
+          cidr: cidr
+          id: id
+          state: STATE_UNSPECIFIED
+          region:
+            provider: CLOUD_PROVIDER_UNSPECIFIED
+            name: name
+            display_name: display_name
+      properties:
+        items:
+          description: A list of CIDRs.
+          items:
+            $ref: '#/components/schemas/centralCidr'
+          type: array
+        total:
+          format: int32
+          type: integer
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - items
+      - total
+      type: object
+    centralListCrossAccountDeploymentResp:
+      example:
+        total: 0
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        items:
+        - tidb_client_cert: tidb_client_cert
+          vpc_id: vpc_id
+          bucket_name: bucket_name
+          created_at: 2000-01-23T04:56:07.000+00:00
+          security_group_id: security_group_id
+          pca_arn_client: pca_arn_client
+          role_arn_eks: role_arn_eks
+          pca_arn_cluster_components: pca_arn_cluster_components
+          project_id: project_id
+          provider: provider
+          is_mtls_on: true
+          subnet_ids:
+          - subnet_ids
+          - subnet_ids
+          role_arn_tidb_cloud: role_arn_tidb_cloud
+          role_arn_node: role_arn_node
+          region_name: region_name
+          tidb_cacert: tidb_cacert
+          id: id
+          tidb_client_key: tidb_client_key
+          region: region
+          kms_key_arn: kms_key_arn
+          status: status
+        - tidb_client_cert: tidb_client_cert
+          vpc_id: vpc_id
+          bucket_name: bucket_name
+          created_at: 2000-01-23T04:56:07.000+00:00
+          security_group_id: security_group_id
+          pca_arn_client: pca_arn_client
+          role_arn_eks: role_arn_eks
+          pca_arn_cluster_components: pca_arn_cluster_components
+          project_id: project_id
+          provider: provider
+          is_mtls_on: true
+          subnet_ids:
+          - subnet_ids
+          - subnet_ids
+          role_arn_tidb_cloud: role_arn_tidb_cloud
+          role_arn_node: role_arn_node
+          region_name: region_name
+          tidb_cacert: tidb_cacert
+          id: id
+          tidb_client_key: tidb_client_key
+          region: region
+          kms_key_arn: kms_key_arn
+          status: status
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/centralCrossAccountDeployment'
+          type: array
+        total:
+          format: int32
+          type: integer
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - items
+      - total
+      type: object
+    centralListIamRolesResp:
+      example:
+        total: 0
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        items:
+        - created_at: 2000-01-23T04:56:07.000+00:00
+          id: id
+          usages:
+          - service_name: service_name
+            region_name: region_name
+            provider_name: provider_name
+            region: region
+          - service_name: service_name
+            region_name: region_name
+            provider_name: provider_name
+            region: region
+          arn: arn
+        - created_at: 2000-01-23T04:56:07.000+00:00
+          id: id
+          usages:
+          - service_name: service_name
+            region_name: region_name
+            provider_name: provider_name
+            region: region
+          - service_name: service_name
+            region_name: region_name
+            provider_name: provider_name
+            region: region
+          arn: arn
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/centralIamRole'
+          type: array
+        total:
+          format: int32
+          type: integer
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - items
+      - total
+      type: object
+    centralListPrivateLinkEndpointsOfProjectResp:
+      example:
+        endpoints:
+        - cluster_name: cluster_name
+          cluster_id: cluster_id
+          cluster_status: NORMAL
+          service_name: service_name
+          endpoint_name: endpoint_name
+          service_status: NOT_CONFIGURE
+          endpoint_id: endpoint_id
+          cloud_provider: cloud_provider
+          region_name: region_name
+          id: id
+          message: message
+          status: NOT_CONFIGURE
+        - cluster_name: cluster_name
+          cluster_id: cluster_id
+          cluster_status: NORMAL
+          service_name: service_name
+          endpoint_name: endpoint_name
+          service_status: NOT_CONFIGURE
+          endpoint_id: endpoint_id
+          cloud_provider: cloud_provider
+          region_name: region_name
+          id: id
+          message: message
+          status: NOT_CONFIGURE
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+      properties:
+        endpoints:
+          items:
+            $ref: '#/components/schemas/centralPrivateLinkEndpoint'
+          type: array
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - endpoints
+      type: object
+    centralListProjectMaintenanceTasksResp:
+      example:
+        total: 0
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        items:
+        - project_id: project_id
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: description
+          id: id
+          scheduled_apply_time: 2000-01-23T04:56:07.000+00:00
+          deadline: 2000-01-23T04:56:07.000+00:00
+          status: STATUS_UNSPECIFIED
+        - project_id: project_id
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: description
+          id: id
+          scheduled_apply_time: 2000-01-23T04:56:07.000+00:00
+          deadline: 2000-01-23T04:56:07.000+00:00
+          status: STATUS_UNSPECIFIED
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/centralMaintenanceTask'
+          type: array
+        total:
+          format: int32
+          type: integer
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - items
+      - total
+      type: object
+    centralMaintenanceTask:
+      example:
+        project_id: project_id
+        created_at: 2000-01-23T04:56:07.000+00:00
+        description: description
+        id: id
+        scheduled_apply_time: 2000-01-23T04:56:07.000+00:00
+        deadline: 2000-01-23T04:56:07.000+00:00
+        status: STATUS_UNSPECIFIED
+      properties:
+        id:
+          format: uint64
+          type: string
+        project_id:
+          format: uint64
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/centralMaintenanceTaskStatus'
+        scheduled_apply_time:
+          format: date-time
+          type: string
+        deadline:
+          format: date-time
+          type: string
+      type: object
+    centralMaintenanceTaskStatus:
+      default: STATUS_UNSPECIFIED
+      enum:
+      - STATUS_UNSPECIFIED
+      - STATUS_PENDING
+      - STATUS_RUNNING
+      - STATUS_DONE
+      type: string
+    centralMaintenanceWindow:
+      example:
+        minute_of_hour: 1
+        hour_of_day: 6
+        day_of_week: 0
+      properties:
+        day_of_week:
+          format: int32
+          title: "0-6, 0 is Sunday"
+          type: integer
+        hour_of_day:
+          format: int32
+          title: 0-23
+          type: integer
+        minute_of_hour:
+          format: int32
+          title: 0-59
+          type: integer
+      type: object
+    centralNodeProfile:
+      example:
+        compute:
+          memory_mi: 2
+          cpu: 5.637377
+        name: name
+        display_name: display_name
+        storage_gi: 7
+      properties:
+        compute:
+          $ref: '#/components/schemas/centralCompute'
+        storage_gi:
+          format: int64
+          type: integer
+        name:
+          title: uint64 node_profile_id = 3; deprecated
+          type: string
+        display_name:
+          type: string
+      required:
+      - compute
+      - display_name
+      - name
+      - storage_gi
+      type: object
+    centralPrecheckAuditLogConfigResp:
+      example:
+        valid: true
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        message: message
+      properties:
+        valid:
+          type: boolean
+        message:
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - message
+      - valid
+      type: object
+    centralPrivateEndpointStatus:
+      default: NO_VPC_PEERING
+      enum:
+      - NO_VPC_PEERING
+      - VPC_PEERING_ERROR
+      - NO_DOMAIN
+      - CREATING
+      - NORMAL
+      type: string
+    centralPrivateLinkEndpoint:
+      example:
+        cluster_name: cluster_name
+        cluster_id: cluster_id
+        cluster_status: NORMAL
+        service_name: service_name
+        endpoint_name: endpoint_name
+        service_status: NOT_CONFIGURE
+        endpoint_id: endpoint_id
+        cloud_provider: cloud_provider
+        region_name: region_name
+        id: id
+        message: message
+        status: NOT_CONFIGURE
+      properties:
+        cloud_provider:
+          type: string
+        cluster_id:
+          format: uint64
+          type: string
+        cluster_name:
+          type: string
+        region_name:
+          type: string
+        endpoint_id:
+          title: "[DEPRECATED] should use endpoint_name instead"
+          type: string
+        status:
+          $ref: '#/components/schemas/centralPrivateLinkEndpointStatus'
+        message:
+          type: string
+        service_name:
+          type: string
+        service_status:
+          $ref: '#/components/schemas/centralPrivateLinkServiceStatus'
+        cluster_status:
+          $ref: '#/components/schemas/centralClusterStatus'
+        id:
+          format: uint64
+          title: Unique ID
+          type: string
+        endpoint_name:
+          type: string
+      type: object
+    centralPrivateLinkEndpointStatus:
+      default: NOT_CONFIGURE
+      enum:
+      - NOT_CONFIGURE
+      - PENDING
+      - ACTIVE
+      - DELETING
+      - FAILED
+      title: "- PENDING: The following must be consistent with 'PrivateLinkServicePhase'\
+        \ defined in infra-api"
+      type: string
+    centralPrivateLinkService:
+      example:
+        port: 0
+        name: name
+        az_ids:
+        - az_ids
+        - az_ids
+        cloud_provider: cloud_provider
+        status: NOT_CONFIGURE
+        dns_name: dns_name
+      properties:
+        cloud_provider:
+          type: string
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/centralPrivateLinkServiceStatus'
+        dns_name:
+          type: string
+        port:
+          format: int32
+          type: integer
+        az_ids:
+          items:
+            type: string
+          title: "availability zones, for example: 'usw2-az2', 'usw2-az1'"
+          type: array
+      type: object
+    centralPrivateLinkServiceStatus:
+      default: NOT_CONFIGURE
+      enum:
+      - NOT_CONFIGURE
+      - CREATING
+      - ACTIVE
+      - DELETING
+      title: "- CREATING: The following must be consistent with 'PrivateLinkServicePhase'\
+        \ defined in infra-api"
+      type: string
+    centralProjectAWSAccount:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        aws_account: aws_account
+      properties:
+        aws_account:
+          type: string
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      type: object
+    centralProjectCIDR:
+      example:
+        region_cidr: region_cidr
+        cidr: cidr
+        is_default: true
+      properties:
+        cidr:
+          type: string
+        is_default:
+          type: boolean
+        region_cidr:
+          title: option
+          type: string
+      required:
+      - cidr
+      - is_default
+      - region_cidr
+      type: object
+    centralProjectRegionCIDR:
+      example:
+        regions:
+        - active: true
+          region_name: region_name
+          cidr: cidr
+          region: region
+        - active: true
+          region_name: region_name
+          cidr: cidr
+          region: region
+        provider: provider
+        cidr: cidr
+      properties:
+        provider:
+          type: string
+        cidr:
+          type: string
+        regions:
+          items:
+            $ref: '#/components/schemas/centralRegionCIDR'
+          type: array
+      required:
+      - cidr
+      - provider
+      - regions
+      type: object
+    centralRegion:
+      example:
+        cross_account_deployment_id: cross_account_deployment_id
+        area: area
+        country_code: country_code
+        name: name
+        display_name: display_name
+      properties:
+        name:
+          type: string
+        display_name:
+          type: string
+        cross_account_deployment_id:
+          format: uint64
+          type: string
+        area:
+          type: string
+        country_code:
+          type: string
+      required:
+      - display_name
+      - name
+      type: object
+    centralRegionCIDR:
+      example:
+        active: true
+        region_name: region_name
+        cidr: cidr
+        region: region
+      properties:
+        region:
+          type: string
+        region_name:
+          type: string
+        cidr:
+          type: string
+        active:
+          type: boolean
+      required:
+      - active
+      - cidr
+      - region
+      - region_name
+      type: object
+    centralReplication:
+      example:
+        creation_time: 2000-01-23T04:56:07.000+00:00
+        secondary_cluster_id: secondary_cluster_id
+        detach_user: detach_user
+        creator: creator
+        create_progress: null
+        secondary_write_status: null
+        replication_lag: replication_lag
+        primary_write_status: WRITABLE
+        replication_id: replication_id
+        detached_time: 2000-01-23T04:56:07.000+00:00
+        secondary_cluster_name: secondary_cluster_name
+        primary_cluster_name: primary_cluster_name
+        detached_tso: detached_tso
+        status: status
+        primary_cluster_id: primary_cluster_id
+      properties:
+        primary_cluster_name:
+          type: string
+        secondary_cluster_name:
+          type: string
+        status:
+          type: string
+        creation_time:
+          format: date-time
+          type: string
+        detached_time:
+          format: date-time
+          type: string
+        detached_tso:
+          type: string
+        replication_lag:
+          type: string
+        primary_cluster_id:
+          format: uint64
+          type: string
+        secondary_cluster_id:
+          format: uint64
+          type: string
+        replication_id:
+          format: uint64
+          type: string
+        detach_user:
+          type: string
+        creator:
+          type: string
+        primary_write_status:
+          $ref: '#/components/schemas/centralWriteStatus'
+        secondary_write_status:
+          $ref: '#/components/schemas/centralWriteStatus'
+        create_progress:
+          $ref: '#/components/schemas/ClusterCreateProgress'
+      type: object
+    centralTiDBNode:
+      example:
+        compute:
+          memory_mi: 2
+          cpu: 5.637377
+        name: name
+        az: az
+        type: COMPUTING
+        status: AVAILABLE
+      properties:
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/centralTiDBNodeStatus'
+        az:
+          type: string
+        compute:
+          $ref: '#/components/schemas/centralCompute'
+        type:
+          $ref: '#/components/schemas/centralTiDBNodeType'
+      required:
+      - az
+      - compute
+      - name
+      - status
+      - type
+      type: object
+    centralTiDBNodeStatus:
+      default: AVAILABLE
+      enum:
+      - AVAILABLE
+      - CREATING
+      - UNAVAILABLE
+      - DELETING
+      title: "Refer to: https://pingcap.feishu.cn/wiki/wikcnFM1PHrXFKgSdlb9pJosNHd#iIylvy"
+      type: string
+    centralTiDBNodeType:
+      default: COMPUTING
+      enum:
+      - COMPUTING
+      type: string
+    centralTiDBNodes:
+      example:
+        total: 0
+        items:
+        - compute:
+            memory_mi: 2
+            cpu: 5.637377
+          name: name
+          az: az
+          type: COMPUTING
+          status: AVAILABLE
+        - compute:
+            memory_mi: 2
+            cpu: 5.637377
+          name: name
+          az: az
+          type: COMPUTING
+          status: AVAILABLE
+      properties:
+        total:
+          format: int32
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/centralTiDBNode'
+          type: array
+      required:
+      - items
+      - total
+      type: object
+    centralTiFlashNode:
+      example:
+        compute:
+          memory_mi: 2
+          cpu: 5.637377
+        name: name
+        az: az
+        type: STORAGE
+        status: AVAILABLE
+        storage_gi: 6
+      properties:
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/centralTiFlashNodeStatus'
+        az:
+          type: string
+        compute:
+          $ref: '#/components/schemas/centralCompute'
+        storage_gi:
+          format: int64
+          type: integer
+        type:
+          $ref: '#/components/schemas/centralTiFlashNodeType'
+      required:
+      - az
+      - compute
+      - name
+      - status
+      - storage_gi
+      - type
+      type: object
+    centralTiFlashNodeStatus:
+      default: AVAILABLE
+      enum:
+      - AVAILABLE
+      - CREATING
+      - UNAVAILABLE
+      - DELETING
+      type: string
+    centralTiFlashNodeType:
+      default: STORAGE
+      enum:
+      - STORAGE
+      type: string
+    centralTiFlashNodes:
+      example:
+        total: 0
+        items:
+        - compute:
+            memory_mi: 2
+            cpu: 5.637377
+          name: name
+          az: az
+          type: STORAGE
+          status: AVAILABLE
+          storage_gi: 6
+        - compute:
+            memory_mi: 2
+            cpu: 5.637377
+          name: name
+          az: az
+          type: STORAGE
+          status: AVAILABLE
+          storage_gi: 6
+      properties:
+        total:
+          format: int32
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/centralTiFlashNode'
+          type: array
+      required:
+      - items
+      - total
+      type: object
+    centralTiKVNode:
+      example:
+        compute:
+          memory_mi: 2
+          cpu: 5.637377
+        name: name
+        az: az
+        type: STORAGE
+        status: AVAILABLE
+        storage_gi: 6
+      properties:
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/centralTiKVNodeStatus'
+        az:
+          type: string
+        compute:
+          $ref: '#/components/schemas/centralCompute'
+        storage_gi:
+          format: int64
+          type: integer
+        type:
+          $ref: '#/components/schemas/centralTiKVNodeType'
+      required:
+      - az
+      - compute
+      - name
+      - status
+      - storage_gi
+      - type
+      type: object
+    centralTiKVNodeStatus:
+      default: AVAILABLE
+      enum:
+      - AVAILABLE
+      - CREATING
+      - UNAVAILABLE
+      - DELETING
+      type: string
+    centralTiKVNodeType:
+      default: STORAGE
+      enum:
+      - STORAGE
+      type: string
+    centralTiKVNodes:
+      example:
+        total: 0
+        items:
+        - compute:
+            memory_mi: 2
+            cpu: 5.637377
+          name: name
+          az: az
+          type: STORAGE
+          status: AVAILABLE
+          storage_gi: 6
+        - compute:
+            memory_mi: 2
+            cpu: 5.637377
+          name: name
+          az: az
+          type: STORAGE
+          status: AVAILABLE
+          storage_gi: 6
+      properties:
+        total:
+          format: int32
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/centralTiKVNode'
+          type: array
+      required:
+      - items
+      - total
+      type: object
+    centralTrafficFilter:
+      example:
+        description: description
+        cidr: cidr
+      properties:
+        cidr:
+          type: string
+        description:
+          type: string
+      required:
+      - cidr
+      - description
+      type: object
+    centralTrafficFilterList:
+      example:
+        disable_public_lb: true
+        cidrs:
+        - description: description
+          cidr: cidr
+        - description: description
+          cidr: cidr
+      properties:
+        cidrs:
+          items:
+            $ref: '#/components/schemas/centralTrafficFilter'
+          type: array
+        disable_public_lb:
+          description: |-
+            disable public endpoint for accessing TiDB.
+            set it to true if don't want to expose public endpoint.
+          type: boolean
+      required:
+      - cidrs
+      - disable_public_lb
+      type: object
+    centralTrafficFilterResp:
+      example:
+        total: 0
+        traffic_filters:
+          disable_public_lb: true
+          cidrs:
+          - description: description
+            cidr: cidr
+          - description: description
+            cidr: cidr
+      properties:
+        total:
+          format: int32
+          type: integer
+        traffic_filters:
+          $ref: '#/components/schemas/centralTrafficFilterList'
+      required:
+      - total
+      - traffic_filters
+      type: object
+    centralUnchangedTask:
+      example:
+        description: description
+        id: id
+      properties:
+        id:
+          format: uint64
+          type: string
+        description:
+          type: string
+      type: object
+    centralUpdateAuditLogStatusResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        enabled: true
+      properties:
+        enabled:
+          type: boolean
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      type: object
+    centralUpdateCidrResponse:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        max_node_ip: 0
+        overlaps:
+        - regions:
+          - provider: CLOUD_PROVIDER_UNSPECIFIED
+            name: name
+            display_name: display_name
+          - provider: CLOUD_PROVIDER_UNSPECIFIED
+            name: name
+            display_name: display_name
+          project_id: project_id
+        - regions:
+          - provider: CLOUD_PROVIDER_UNSPECIFIED
+            name: name
+            display_name: display_name
+          - provider: CLOUD_PROVIDER_UNSPECIFIED
+            name: name
+            display_name: display_name
+          project_id: project_id
+      properties:
+        overlaps:
+          items:
+            $ref: '#/components/schemas/centralCidrOverlap'
+          type: array
+        max_node_ip:
+          description: The max node IP of the CIDR.
+          format: int64
+          type: integer
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      - max_node_ip
+      type: object
+    centralUpdateProjectMaintenanceWindowResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+        unchanged_tasks:
+        - description: description
+          id: id
+        - description: description
+          id: id
+      properties:
+        unchanged_tasks:
+          items:
+            $ref: '#/components/schemas/centralUnchangedTask'
+          type: array
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      type: object
+    centralUpdateTrafficFilterResp:
+      example:
+        base_resp:
+          err_msg: err_msg
+          err_code: err_code
+      properties:
+        base_resp:
+          $ref: '#/components/schemas/centralBaseResp'
+      required:
+      - base_resp
+      type: object
+    centralUser:
+      example:
+        name: name
+        id: id
+        email: email
+      properties:
+        id:
+          format: uint64
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+      required:
+      - email
+      - id
+      - name
+      type: object
+    centralWriteStatus:
+      default: WRITABLE
+      enum:
+      - WRITABLE
+      - READONLY
+      type: string
+    googlerpcStatus:
+      example:
+        code: 0
+        details:
+        - '@type': '@type'
+        - '@type': '@type'
+        message: message
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+        details:
+          items:
+            $ref: '#/components/schemas/protobufAny'
+          type: array
+      type: object
+    protobufAny:
+      additionalProperties:
+        type: object
+      description: |-
+        `Any` contains an arbitrary serialized protocol buffer message along with a
+        URL that describes the type of the serialized message.
+
+        Protobuf library provides support to pack/unpack Any values in the form
+        of utility functions or additional generated methods of the Any type.
+
+        Example 1: Pack and unpack a message in C++.
+
+            Foo foo = ...;
+            Any any;
+            any.PackFrom(foo);
+            ...
+            if (any.UnpackTo(&foo)) {
+              ...
+            }
+
+        Example 2: Pack and unpack a message in Java.
+
+            Foo foo = ...;
+            Any any = Any.pack(foo);
+            ...
+            if (any.is(Foo.class)) {
+              foo = any.unpack(Foo.class);
+            }
+
+        Example 3: Pack and unpack a message in Python.
+
+            foo = Foo(...)
+            any = Any()
+            any.Pack(foo)
+            ...
+            if any.Is(Foo.DESCRIPTOR):
+              any.Unpack(foo)
+              ...
+
+        Example 4: Pack and unpack a message in Go
+
+             foo := &pb.Foo{...}
+             any, err := anypb.New(foo)
+             if err != nil {
+               ...
+             }
+             ...
+             foo := &pb.Foo{}
+             if err := any.UnmarshalTo(foo); err != nil {
+               ...
+             }
+
+        The pack methods provided by protobuf library will by default use
+        'type.googleapis.com/full.type.name' as the type URL and the unpack
+        methods only use the fully qualified type name after the last '/'
+        in the type URL, for example "foo.bar.com/x/y.z" will yield type
+        name "y.z".
+
+
+        JSON
+
+        The JSON representation of an `Any` value uses the regular
+        representation of the deserialized, embedded message, with an
+        additional field `@type` which contains the type URL. Example:
+
+            package google.profile;
+            message Person {
+              string first_name = 1;
+              string last_name = 2;
+            }
+
+            {
+              "@type": "type.googleapis.com/google.profile.Person",
+              "firstName": <string>,
+              "lastName": <string>
+            }
+
+        If the embedded message type is well-known and has a custom JSON
+        representation, that representation will be embedded adding a field
+        `value` which holds the custom JSON in addition to the `@type`
+        field. Example (for message [google.protobuf.Duration][]):
+
+            {
+              "@type": "type.googleapis.com/google.protobuf.Duration",
+              "value": "1.212s"
+            }
+      example:
+        '@type': '@type'
+      properties:
+        '@type':
+          description: |-
+            A URL/resource name that uniquely identifies the type of the serialized
+            protocol buffer message. This string must contain at least
+            one "/" character. The last segment of the URL's path must represent
+            the fully qualified name of the type (as in
+            `path/google.protobuf.Duration`). The name should be in a canonical form
+            (e.g., leading "." is not accepted).
+
+            In practice, teams usually precompile into the binary all types that they
+            expect it to use in the context of Any. However, for URLs which use the
+            scheme `http`, `https`, or no scheme, one can optionally set up a type
+            server that maps type URLs to message definitions as follows:
+
+            * If no scheme is provided, `https` is assumed.
+            * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+              value in binary format, or produce an error.
+            * Applications are allowed to cache lookup results based on the
+              URL, or have them precompiled into a binary to avoid any
+              lookup. Therefore, binary compatibility needs to be preserved
+              on changes to types. (Use versioned type names to manage
+              breaking changes.)
+
+            Note: this functionality is not currently available in the official
+            protobuf release, and it is not used for type URLs beginning with
+            type.googleapis.com.
+
+            Schemes other than `http`, `https` (or the empty scheme) might be
+            used with implementation specific semantics.
+          type: string
+      type: object
+    CreateAwsCmek_request:
+      properties:
+        specs:
+          items:
+            $ref: '#/components/schemas/centralAwsCmekSpec'
+          type: array
+      type: object
+    CreateAWSVpcPeering_request:
+      properties:
+        tenant_region:
+          type: string
+        tenant_vpc_id:
+          type: string
+        tenant_account_id:
+          type: string
+        tenant_vpc_cidr:
+          type: string
+        region:
+          type: string
+      required:
+      - region
+      - tenant_account_id
+      - tenant_region
+      - tenant_vpc_cidr
+      - tenant_vpc_id
+      type: object
+    ListCidrs_provider_parameter:
+      default: CLOUD_PROVIDER_UNSPECIFIED
+      enum:
+      - CLOUD_PROVIDER_UNSPECIFIED
+      - AWS
+      - GCP
+      type: string
+    CreateCidr_request:
+      properties:
+        cidr:
+          description: Required. The CIDR setting by user.
+          type: string
+        region:
+          $ref: '#/components/schemas/centralCloudRegion'
+        validate_only:
+          description: "Optional. If true, only validate the CIDR, do not create it."
+          type: boolean
+      required:
+      - cidr
+      - region
+      type: object
+    UpdateCidr_request:
+      properties:
+        cidr:
+          description: Required. The CIDR setting by user.
+          type: string
+        validate_only:
+          description: "Optional. If true, only validate the CIDR, do not update it."
+          type: boolean
+      required:
+      - cidr
+      type: object
+    ListCloudProvidersV2_request:
+      properties:
+        is_dev_tier:
+          type: boolean
+      required:
+      - is_dev_tier
+      type: object
+    CalcClusterFee_request:
+      properties:
+        provider:
+          type: string
+        region:
+          type: string
+        is_dev_tier:
+          type: boolean
+        components:
+          items:
+            $ref: '#/components/schemas/centralClusterComponent'
+          type: array
+        is_cluster_paused:
+          type: boolean
+      required:
+      - components
+      - is_dev_tier
+      - provider
+      - region
+      type: object
+    ListClusters_filter_statuses_parameter_inner:
+      enum:
+      - NORMAL
+      - CREATING
+      - SCALING
+      - UPGRADING
+      - UNAVAILABLE
+      - RECOVERING
+      - IMPORTING
+      - PAUSED
+      - RESUMING
+      - DELETED
+      - MAINTAINING
+      - PAUSING
+      type: string
+    ChangeClusterName_request:
+      properties:
+        cluster_name:
+          type: string
+      required:
+      - cluster_name
+      type: object
+    ClusterService_UpdateAuditLogStatus_request:
+      properties:
+        enabled:
+          type: boolean
+        restart:
+          type: boolean
+        audit_log_config:
+          $ref: '#/components/schemas/centralAuditLogConfig'
+      required:
+      - audit_log_config
+      - enabled
+      - restart
+      type: object
+    ClusterService_CreateAuditLogAccessRecord_request:
+      properties:
+        record:
+          $ref: '#/components/schemas/centralAuditLogAccessRecord'
+      required:
+      - record
+      type: object
+    ClusterService_PrecheckAuditLogConfig_request:
+      properties:
+        audit_log_config:
+          $ref: '#/components/schemas/centralAuditLogConfig'
+      required:
+      - audit_log_config
+      type: object
+    GetClusterCACertificate_type_parameter:
+      default: DOWNLOAD_URL
+      enum:
+      - DOWNLOAD_URL
+      - PEM
+      type: string
+    ChangePassword_request:
+      properties:
+        password:
+          type: string
+      required:
+      - password
+      type: object
+    UpdateTrafficFilter_request:
+      properties:
+        traffic_filters:
+          $ref: '#/components/schemas/centralTrafficFilterList'
+      required:
+      - traffic_filters
+      type: object
+    CreateClusterV2_request:
+      properties:
+        name:
+          type: string
+        root_password:
+          type: string
+        provider:
+          type: string
+        region:
+          type: string
+        is_dev_tier:
+          type: boolean
+        components:
+          items:
+            $ref: '#/components/schemas/centralClusterComponent'
+          type: array
+        primary_cluster_id:
+          format: uint64
+          title: Deprecated
+          type: string
+        ignore_replication:
+          type: boolean
+        port:
+          format: int32
+          type: integer
+        cross_account_deployment_id:
+          format: uint64
+          type: string
+        spend_limits:
+          format: float
+          title: "deprecated, keep for compatibility"
+          type: number
+        spend_limit:
+          format: int64
+          type: integer
+      required:
+      - components
+      - is_dev_tier
+      - name
+      - port
+      - primary_cluster_id
+      - provider
+      - region
+      type: object
+    ScaleClusterV2_request:
+      properties:
+        components:
+          items:
+            $ref: '#/components/schemas/centralClusterComponent'
+          type: array
+      required:
+      - components
+      type: object
+    CreateCrossAccountDeployment_request:
+      properties:
+        provider:
+          type: string
+        region:
+          type: string
+        vpc_id:
+          type: string
+        security_group_id:
+          type: string
+        subnet_ids:
+          items:
+            type: string
+          type: array
+        bucket_name:
+          type: string
+        kms_key_arn:
+          type: string
+        pca_arn_cluster_components:
+          type: string
+        pca_arn_client:
+          type: string
+        role_arn_tidb_cloud:
+          type: string
+        role_arn_eks:
+          type: string
+        role_arn_node:
+          type: string
+        tidb_cacert:
+          type: string
+        tidb_client_cert:
+          type: string
+        tidb_client_key:
+          type: string
+        is_mtls_on:
+          type: boolean
+      required:
+      - bucket_name
+      - kms_key_arn
+      - pca_arn_client
+      - pca_arn_cluster_components
+      - provider
+      - region
+      - role_arn_eks
+      - role_arn_node
+      - role_arn_tidb_cloud
+      - security_group_id
+      - subnet_ids
+      - vpc_id
+      type: object
+    CreateGcpVpcPeering_request:
+      properties:
+        tenant_project_id:
+          type: string
+        tenant_vpc_region:
+          type: string
+        tenant_network_name:
+          type: string
+        region:
+          type: string
+        tenant_vpc_cidr:
+          type: string
+      required:
+      - region
+      - tenant_network_name
+      - tenant_project_id
+      - tenant_vpc_cidr
+      - tenant_vpc_region
+      type: object
+    CreateIamRole_request:
+      properties:
+        role_arn:
+          type: string
+      type: object
+    UpdateProjectMaintenanceWindow_request:
+      properties:
+        maintenance_window:
+          $ref: '#/components/schemas/centralMaintenanceWindow'
+      required:
+      - maintenance_window
+      type: object
+    CalcNodeProfilesV2_request:
+      properties:
+        provider:
+          type: string
+        region:
+          type: string
+        is_dev_tier:
+          type: boolean
+      required:
+      - is_dev_tier
+      - provider
+      - region
+      type: object
+    CreateProjectCIDR_request:
+      properties:
+        cidr:
+          type: string
+      required:
+      - cidr
+      type: object
+  securitySchemes:
+    bearer:
+      description: "Authentication token, prefixed by Bearer: Bearer <token>"
+      in: header
+      name: Authorization
+      type: apiKey
+x-original-swagger-version: "2.0"
