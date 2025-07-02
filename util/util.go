@@ -122,3 +122,22 @@ func GetResponse(url string) (*http.Response, error) {
 	}
 	return resp, nil
 }
+
+// NewBearerTransport returns a RoundTripper that adds a Bearer token to the Authorization header.
+func NewBearerTransport(token string) http.RoundTripper {
+	return &bearerTransport{
+		token: token,
+		inner: NewDebugTransport(http.DefaultTransport),
+	}
+}
+
+type bearerTransport struct {
+	token string
+	inner http.RoundTripper
+}
+
+func (bt *bearerTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	r2 := r.Clone(r.Context())
+	r2.Header.Set("Authorization", "Bearer "+bt.token)
+	return bt.inner.RoundTrip(r2)
+}

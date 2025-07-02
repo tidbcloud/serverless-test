@@ -75,6 +75,7 @@ func (ctx *WebApiLoginContext) getToken(c context.Context,
 		Transport: http.DefaultTransport,
 	}
 	cfg.Host = host
+	cfg.Scheme = "https"
 	cfg.UserAgent = "serverless-test"
 	cli := coreportalapi.NewAPIClient(cfg)
 
