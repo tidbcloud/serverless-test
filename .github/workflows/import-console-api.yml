@@ -1,0 +1,41 @@
+name: Import Console Api Test
+
+on:
+  schedule:
+    - cron: "0 */2 * * *"  # every 2 hours
+  workflow_dispatch:
+    inputs:
+      testCase:
+        description: "specify a case or skip to run all tests"
+        default: ""
+        required: false
+
+jobs:
+  import-scene-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: './go.mod'
+
+      - name: Restore Go modules cache
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: go-${{ runner.os }}-${{ hashFiles('go.mod') }}
+          restore-keys: |
+            go-${{ runner.os }}-
+
+      - name: Run tests
+        run: |
+          if [ -z ${{ github.event.inputs.testCase }} ]; then
+            echo "Running all tests"
+            go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/webImport/* -cid 10278121821273448857 -config "${{ secrets.TEST_CONFIG }}" -timeout 30m
+          else
+            echo "Running test ${{ github.event.inputs.testCase }}"
+            go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/webImport/* -cid 10278121821273448857 -config "${{ secrets.TEST_CONFIG }}" -run ${{ github.event.inputs.testCase }}
+          fi
