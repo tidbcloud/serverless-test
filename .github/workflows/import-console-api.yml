@@ -9,9 +9,6 @@ on:
         description: "specify a case or skip to run all tests"
         default: ""
         required: false
-  pull_request:
-    branches:
-      - master
 
 jobs:
   import-console-api-test:
