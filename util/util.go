@@ -9,9 +9,11 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"reflect"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/icholy/digest"
+	"github.com/stretchr/testify/require"
 )
 
 func NewDigestTransport(publicKey, privateKey string) http.RoundTripper {
@@ -140,4 +142,10 @@ func (bt *bearerTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	r2 := r.Clone(r.Context())
 	r2.Header.Set("Authorization", "Bearer "+bt.token)
 	return bt.inner.RoundTrip(r2)
+}
+
+// EqualPointerValues checks if two pointers point to the same value.
+// see https://github.com/stretchr/testify/issues/1118
+func EqualPointerValues(t *require.Assertions, expected, actual interface{}) {
+	t.EqualValues(expected, actual, "exp=%v, got=%v", reflect.Indirect(reflect.ValueOf(expected)), reflect.Indirect(reflect.ValueOf(actual)))
 }
