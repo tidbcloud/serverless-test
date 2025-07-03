@@ -15,6 +15,12 @@ var (
 	ServerlessEndpoint string
 	IamEndpoint        string
 
+	ConsoleApiHost    string
+	Auth0Domain       string
+	Auth0ClientID     string
+	Auth0ClientSecret string
+	UserEmail         string
+
 	AzureURI      string
 	AzureSASToken string
 
@@ -95,6 +101,12 @@ func init() {
 	flag.StringVar(&PrivateKey, "private-key", "", "")
 	flag.StringVar(&ServerlessEndpoint, "endpoint.serverless", "", "")
 	flag.StringVar(&IamEndpoint, "endpoint.iam", "", "")
+
+	flag.StringVar(&ConsoleApiHost, "console-api-host", "", "")
+	flag.StringVar(&Auth0Domain, "auth0-domain", "", "")
+	flag.StringVar(&Auth0ClientID, "auth0-client-id", "", "")
+	flag.StringVar(&Auth0ClientSecret, "auth0-client-secret", "", "")
+	flag.StringVar(&UserEmail, "user-email", "", "")
 
 	flag.StringVar(&S3URI, "s3.uri", "", "")
 	flag.StringVar(&S3SecretAccessKey, "s3.secret-access-key", "", "")
@@ -301,6 +313,22 @@ func getConfig() {
 	}
 	if ImportOSSSecretAccessKeyNoPrivilege == "" {
 		ImportOSSSecretAccessKeyNoPrivilege = viper.GetString("import.oss.secret-access-key-no-privilege")
+	}
+
+	if ConsoleApiHost == "" {
+		ConsoleApiHost = viper.GetString("console-api-host")
+	}
+	if Auth0Domain == "" {
+		Auth0Domain = viper.GetString("auth0-domain")
+	}
+	if Auth0ClientID == "" {
+		Auth0ClientID = viper.GetString("auth0-client-id")
+	}
+	if Auth0ClientSecret == "" {
+		Auth0ClientSecret = viper.GetString("auth0-client-secret")
+	}
+	if UserEmail == "" {
+		UserEmail = viper.GetString("user-email")
 	}
 }
 

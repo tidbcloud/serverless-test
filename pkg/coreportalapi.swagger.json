@@ -1,0 +1,6384 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "gRPC for our DBaaS central service",
+    "description": "notably uses gRPC-Gateway with OpenAPI",
+    "version": "0.1"
+  },
+  "tags": [
+    {
+      "name": "ClusterService"
+    },
+    {
+      "name": "TenantService"
+    },
+    {
+      "name": "TestTokenService"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/orgs/{org_id}/projects/{project_id}/aws-cmek": {
+      "get": {
+        "operationId": "GetAwsCmek",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetAwsCmekResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "region_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateAwsCmek",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCreateAwsCmekResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "specs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/definitions/centralAwsCmekSpec"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/aws_account": {
+      "get": {
+        "summary": "CMEK related APIs",
+        "operationId": "GetProjectAWSAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralProjectAWSAccount"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/aws_vpc_peerings": {
+      "get": {
+        "operationId": "ListAwsVpcPeerings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralAwsVpcPeerings"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateAWSVpcPeering",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCreateAWSVpcPeeringResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tenant_region": {
+                  "type": "string"
+                },
+                "tenant_vpc_id": {
+                  "type": "string"
+                },
+                "tenant_account_id": {
+                  "type": "string"
+                },
+                "tenant_vpc_cidr": {
+                  "type": "string"
+                },
+                "region": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "tenant_region",
+                "tenant_vpc_id",
+                "tenant_account_id",
+                "tenant_vpc_cidr",
+                "region"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/aws_vpc_peerings/{id}": {
+      "get": {
+        "operationId": "GetAwsVpcPeering",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralAwsVpcPeering"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteAwsVpcPeering",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/cidr/regions": {
+      "get": {
+        "operationId": "GetProjectRegionCIDR",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetProjectRegionCIDRResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/cidrs": {
+      "get": {
+        "summary": "Retrieves a list of CIDRs for regions in a project.",
+        "operationId": "ListCidrs",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralListCidrsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "description": "Required. The ID of the org.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "description": "Required. The ID of the project.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "provider",
+            "description": " - CLOUD_PROVIDER_UNSPECIFIED: Unspecified cloud provider.\n - AWS: Amazon Web Services.\n - GCP: Google Cloud Platform.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "CLOUD_PROVIDER_UNSPECIFIED",
+              "AWS",
+              "GCP"
+            ],
+            "default": "CLOUD_PROVIDER_UNSPECIFIED"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "post": {
+        "summary": "Creates a CIDR for a region in a project.",
+        "operationId": "CreateCidr",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCreateCidrResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "description": "Required. The ID of the org.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "description": "Required. The ID of the project.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cidr": {
+                  "type": "string",
+                  "description": "Required. The CIDR setting by user."
+                },
+                "region": {
+                  "$ref": "#/definitions/centralCloudRegion",
+                  "description": "Required. The region of the CIDR."
+                },
+                "validate_only": {
+                  "type": "boolean",
+                  "description": "Optional. If true, only validate the CIDR, do not create it."
+                }
+              },
+              "required": [
+                "cidr",
+                "region"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/cidrs/{cidr_id}": {
+      "get": {
+        "summary": "Retrieves details of a specific CIDR in a project.",
+        "operationId": "GetCidr",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetCidrResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "description": "Required. The ID of the org.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "description": "Required. The ID of the project.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cidr_id",
+            "description": "Required. The ID of the CIDR to be retrieved.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "delete": {
+        "summary": "Deletes a CIDR of a region in a project.",
+        "operationId": "DeleteCidr",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDefaultResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "description": "Required. The ID of the org.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "description": "Required. The ID of the project.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cidr_id",
+            "description": "Required. The ID of the CIDR to be deleted.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "patch": {
+        "summary": "Updates CIDR of a region in a project.",
+        "operationId": "UpdateCidr",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralUpdateCidrResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "description": "Required. The ID of the org.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "description": "Required. The ID of the project.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cidr_id",
+            "description": "Required. The ID of the CIDR to be updated.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cidr": {
+                  "type": "string",
+                  "description": "Required. The CIDR setting by user."
+                },
+                "validate_only": {
+                  "type": "boolean",
+                  "description": "Optional. If true, only validate the CIDR, do not update it."
+                }
+              },
+              "required": [
+                "cidr"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/cloud_providers/query": {
+      "post": {
+        "operationId": "ListCloudProvidersV2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCloudProviders"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "is_dev_tier": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "is_dev_tier"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/cluster_fee/query": {
+      "post": {
+        "operationId": "CalcClusterFee",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCalcClusterFeeResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string"
+                },
+                "region": {
+                  "type": "string"
+                },
+                "is_dev_tier": {
+                  "type": "boolean"
+                },
+                "components": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/definitions/centralClusterComponent"
+                  }
+                },
+                "is_cluster_paused": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "provider",
+                "region",
+                "is_dev_tier",
+                "components"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters": {
+      "get": {
+        "operationId": "ListClusters",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralClusters"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "filter.statuses",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "NORMAL",
+                "CREATING",
+                "SCALING",
+                "UPGRADING",
+                "UNAVAILABLE",
+                "RECOVERING",
+                "IMPORTING",
+                "PAUSED",
+                "RESUMING",
+                "DELETED",
+                "MAINTAINING",
+                "PAUSING"
+              ]
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.is_serverless",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/names": {
+      "post": {
+        "operationId": "GenClusterName",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGenClusterNameResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}": {
+      "delete": {
+        "operationId": "DeleteCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDefaultResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "patch": {
+        "operationId": "ChangeClusterName",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cluster_name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cluster_name"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/accesspoints": {
+      "get": {
+        "summary": "List all accesspoints for a cluster.",
+        "operationId": "ListAccesspoints",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralListAccesspointsResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/audit_log": {
+      "get": {
+        "operationId": "ClusterService_GetAuditLogStatus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetAuditLogStatusResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "put": {
+        "operationId": "ClusterService_UpdateAuditLogStatus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralUpdateAuditLogStatusResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "restart": {
+                  "type": "boolean"
+                },
+                "audit_log_config": {
+                  "$ref": "#/definitions/centralAuditLogConfig"
+                }
+              },
+              "required": [
+                "enabled",
+                "restart",
+                "audit_log_config"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/audit_log/access_records": {
+      "get": {
+        "operationId": "ClusterService_GetAuditLogAccessRecords",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetAuditLogAccessRecordsResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "post": {
+        "operationId": "ClusterService_CreateAuditLogAccessRecord",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCreateAuditLogAccessRecordResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "record": {
+                  "$ref": "#/definitions/centralAuditLogAccessRecord"
+                }
+              },
+              "required": [
+                "record"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/audit_log/access_records/{id}": {
+      "delete": {
+        "operationId": "ClusterService_DeleteAuditLogAccessRecord",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDeleteAuditLogAccessRecordResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/audit_log/plugin_status": {
+      "get": {
+        "operationId": "ClusterService_CheckAuditLogPluginStatus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCheckAuditLogPluginStatusResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/audit_log/precheck": {
+      "post": {
+        "operationId": "ClusterService_PrecheckAuditLogConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralPrecheckAuditLogConfigResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "audit_log_config": {
+                  "$ref": "#/definitions/centralAuditLogConfig"
+                }
+              },
+              "required": [
+                "audit_log_config"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/ca_cert": {
+      "get": {
+        "summary": "GetClusterCACertificate get the CA certificate of the cluster",
+        "operationId": "GetClusterCACertificate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetClusterCACertificateResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "DOWNLOAD_URL",
+              "PEM"
+            ],
+            "default": "DOWNLOAD_URL"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/connections": {
+      "get": {
+        "operationId": "GetPrivateEndpoint",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetPrivateEndpointResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "post": {
+        "operationId": "CreatePrivateEndpoint",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/password": {
+      "put": {
+        "operationId": "ChangePassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDefaultResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "password": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "password"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/pause": {
+      "post": {
+        "operationId": "PauseCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDefaultResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/privatelink_endpoints": {
+      "post": {
+        "operationId": "CreatePrivateLinkEndpoint",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCreatePrivateLinkEndpointResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "privatelink_endpoint",
+            "description": "Only endpoint_name or endpoint_id(DEPRECATED) is required",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/centralPrivateLinkEndpoint"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/privatelink_endpoints/{endpoint_id}": {
+      "delete": {
+        "operationId": "DeletePrivateLinkEndpoint",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDefaultResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "endpoint_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/privatelink_service": {
+      "get": {
+        "operationId": "GetPrivateLinkService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetPrivateLinkServiceResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "delete": {
+        "operationId": "DeletePrivateLinkService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDefaultResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "post": {
+        "summary": "PrivateLink Service",
+        "operationId": "CreatePrivateLinkService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCreatePrivateLinkServiceResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "privatelink_service",
+            "description": "Not required",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/centralPrivateLinkService"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/resume": {
+      "post": {
+        "operationId": "ResumeCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDefaultResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/tidb_nodes": {
+      "get": {
+        "operationId": "GetTiDBNodes",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralTiDBNodes"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/tiflash_nodes": {
+      "get": {
+        "operationId": "GetTiFlashNodes",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralTiFlashNodes"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/tikv_nodes": {
+      "get": {
+        "operationId": "GetTiKVNodes",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralTiKVNodes"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/traffic_filter": {
+      "get": {
+        "operationId": "GetTrafficFilter",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralTrafficFilterResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "post": {
+        "operationId": "UpdateTrafficFilter",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralUpdateTrafficFilterResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "traffic_filters": {
+                  "$ref": "#/definitions/centralTrafficFilterList"
+                }
+              },
+              "required": [
+                "traffic_filters"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/writable": {
+      "patch": {
+        "operationId": "MakeClusterWritable",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clusters/{id}": {
+      "get": {
+        "operationId": "GetCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetClusterResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clustersv2": {
+      "post": {
+        "operationId": "CreateClusterV2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCreateClusterResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "root_password": {
+                  "type": "string"
+                },
+                "provider": {
+                  "type": "string"
+                },
+                "region": {
+                  "type": "string"
+                },
+                "is_dev_tier": {
+                  "type": "boolean"
+                },
+                "components": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/definitions/centralClusterComponent"
+                  }
+                },
+                "primary_cluster_id": {
+                  "type": "string",
+                  "format": "uint64",
+                  "title": "Deprecated"
+                },
+                "ignore_replication": {
+                  "type": "boolean"
+                },
+                "port": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "cross_account_deployment_id": {
+                  "type": "string",
+                  "format": "uint64"
+                },
+                "spend_limits": {
+                  "type": "number",
+                  "format": "float",
+                  "title": "deprecated, keep for compatibility"
+                },
+                "spend_limit": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              },
+              "required": [
+                "name",
+                "provider",
+                "region",
+                "is_dev_tier",
+                "components",
+                "primary_cluster_id",
+                "port"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/clustersv2/{cluster_id}/components": {
+      "put": {
+        "operationId": "ScaleClusterV2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDefaultResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "components": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/definitions/centralClusterComponent"
+                  }
+                }
+              },
+              "required": [
+                "components"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/cross_account_deployments": {
+      "get": {
+        "operationId": "ListCrossAccountDeployments",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralListCrossAccountDeploymentResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "TenantService"
+        ]
+      },
+      "post": {
+        "summary": "Cross account deployment",
+        "operationId": "CreateCrossAccountDeployment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCreateCrossAccountDeploymentResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string"
+                },
+                "region": {
+                  "type": "string"
+                },
+                "vpc_id": {
+                  "type": "string"
+                },
+                "security_group_id": {
+                  "type": "string"
+                },
+                "subnet_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "bucket_name": {
+                  "type": "string"
+                },
+                "kms_key_arn": {
+                  "type": "string"
+                },
+                "pca_arn_cluster_components": {
+                  "type": "string"
+                },
+                "pca_arn_client": {
+                  "type": "string"
+                },
+                "role_arn_tidb_cloud": {
+                  "type": "string"
+                },
+                "role_arn_eks": {
+                  "type": "string"
+                },
+                "role_arn_node": {
+                  "type": "string"
+                },
+                "tidb_cacert": {
+                  "type": "string"
+                },
+                "tidb_client_cert": {
+                  "type": "string"
+                },
+                "tidb_client_key": {
+                  "type": "string"
+                },
+                "is_mtls_on": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "provider",
+                "region",
+                "vpc_id",
+                "security_group_id",
+                "subnet_ids",
+                "bucket_name",
+                "kms_key_arn",
+                "pca_arn_cluster_components",
+                "pca_arn_client",
+                "role_arn_tidb_cloud",
+                "role_arn_eks",
+                "role_arn_node"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "TenantService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/cross_account_deployments/delegation_info": {
+      "get": {
+        "summary": "Give TiDB Cloud delegation info to customers",
+        "operationId": "GetTiDBCloudDelegationInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetTiDBCloudDelegationInfoResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "TenantService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/cross_account_deployments/{id}": {
+      "delete": {
+        "operationId": "DeleteCrossAccountDeployment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDefaultResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "TenantService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/defaultCidr": {
+      "get": {
+        "operationId": "GetDefaultCidr",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetDefaultCidrResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "provider",
+            "description": " - CLOUD_PROVIDER_UNSPECIFIED: Unspecified cloud provider.\n - AWS: Amazon Web Services.\n - GCP: Google Cloud Platform.",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "CLOUD_PROVIDER_UNSPECIFIED",
+              "AWS",
+              "GCP"
+            ],
+            "default": "CLOUD_PROVIDER_UNSPECIFIED"
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/gcp_vpc_peerings": {
+      "get": {
+        "operationId": "ListGcpVpcPeerings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGcpVpcPeerings"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateGcpVpcPeering",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCreateGcpVpcPeeringResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tenant_project_id": {
+                  "type": "string"
+                },
+                "tenant_vpc_region": {
+                  "type": "string"
+                },
+                "tenant_network_name": {
+                  "type": "string"
+                },
+                "region": {
+                  "type": "string"
+                },
+                "tenant_vpc_cidr": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "tenant_project_id",
+                "tenant_vpc_region",
+                "tenant_network_name",
+                "region",
+                "tenant_vpc_cidr"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/gcp_vpc_peerings/{id}": {
+      "get": {
+        "operationId": "GetGcpVpcPeering",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGcpVpcPeering"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteGcpVpcPeering",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/iam_roles": {
+      "get": {
+        "operationId": "ListIamRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralListIamRolesResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "TenantService"
+        ]
+      },
+      "post": {
+        "summary": "IAM roles",
+        "operationId": "CreateIamRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCreateIamRoleResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "role_arn": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "arn"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "TenantService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/iam_roles/{id}": {
+      "delete": {
+        "operationId": "DeleteIamRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDefaultResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "TenantService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/maintenance-tasks": {
+      "get": {
+        "operationId": "ListProjectMaintenanceTasks",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralListProjectMaintenanceTasksResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/maintenance-tasks/{task_id}/defer": {
+      "post": {
+        "operationId": "DeferMaintenanceTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDefaultResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/maintenance-window": {
+      "get": {
+        "operationId": "GetProjectMaintenanceWindow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGetProjectMaintenanceWindowResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "put": {
+        "operationId": "UpdateProjectMaintenanceWindow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralUpdateProjectMaintenanceWindowResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "maintenance_window": {
+                  "$ref": "#/definitions/centralMaintenanceWindow"
+                }
+              },
+              "required": [
+                "maintenance_window"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/node_profiles/query": {
+      "post": {
+        "operationId": "CalcNodeProfilesV2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralCalcNodeProfilesResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string"
+                },
+                "region": {
+                  "type": "string"
+                },
+                "is_dev_tier": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "provider",
+                "region",
+                "is_dev_tier"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/privatelink_endpoints": {
+      "get": {
+        "operationId": "ListPrivateLinkEndpointsOfProject",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralListPrivateLinkEndpointsOfProjectResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/recycle-bin": {
+      "get": {
+        "operationId": "ListDeletedClusters",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralDeletedClusters"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "filter.statuses",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "NORMAL",
+                "CREATING",
+                "SCALING",
+                "UPGRADING",
+                "UNAVAILABLE",
+                "RECOVERING",
+                "IMPORTING",
+                "PAUSED",
+                "RESUMING",
+                "DELETED",
+                "MAINTAINING",
+                "PAUSING"
+              ]
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.is_serverless",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/{provider}/cidr": {
+      "get": {
+        "summary": "in the frontend, we'll call the CIDR API with URLs like `/api/v1/orgs/1/projects/1/aws//cidr`,\nbut in the API gate-way, this URL will be normalized to `/api/v1/orgs/1/projects/1/aws/cidr`,\nso we need to add a route for this URL.",
+        "operationId": "ClusterService_GetProjectCIDRWithoutRegion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralProjectCIDR"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateProjectCIDR",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralProjectCIDR"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cidr": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cidr"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/{provider}/cidr/validation/query": {
+      "post": {
+        "operationId": "ValidateProjectCIDR",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cidr": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cidr"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/{provider}/{region}/cidr": {
+      "get": {
+        "operationId": "GetProjectCIDR",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralProjectCIDR"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "region",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/test-token": {
+      "post": {
+        "operationId": "TestTokenService_GenerateTestToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/centralGenerateTestTokenResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/centralGenerateTestTokenReq"
+            }
+          }
+        ],
+        "tags": [
+          "TestTokenService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ClusterClusterType": {
+      "type": "string",
+      "enum": [
+        "COMMON",
+        "PRIMARY",
+        "SECONDARY"
+      ],
+      "default": "COMMON"
+    },
+    "ClusterCreateProgress": {
+      "type": "string",
+      "enum": [
+        "INITIALIZING",
+        "PREPARING",
+        "LAUNCHING",
+        "COMPLETED",
+        "BACKUPING",
+        "RESTORING",
+        "REPLICATION_PREPARING",
+        "HIBERNATED"
+      ],
+      "default": "INITIALIZING"
+    },
+    "ClusterDisplayStatus": {
+      "type": "string",
+      "enum": [
+        "DISPLAY_UNSPECIFIED",
+        "DISPLAY_CREATING",
+        "DISPLAY_RESTORING",
+        "DISPLAY_AVAILABLE",
+        "DISPLAY_IMPORTING",
+        "DISPLAY_MODIFYING",
+        "DISPLAY_PAUSED",
+        "DISPLAY_RESUMING",
+        "DISPLAY_UNAVAILABLE",
+        "DISPLAY_MAINTAINING",
+        "DISPLAY_PAUSING"
+      ],
+      "default": "DISPLAY_UNSPECIFIED",
+      "title": "Used for UI to display the cluster status"
+    },
+    "ClusterListReqFilter": {
+      "type": "object",
+      "properties": {
+        "statuses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/centralClusterStatus"
+          }
+        },
+        "is_serverless": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ClusterSecondaryStatus": {
+      "type": "string",
+      "enum": [
+        "HEALTHY",
+        "UNHEALTHY"
+      ],
+      "default": "HEALTHY"
+    },
+    "centralAccesspoint": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "project_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "cluster_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "display_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "cluster_id",
+        "display_name"
+      ]
+    },
+    "centralAuditLogAccessRecord": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "user_expr": {
+          "type": "string"
+        },
+        "db_expr": {
+          "type": "string"
+        },
+        "table_expr": {
+          "type": "string"
+        },
+        "access_type_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "user_expr",
+        "db_expr",
+        "table_expr",
+        "access_type_list"
+      ]
+    },
+    "centralAuditLogConfig": {
+      "type": "object",
+      "properties": {
+        "bucket_url": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "role_arn": {
+          "type": "string"
+        },
+        "data_source_type": {
+          "type": "integer",
+          "format": "int64",
+          "title": "1: aws s3\n2: GCS"
+        }
+      },
+      "required": [
+        "bucket_url",
+        "region",
+        "role_arn",
+        "data_source_type"
+      ]
+    },
+    "centralAwsCmek": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "project_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "region_name": {
+          "type": "string"
+        },
+        "kms_arn": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "centralAwsCmekSpec": {
+      "type": "object",
+      "properties": {
+        "region_name": {
+          "type": "string"
+        },
+        "kms_arn": {
+          "type": "string"
+        }
+      }
+    },
+    "centralAwsVpcPeering": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string"
+        },
+        "private_host_zone": {
+          "type": "string"
+        },
+        "vpc_peering_id": {
+          "type": "string"
+        },
+        "vpc_cidr": {
+          "type": "string"
+        },
+        "tenant_vpc_cidr": {
+          "type": "string"
+        },
+        "tenant_vpc_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "region_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "region",
+        "private_host_zone",
+        "vpc_peering_id",
+        "vpc_cidr",
+        "tenant_vpc_cidr",
+        "tenant_vpc_id",
+        "status",
+        "id",
+        "region_name"
+      ]
+    },
+    "centralAwsVpcPeerings": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralAwsVpcPeering"
+          }
+        }
+      },
+      "required": [
+        "total",
+        "items"
+      ]
+    },
+    "centralBaseResp": {
+      "type": "object",
+      "properties": {
+        "err_code": {
+          "type": "string",
+          "format": "int64"
+        },
+        "err_msg": {
+          "type": "string"
+        }
+      }
+    },
+    "centralCalcClusterFeeResp": {
+      "type": "object",
+      "properties": {
+        "costs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralCalcClusterFeeRespComponentCost"
+          }
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "costs",
+        "base_resp"
+      ]
+    },
+    "centralCalcClusterFeeRespComponentCost": {
+      "type": "object",
+      "properties": {
+        "component_type": {
+          "$ref": "#/definitions/centralComponentType"
+        },
+        "compute": {
+          "type": "number",
+          "format": "double"
+        },
+        "storage": {
+          "type": "number",
+          "format": "double"
+        },
+        "raw_compute": {
+          "type": "number",
+          "format": "double"
+        },
+        "raw_storage": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "centralCalcNodeProfilesResp": {
+      "type": "object",
+      "properties": {
+        "node_profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralComponentNodeProfiles"
+          }
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "node_profiles",
+        "base_resp"
+      ]
+    },
+    "centralCheckAuditLogPluginStatusResp": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "centralCidr": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Output_only. The unique ID of the CIDR."
+        },
+        "project_id": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Required. The ID of the project."
+        },
+        "cidr": {
+          "type": "string",
+          "description": "Required. The CIDR setting by user."
+        },
+        "region": {
+          "$ref": "#/definitions/centralCloudRegion",
+          "description": "Required. The region of the CIDR."
+        },
+        "provider": {
+          "$ref": "#/definitions/centralCloudRegionCloudProvider",
+          "description": "Output_only. Immutable. The cloud provider for the region."
+        },
+        "state": {
+          "$ref": "#/definitions/centralCidrState",
+          "description": "Output_only. The current state of the CIDR."
+        },
+        "vpc_id": {
+          "type": "string",
+          "description": "Output_only. The ID of the VPC that the CIDR belongs to."
+        }
+      },
+      "description": "Message for describing a CIDR."
+    },
+    "centralCidrOverlap": {
+      "type": "object",
+      "properties": {
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralCloudRegion"
+          },
+          "description": "The list of regions that their CIDRs overlap with the CIDR to be created."
+        },
+        "project_id": {
+          "type": "string",
+          "format": "uint64",
+          "description": "The ID of the project that the CIDR overlaps with."
+        }
+      }
+    },
+    "centralCidrState": {
+      "type": "string",
+      "enum": [
+        "STATE_UNSPECIFIED",
+        "STATE_ACTIVE",
+        "STATE_INACTIVE"
+      ],
+      "default": "STATE_UNSPECIFIED",
+      "description": "Enum for CIDR state.\n\n - STATE_UNSPECIFIED: Unspecified state.\n - STATE_ACTIVE: The CIDR is active.\n - STATE_INACTIVE: The CIDR is inactive."
+    },
+    "centralCloudProvider": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralRegion"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "regions"
+      ]
+    },
+    "centralCloudProviders": {
+      "type": "object",
+      "properties": {
+        "cloud_providers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralCloudProvider"
+          }
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "cloud_providers",
+        "base_resp"
+      ]
+    },
+    "centralCloudRegion": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Required. Immutable. The unique name of the region."
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Output_only. Immutable. User-friendly display name of the region."
+        },
+        "provider": {
+          "$ref": "#/definitions/centralCloudRegionCloudProvider",
+          "description": "Required. Immutable. The cloud provider for the region."
+        }
+      },
+      "description": "Message for describing a region for deploying TiDB Dedicated clusters."
+    },
+    "centralCloudRegionCloudProvider": {
+      "type": "string",
+      "enum": [
+        "CLOUD_PROVIDER_UNSPECIFIED",
+        "AWS",
+        "GCP"
+      ],
+      "default": "CLOUD_PROVIDER_UNSPECIFIED",
+      "description": "Enum for cloud providers for the region.\n\n - CLOUD_PROVIDER_UNSPECIFIED: Unspecified cloud provider.\n - AWS: Amazon Web Services.\n - GCP: Google Cloud Platform."
+    },
+    "centralCluster": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/centralClusterStatus"
+        },
+        "secondary_status": {
+          "$ref": "#/definitions/ClusterSecondaryStatus"
+        },
+        "version": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "region_name": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "$ref": "#/definitions/centralUser"
+        },
+        "endpoint": {
+          "$ref": "#/definitions/centralEndpoint"
+        },
+        "vpc_cidr_block": {
+          "type": "string"
+        },
+        "capacity": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cluster_components": {
+          "$ref": "#/definitions/centralClusterComponents"
+        },
+        "create_progress": {
+          "$ref": "#/definitions/ClusterCreateProgress"
+        },
+        "prometheus_ready": {
+          "type": "boolean"
+        },
+        "privateEndpoint": {
+          "$ref": "#/definitions/centralEndpoint"
+        },
+        "restored": {
+          "type": "boolean"
+        },
+        "import_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "lastErrors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralLastError"
+          }
+        },
+        "replications": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralReplication"
+          },
+          "title": "Deprecated"
+        },
+        "cluster_type": {
+          "$ref": "#/definitions/ClusterClusterType"
+        },
+        "write_status": {
+          "$ref": "#/definitions/centralWriteStatus"
+        },
+        "is_dev_tier": {
+          "type": "boolean"
+        },
+        "cross_account_deployment_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "display_status": {
+          "$ref": "#/definitions/ClusterDisplayStatus"
+        },
+        "has_set_pwd": {
+          "type": "boolean",
+          "title": "Used for UI"
+        },
+        "dev_tier_type": {
+          "$ref": "#/definitions/centralClusterDevTierClusterType"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/centralClusterAvailableFeature"
+          },
+          "title": "Used for UI"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "status",
+        "secondary_status",
+        "version",
+        "provider",
+        "region",
+        "region_name",
+        "created_at",
+        "created_by",
+        "endpoint",
+        "vpc_cidr_block",
+        "capacity",
+        "cluster_components",
+        "create_progress",
+        "prometheus_ready",
+        "privateEndpoint",
+        "restored",
+        "import_id",
+        "lastErrors",
+        "replications",
+        "cluster_type",
+        "write_status"
+      ]
+    },
+    "centralClusterAvailableFeature": {
+      "type": "string",
+      "enum": [
+        "DISABLE_PUBLIC_LB",
+        "PRIVATELINK",
+        "DELEGATE_USER",
+        "VECTOR_TYPE"
+      ],
+      "default": "DISABLE_PUBLIC_LB",
+      "title": "Available feature for a cluster"
+    },
+    "centralClusterComponent": {
+      "type": "object",
+      "properties": {
+        "component_type": {
+          "$ref": "#/definitions/centralComponentType"
+        },
+        "node_profile_name": {
+          "type": "string",
+          "description": "required when creating/updating a cluster",
+          "title": "uint64 node_profile_id = 2; deprecated: use node_profile_name to instead"
+        },
+        "replicas": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "storage_size_gi": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "required": [
+        "component_type",
+        "node_profile_name",
+        "replicas",
+        "storage_size_gi"
+      ]
+    },
+    "centralClusterComponents": {
+      "type": "object",
+      "properties": {
+        "tikv": {
+          "$ref": "#/definitions/centralComponent"
+        },
+        "tidb": {
+          "$ref": "#/definitions/centralComponent"
+        },
+        "tiflash": {
+          "$ref": "#/definitions/centralComponent"
+        }
+      },
+      "required": [
+        "tikv",
+        "tidb",
+        "tiflash"
+      ]
+    },
+    "centralClusterDevTierClusterType": {
+      "type": "string",
+      "enum": [
+        "DEVTIER_UNSPECIFIED",
+        "DEVTIER_CLASSIC",
+        "DEVTIER_SERVERLESS"
+      ],
+      "default": "DEVTIER_UNSPECIFIED",
+      "title": "Used for Dev Tier \u0026 UI"
+    },
+    "centralClusterNodeProfile": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "uint64 id = 1; deprecated"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "default_node_num": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "min_storage_size_gi": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "max_storage_size_gi": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "default_storage_size_gi": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "cpu_num": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "memory_gi": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "centralClusterStatus": {
+      "type": "string",
+      "enum": [
+        "NORMAL",
+        "CREATING",
+        "SCALING",
+        "UPGRADING",
+        "UNAVAILABLE",
+        "RECOVERING",
+        "IMPORTING",
+        "PAUSED",
+        "RESUMING",
+        "DELETED",
+        "MAINTAINING",
+        "PAUSING"
+      ],
+      "default": "NORMAL"
+    },
+    "centralClusters": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralCluster"
+          }
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "total",
+        "items"
+      ]
+    },
+    "centralComponent": {
+      "type": "object",
+      "properties": {
+        "replicas": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "node_profile": {
+          "$ref": "#/definitions/centralNodeProfile"
+        },
+        "modify_progress": {
+          "$ref": "#/definitions/centralComponentModifyProgress",
+          "title": "available if the cluster is modifying"
+        }
+      },
+      "required": [
+        "replicas",
+        "node_profile"
+      ]
+    },
+    "centralComponentModifyProgress": {
+      "type": "object",
+      "properties": {
+        "pending": {
+          "type": "boolean",
+          "description": "the following fields SHOULDN't be used if `pending` is true."
+        },
+        "expected_quantity": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "uptodate_quantity": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "remaining_deletion_quantity": {
+          "type": "integer",
+          "format": "int32",
+          "title": "available if some nodes are deleting"
+        }
+      }
+    },
+    "centralComponentNodeProfiles": {
+      "type": "object",
+      "properties": {
+        "component_type": {
+          "$ref": "#/definitions/centralComponentType"
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralClusterNodeProfile"
+          }
+        },
+        "default_profile_name": {
+          "type": "string",
+          "title": "uint64 default_profile_id = 3; deprecated"
+        }
+      },
+      "required": [
+        "component_type",
+        "profiles",
+        "default_profile_name"
+      ]
+    },
+    "centralComponentType": {
+      "type": "string",
+      "enum": [
+        "COMPONENT_TYPE_UNSPECIFIED",
+        "COMPONENT_TYPE_TIDB",
+        "COMPONENT_TYPE_TIKV",
+        "COMPONENT_TYPE_TIFLASH",
+        "COMPONENT_TYPE_PD",
+        "COMPONENT_TYPE_TICDC"
+      ],
+      "default": "COMPONENT_TYPE_UNSPECIFIED"
+    },
+    "centralCompute": {
+      "type": "object",
+      "properties": {
+        "cpu": {
+          "type": "number",
+          "format": "float"
+        },
+        "memory_mi": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "required": [
+        "cpu",
+        "memory_mi"
+      ]
+    },
+    "centralCreateAWSVpcPeeringResp": {
+      "type": "object",
+      "properties": {
+        "vpc_peering_id": {
+          "type": "string"
+        },
+        "vpc_cidr": {
+          "type": "string"
+        },
+        "private_host_zone": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "vpc_peering_id",
+        "vpc_cidr",
+        "private_host_zone",
+        "region",
+        "id"
+      ]
+    },
+    "centralCreateAuditLogAccessRecordResp": {
+      "type": "object",
+      "properties": {
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      }
+    },
+    "centralCreateAwsCmekResp": {
+      "type": "object",
+      "properties": {
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      }
+    },
+    "centralCreateCidrResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "overlaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralCidrOverlap"
+          }
+        },
+        "max_node_ip": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The max node IP of the CIDR."
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "id",
+        "base_resp"
+      ]
+    },
+    "centralCreateClusterResp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "id",
+        "base_resp"
+      ]
+    },
+    "centralCreateCrossAccountDeploymentResp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "id",
+        "base_resp"
+      ]
+    },
+    "centralCreateGcpVpcPeeringResp": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "network_name": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "project_id",
+        "network_name",
+        "region",
+        "id"
+      ]
+    },
+    "centralCreateIamRoleResp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "id",
+        "base_resp"
+      ]
+    },
+    "centralCreatePrivateLinkEndpointResp": {
+      "type": "object",
+      "properties": {
+        "privatelink_endpoint": {
+          "$ref": "#/definitions/centralPrivateLinkEndpoint"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "privatelink_endpoint",
+        "base_resp"
+      ]
+    },
+    "centralCreatePrivateLinkServiceResp": {
+      "type": "object",
+      "properties": {
+        "privatelink_service": {
+          "$ref": "#/definitions/centralPrivateLinkService"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "privatelink_service",
+        "base_resp"
+      ]
+    },
+    "centralCrossAccountDeployment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "project_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "vpc_id": {
+          "type": "string"
+        },
+        "security_group_id": {
+          "type": "string"
+        },
+        "subnet_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "bucket_name": {
+          "type": "string"
+        },
+        "kms_key_arn": {
+          "type": "string"
+        },
+        "pca_arn_cluster_components": {
+          "type": "string"
+        },
+        "pca_arn_client": {
+          "type": "string"
+        },
+        "role_arn_tidb_cloud": {
+          "type": "string"
+        },
+        "role_arn_eks": {
+          "type": "string"
+        },
+        "role_arn_node": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "region_name": {
+          "type": "string"
+        },
+        "tidb_cacert": {
+          "type": "string"
+        },
+        "tidb_client_cert": {
+          "type": "string"
+        },
+        "tidb_client_key": {
+          "type": "string"
+        },
+        "is_mtls_on": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "created_at",
+        "project_id",
+        "provider",
+        "region",
+        "region_name",
+        "status",
+        "vpc_id",
+        "security_group_id",
+        "subnet_ids",
+        "bucket_name",
+        "kms_key_arn",
+        "pca_arn_cluster_components",
+        "pca_arn_client",
+        "role_arn_tidb_cloud",
+        "role_arn_eks",
+        "role_arn_node"
+      ]
+    },
+    "centralDefaultResp": {
+      "type": "object",
+      "properties": {
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "base_resp"
+      ]
+    },
+    "centralDeleteAuditLogAccessRecordResp": {
+      "type": "object",
+      "properties": {
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      }
+    },
+    "centralDeletedCluster": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "region_name": {
+          "type": "string"
+        },
+        "delete_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "latest_backup_size": {
+          "type": "string",
+          "format": "uint64",
+          "title": "Deprecated"
+        },
+        "cross_account_deployment_id": {
+          "type": "string",
+          "format": "uint64"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "provider",
+        "region",
+        "region_name",
+        "delete_time",
+        "latest_backup_size"
+      ]
+    },
+    "centralDeletedClusters": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralDeletedCluster"
+          }
+        }
+      },
+      "required": [
+        "total",
+        "items"
+      ]
+    },
+    "centralEndpoint": {
+      "type": "object",
+      "properties": {
+        "ready": {
+          "type": "boolean"
+        },
+        "address": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ready",
+        "address",
+        "port"
+      ]
+    },
+    "centralGcpVpcPeering": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string"
+        },
+        "network_name": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string"
+        },
+        "tenant_project_id": {
+          "type": "string"
+        },
+        "tenant_network_name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "vpc_cidr": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "tenant_vpc_cidr": {
+          "type": "string"
+        },
+        "region_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "region",
+        "network_name",
+        "project_id",
+        "tenant_project_id",
+        "tenant_network_name",
+        "status",
+        "vpc_cidr",
+        "id",
+        "region_name"
+      ]
+    },
+    "centralGcpVpcPeerings": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralGcpVpcPeering"
+          }
+        }
+      },
+      "required": [
+        "total",
+        "items"
+      ]
+    },
+    "centralGenClusterNameResp": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "name",
+        "base_resp"
+      ]
+    },
+    "centralGenerateTestTokenReq": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "auth0_domain": {
+          "type": "string"
+        },
+        "auth0_client_id": {
+          "type": "string"
+        },
+        "auth0_client_secret": {
+          "type": "string"
+        }
+      }
+    },
+    "centralGenerateTestTokenResp": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        },
+        "expire_at": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "centralGetAuditLogAccessRecordsResp": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralAuditLogAccessRecord"
+          }
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "records"
+      ]
+    },
+    "centralGetAuditLogStatusResp": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "audit_log_config": {
+          "$ref": "#/definitions/centralAuditLogConfig"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "enabled",
+        "audit_log_config"
+      ]
+    },
+    "centralGetAwsCmekResp": {
+      "type": "object",
+      "properties": {
+        "cmeks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralAwsCmek"
+          }
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      }
+    },
+    "centralGetCidrResponse": {
+      "type": "object",
+      "properties": {
+        "cidr": {
+          "$ref": "#/definitions/centralCidr"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "cidr",
+        "base_resp"
+      ]
+    },
+    "centralGetClusterCACertificateReqType": {
+      "type": "string",
+      "enum": [
+        "DOWNLOAD_URL",
+        "PEM"
+      ],
+      "default": "DOWNLOAD_URL"
+    },
+    "centralGetClusterCACertificateResp": {
+      "type": "object",
+      "properties": {
+        "certificate": {
+          "type": "string",
+          "format": "byte"
+        },
+        "download_url": {
+          "type": "string"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "certificate",
+        "base_resp"
+      ]
+    },
+    "centralGetClusterResp": {
+      "type": "object",
+      "properties": {
+        "cluster": {
+          "$ref": "#/definitions/centralCluster"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "cluster",
+        "base_resp"
+      ]
+    },
+    "centralGetDefaultCidrResponse": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "provider": {
+          "$ref": "#/definitions/centralCloudRegionCloudProvider"
+        },
+        "region": {
+          "$ref": "#/definitions/centralCloudRegion"
+        },
+        "cidr": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "name",
+        "provider",
+        "region",
+        "cidr",
+        "base_resp"
+      ]
+    },
+    "centralGetPrivateEndpointResp": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/centralPrivateEndpointStatus"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string",
+          "format": "uint64"
+        }
+      },
+      "required": [
+        "status",
+        "domain",
+        "port"
+      ]
+    },
+    "centralGetPrivateLinkServiceResp": {
+      "type": "object",
+      "properties": {
+        "privatelink_service": {
+          "$ref": "#/definitions/centralPrivateLinkService"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "privatelink_service",
+        "base_resp"
+      ]
+    },
+    "centralGetProjectMaintenanceWindowResp": {
+      "type": "object",
+      "properties": {
+        "maintenance_window": {
+          "$ref": "#/definitions/centralMaintenanceWindow"
+        },
+        "next_maintenance_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "maintenance_window",
+        "next_maintenance_date",
+        "base_resp"
+      ]
+    },
+    "centralGetProjectRegionCIDRResp": {
+      "type": "object",
+      "properties": {
+        "project_region_cidrs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralProjectRegionCIDR"
+          }
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      }
+    },
+    "centralGetTiDBCloudDelegationInfoResp": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "external_id": {
+          "type": "string"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "account_id",
+        "external_id",
+        "base_resp"
+      ]
+    },
+    "centralIamRole": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "arn": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "usages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralIamRoleUsage"
+          }
+        }
+      },
+      "title": "cross account deployment service",
+      "required": [
+        "id",
+        "arn",
+        "created_at",
+        "usages"
+      ]
+    },
+    "centralIamRoleUsage": {
+      "type": "object",
+      "properties": {
+        "service_name": {
+          "type": "string"
+        },
+        "provider_name": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "region_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_name",
+        "provider_name",
+        "region_name"
+      ]
+    },
+    "centralInfraErrorCode": {
+      "type": "string",
+      "enum": [
+        "INFRA_RESOURCES_DEPLETED"
+      ],
+      "default": "INFRA_RESOURCES_DEPLETED"
+    },
+    "centralLastError": {
+      "type": "object",
+      "properties": {
+        "codes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/centralInfraErrorCode"
+          }
+        }
+      },
+      "required": [
+        "codes"
+      ]
+    },
+    "centralListAccesspointsResp": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralAccesspoint"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "items",
+        "total",
+        "base_resp"
+      ]
+    },
+    "centralListCidrsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralCidr"
+          },
+          "description": "A list of CIDRs."
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "items",
+        "total",
+        "base_resp"
+      ]
+    },
+    "centralListCrossAccountDeploymentResp": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralCrossAccountDeployment"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "items",
+        "total",
+        "base_resp"
+      ]
+    },
+    "centralListIamRolesResp": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralIamRole"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "items",
+        "total",
+        "base_resp"
+      ]
+    },
+    "centralListPrivateLinkEndpointsOfProjectResp": {
+      "type": "object",
+      "properties": {
+        "endpoints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralPrivateLinkEndpoint"
+          }
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "endpoints",
+        "base_resp"
+      ]
+    },
+    "centralListProjectMaintenanceTasksResp": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralMaintenanceTask"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "items",
+        "total",
+        "base_resp"
+      ]
+    },
+    "centralMaintenanceTask": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "project_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/centralMaintenanceTaskStatus"
+        },
+        "scheduled_apply_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "deadline": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "centralMaintenanceTaskStatus": {
+      "type": "string",
+      "enum": [
+        "STATUS_UNSPECIFIED",
+        "STATUS_PENDING",
+        "STATUS_RUNNING",
+        "STATUS_DONE"
+      ],
+      "default": "STATUS_UNSPECIFIED"
+    },
+    "centralMaintenanceWindow": {
+      "type": "object",
+      "properties": {
+        "day_of_week": {
+          "type": "integer",
+          "format": "int32",
+          "title": "0-6, 0 is Sunday"
+        },
+        "hour_of_day": {
+          "type": "integer",
+          "format": "int32",
+          "title": "0-23"
+        },
+        "minute_of_hour": {
+          "type": "integer",
+          "format": "int32",
+          "title": "0-59"
+        }
+      }
+    },
+    "centralNodeProfile": {
+      "type": "object",
+      "properties": {
+        "compute": {
+          "$ref": "#/definitions/centralCompute"
+        },
+        "storage_gi": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string",
+          "title": "uint64 node_profile_id = 3; deprecated"
+        },
+        "display_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "compute",
+        "storage_gi",
+        "name",
+        "display_name"
+      ]
+    },
+    "centralPrecheckAuditLogConfigResp": {
+      "type": "object",
+      "properties": {
+        "valid": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "valid",
+        "message"
+      ]
+    },
+    "centralPrivateEndpointStatus": {
+      "type": "string",
+      "enum": [
+        "NO_VPC_PEERING",
+        "VPC_PEERING_ERROR",
+        "NO_DOMAIN",
+        "CREATING",
+        "NORMAL"
+      ],
+      "default": "NO_VPC_PEERING"
+    },
+    "centralPrivateLinkEndpoint": {
+      "type": "object",
+      "properties": {
+        "cloud_provider": {
+          "type": "string"
+        },
+        "cluster_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "cluster_name": {
+          "type": "string"
+        },
+        "region_name": {
+          "type": "string"
+        },
+        "endpoint_id": {
+          "type": "string",
+          "title": "[DEPRECATED] should use endpoint_name instead"
+        },
+        "status": {
+          "$ref": "#/definitions/centralPrivateLinkEndpointStatus"
+        },
+        "message": {
+          "type": "string"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "service_status": {
+          "$ref": "#/definitions/centralPrivateLinkServiceStatus"
+        },
+        "cluster_status": {
+          "$ref": "#/definitions/centralClusterStatus"
+        },
+        "id": {
+          "type": "string",
+          "format": "uint64",
+          "title": "Unique ID"
+        },
+        "endpoint_name": {
+          "type": "string"
+        }
+      }
+    },
+    "centralPrivateLinkEndpointStatus": {
+      "type": "string",
+      "enum": [
+        "NOT_CONFIGURE",
+        "PENDING",
+        "ACTIVE",
+        "DELETING",
+        "FAILED"
+      ],
+      "default": "NOT_CONFIGURE",
+      "title": "- PENDING: The following must be consistent with 'PrivateLinkServicePhase' defined in infra-api"
+    },
+    "centralPrivateLinkService": {
+      "type": "object",
+      "properties": {
+        "cloud_provider": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/centralPrivateLinkServiceStatus"
+        },
+        "dns_name": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "az_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "availability zones, for example: 'usw2-az2', 'usw2-az1'"
+        }
+      }
+    },
+    "centralPrivateLinkServiceStatus": {
+      "type": "string",
+      "enum": [
+        "NOT_CONFIGURE",
+        "CREATING",
+        "ACTIVE",
+        "DELETING"
+      ],
+      "default": "NOT_CONFIGURE",
+      "title": "- CREATING: The following must be consistent with 'PrivateLinkServicePhase' defined in infra-api"
+    },
+    "centralProjectAWSAccount": {
+      "type": "object",
+      "properties": {
+        "aws_account": {
+          "type": "string"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      }
+    },
+    "centralProjectCIDR": {
+      "type": "object",
+      "properties": {
+        "cidr": {
+          "type": "string"
+        },
+        "is_default": {
+          "type": "boolean"
+        },
+        "region_cidr": {
+          "type": "string",
+          "title": "option"
+        }
+      },
+      "required": [
+        "cidr",
+        "is_default",
+        "region_cidr"
+      ]
+    },
+    "centralProjectRegionCIDR": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string"
+        },
+        "cidr": {
+          "type": "string"
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralRegionCIDR"
+          }
+        }
+      },
+      "required": [
+        "provider",
+        "cidr",
+        "regions"
+      ]
+    },
+    "centralRegion": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "cross_account_deployment_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "area": {
+          "type": "string"
+        },
+        "country_code": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "display_name"
+      ]
+    },
+    "centralRegionCIDR": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string"
+        },
+        "region_name": {
+          "type": "string"
+        },
+        "cidr": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "region",
+        "cidr",
+        "active",
+        "region_name"
+      ]
+    },
+    "centralReplication": {
+      "type": "object",
+      "properties": {
+        "primary_cluster_name": {
+          "type": "string"
+        },
+        "secondary_cluster_name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "creation_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "detached_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "detached_tso": {
+          "type": "string"
+        },
+        "replication_lag": {
+          "type": "string"
+        },
+        "primary_cluster_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "secondary_cluster_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "replication_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "detach_user": {
+          "type": "string"
+        },
+        "creator": {
+          "type": "string"
+        },
+        "primary_write_status": {
+          "$ref": "#/definitions/centralWriteStatus"
+        },
+        "secondary_write_status": {
+          "$ref": "#/definitions/centralWriteStatus"
+        },
+        "create_progress": {
+          "$ref": "#/definitions/ClusterCreateProgress"
+        }
+      }
+    },
+    "centralTiDBNode": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/centralTiDBNodeStatus"
+        },
+        "az": {
+          "type": "string"
+        },
+        "compute": {
+          "$ref": "#/definitions/centralCompute"
+        },
+        "type": {
+          "$ref": "#/definitions/centralTiDBNodeType"
+        }
+      },
+      "required": [
+        "name",
+        "status",
+        "az",
+        "compute",
+        "type"
+      ]
+    },
+    "centralTiDBNodeStatus": {
+      "type": "string",
+      "enum": [
+        "AVAILABLE",
+        "CREATING",
+        "UNAVAILABLE",
+        "DELETING"
+      ],
+      "default": "AVAILABLE",
+      "title": "Refer to: https://pingcap.feishu.cn/wiki/wikcnFM1PHrXFKgSdlb9pJosNHd#iIylvy"
+    },
+    "centralTiDBNodeType": {
+      "type": "string",
+      "enum": [
+        "COMPUTING"
+      ],
+      "default": "COMPUTING"
+    },
+    "centralTiDBNodes": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralTiDBNode"
+          }
+        }
+      },
+      "required": [
+        "total",
+        "items"
+      ]
+    },
+    "centralTiFlashNode": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/centralTiFlashNodeStatus"
+        },
+        "az": {
+          "type": "string"
+        },
+        "compute": {
+          "$ref": "#/definitions/centralCompute"
+        },
+        "storage_gi": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "type": {
+          "$ref": "#/definitions/centralTiFlashNodeType"
+        }
+      },
+      "required": [
+        "name",
+        "status",
+        "az",
+        "compute",
+        "storage_gi",
+        "type"
+      ]
+    },
+    "centralTiFlashNodeStatus": {
+      "type": "string",
+      "enum": [
+        "AVAILABLE",
+        "CREATING",
+        "UNAVAILABLE",
+        "DELETING"
+      ],
+      "default": "AVAILABLE"
+    },
+    "centralTiFlashNodeType": {
+      "type": "string",
+      "enum": [
+        "STORAGE"
+      ],
+      "default": "STORAGE"
+    },
+    "centralTiFlashNodes": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralTiFlashNode"
+          }
+        }
+      },
+      "required": [
+        "total",
+        "items"
+      ]
+    },
+    "centralTiKVNode": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/centralTiKVNodeStatus"
+        },
+        "az": {
+          "type": "string"
+        },
+        "compute": {
+          "$ref": "#/definitions/centralCompute"
+        },
+        "storage_gi": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "type": {
+          "$ref": "#/definitions/centralTiKVNodeType"
+        }
+      },
+      "required": [
+        "name",
+        "status",
+        "az",
+        "compute",
+        "storage_gi",
+        "type"
+      ]
+    },
+    "centralTiKVNodeStatus": {
+      "type": "string",
+      "enum": [
+        "AVAILABLE",
+        "CREATING",
+        "UNAVAILABLE",
+        "DELETING"
+      ],
+      "default": "AVAILABLE"
+    },
+    "centralTiKVNodeType": {
+      "type": "string",
+      "enum": [
+        "STORAGE"
+      ],
+      "default": "STORAGE"
+    },
+    "centralTiKVNodes": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralTiKVNode"
+          }
+        }
+      },
+      "required": [
+        "total",
+        "items"
+      ]
+    },
+    "centralTrafficFilter": {
+      "type": "object",
+      "properties": {
+        "cidr": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "cidr",
+        "description"
+      ]
+    },
+    "centralTrafficFilterList": {
+      "type": "object",
+      "properties": {
+        "cidrs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralTrafficFilter"
+          }
+        },
+        "disable_public_lb": {
+          "type": "boolean",
+          "description": "disable public endpoint for accessing TiDB.\nset it to true if don't want to expose public endpoint."
+        }
+      },
+      "required": [
+        "disable_public_lb",
+        "cidrs"
+      ]
+    },
+    "centralTrafficFilterResp": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "traffic_filters": {
+          "$ref": "#/definitions/centralTrafficFilterList"
+        }
+      },
+      "required": [
+        "total",
+        "traffic_filters"
+      ]
+    },
+    "centralUnchangedTask": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "centralUpdateAuditLogStatusResp": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      }
+    },
+    "centralUpdateCidrResponse": {
+      "type": "object",
+      "properties": {
+        "overlaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralCidrOverlap"
+          }
+        },
+        "max_node_ip": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The max node IP of the CIDR."
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "max_node_ip",
+        "base_resp"
+      ]
+    },
+    "centralUpdateProjectMaintenanceWindowResp": {
+      "type": "object",
+      "properties": {
+        "unchanged_tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/centralUnchangedTask"
+          }
+        },
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "base_resp"
+      ]
+    },
+    "centralUpdateTrafficFilterResp": {
+      "type": "object",
+      "properties": {
+        "base_resp": {
+          "$ref": "#/definitions/centralBaseResp"
+        }
+      },
+      "required": [
+        "base_resp"
+      ]
+    },
+    "centralUser": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "name"
+      ]
+    },
+    "centralWriteStatus": {
+      "type": "string",
+      "enum": [
+        "WRITABLE",
+        "READONLY"
+      ],
+      "default": "WRITABLE"
+    },
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string",
+          "description": "A URL/resource name that uniquely identifies the type of the serialized\nprotocol buffer message. This string must contain at least\none \"/\" character. The last segment of the URL's path must represent\nthe fully qualified name of the type (as in\n`path/google.protobuf.Duration`). The name should be in a canonical form\n(e.g., leading \".\" is not accepted).\n\nIn practice, teams usually precompile into the binary all types that they\nexpect it to use in the context of Any. However, for URLs which use the\nscheme `http`, `https`, or no scheme, one can optionally set up a type\nserver that maps type URLs to message definitions as follows:\n\n* If no scheme is provided, `https` is assumed.\n* An HTTP GET on the URL must yield a [google.protobuf.Type][]\n  value in binary format, or produce an error.\n* Applications are allowed to cache lookup results based on the\n  URL, or have them precompiled into a binary to avoid any\n  lookup. Therefore, binary compatibility needs to be preserved\n  on changes to types. (Use versioned type names to manage\n  breaking changes.)\n\nNote: this functionality is not currently available in the official\nprotobuf release, and it is not used for type URLs beginning with\ntype.googleapis.com.\n\nSchemes other than `http`, `https` (or the empty scheme) might be\nused with implementation specific semantics."
+        }
+      },
+      "additionalProperties": {},
+      "description": "`Any` contains an arbitrary serialized protocol buffer message along with a\nURL that describes the type of the serialized message.\n\nProtobuf library provides support to pack/unpack Any values in the form\nof utility functions or additional generated methods of the Any type.\n\nExample 1: Pack and unpack a message in C++.\n\n    Foo foo = ...;\n    Any any;\n    any.PackFrom(foo);\n    ...\n    if (any.UnpackTo(\u0026foo)) {\n      ...\n    }\n\nExample 2: Pack and unpack a message in Java.\n\n    Foo foo = ...;\n    Any any = Any.pack(foo);\n    ...\n    if (any.is(Foo.class)) {\n      foo = any.unpack(Foo.class);\n    }\n\nExample 3: Pack and unpack a message in Python.\n\n    foo = Foo(...)\n    any = Any()\n    any.Pack(foo)\n    ...\n    if any.Is(Foo.DESCRIPTOR):\n      any.Unpack(foo)\n      ...\n\nExample 4: Pack and unpack a message in Go\n\n     foo := \u0026pb.Foo{...}\n     any, err := anypb.New(foo)\n     if err != nil {\n       ...\n     }\n     ...\n     foo := \u0026pb.Foo{}\n     if err := any.UnmarshalTo(foo); err != nil {\n       ...\n     }\n\nThe pack methods provided by protobuf library will by default use\n'type.googleapis.com/full.type.name' as the type URL and the unpack\nmethods only use the fully qualified type name after the last '/'\nin the type URL, for example \"foo.bar.com/x/y.z\" will yield type\nname \"y.z\".\n\n\nJSON\n\nThe JSON representation of an `Any` value uses the regular\nrepresentation of the deserialized, embedded message, with an\nadditional field `@type` which contains the type URL. Example:\n\n    package google.profile;\n    message Person {\n      string first_name = 1;\n      string last_name = 2;\n    }\n\n    {\n      \"@type\": \"type.googleapis.com/google.profile.Person\",\n      \"firstName\": \u003cstring\u003e,\n      \"lastName\": \u003cstring\u003e\n    }\n\nIf the embedded message type is well-known and has a custom JSON\nrepresentation, that representation will be embedded adding a field\n`value` which holds the custom JSON in addition to the `@type`\nfield. Example (for message [google.protobuf.Duration][]):\n\n    {\n      \"@type\": \"type.googleapis.com/google.protobuf.Duration\",\n      \"value\": \"1.212s\"\n    }"
+    }
+  },
+  "securityDefinitions": {
+    "bearer": {
+      "type": "apiKey",
+      "description": "Authentication token, prefixed by Bearer: Bearer \u003ctoken\u003e",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ],
+  "externalDocs": {
+    "description": "DBaaS central",
+    "url": "https://github.com/tidbcloud/core-svc"
+  }
+}
