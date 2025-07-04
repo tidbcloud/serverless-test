@@ -25,6 +25,7 @@ type OSSSource struct {
 	Uri       string                `json:"uri"`
 	AuthType  ImportOSSAuthTypeEnum `json:"auth_type"`
 	AccessKey *OSSSourceAccessKey   `json:"access_key,omitempty"`
+	RoleArn   *string               `json:"role_arn,omitempty"`
 	// The target table information of the import.
 	TargetTableInfos []ImportTargetTableInfo `json:"target_table_infos,omitempty"`
 }
@@ -130,6 +131,38 @@ func (o *OSSSource) SetAccessKey(v OSSSourceAccessKey) {
 	o.AccessKey = &v
 }
 
+// GetRoleArn returns the RoleArn field value if set, zero value otherwise.
+func (o *OSSSource) GetRoleArn() string {
+	if o == nil || IsNil(o.RoleArn) {
+		var ret string
+		return ret
+	}
+	return *o.RoleArn
+}
+
+// GetRoleArnOk returns a tuple with the RoleArn field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *OSSSource) GetRoleArnOk() (*string, bool) {
+	if o == nil || IsNil(o.RoleArn) {
+		return nil, false
+	}
+	return o.RoleArn, true
+}
+
+// HasRoleArn returns a boolean if a field has been set.
+func (o *OSSSource) HasRoleArn() bool {
+	if o != nil && !IsNil(o.RoleArn) {
+		return true
+	}
+
+	return false
+}
+
+// SetRoleArn gets a reference to the given string and assigns it to the RoleArn field.
+func (o *OSSSource) SetRoleArn(v string) {
+	o.RoleArn = &v
+}
+
 // GetTargetTableInfos returns the TargetTableInfos field value if set, zero value otherwise.
 func (o *OSSSource) GetTargetTableInfos() []ImportTargetTableInfo {
 	if o == nil || IsNil(o.TargetTableInfos) {
@@ -176,6 +209,9 @@ func (o OSSSource) ToMap() (map[string]interface{}, error) {
 	toSerialize["auth_type"] = o.AuthType
 	if !IsNil(o.AccessKey) {
 		toSerialize["access_key"] = o.AccessKey
+	}
+	if !IsNil(o.RoleArn) {
+		toSerialize["role_arn"] = o.RoleArn
 	}
 	if !IsNil(o.TargetTableInfos) {
 		toSerialize["target_table_infos"] = o.TargetTableInfos
