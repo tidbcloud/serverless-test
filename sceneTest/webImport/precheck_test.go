@@ -264,7 +264,7 @@ func TestPrecheckCustomMappingWithNonEmptyTable(t *testing.T) {
 	assert.NoError(err)
 	assert.NotNil(result)
 	util.EqualPointerValues(assert, pointer.ToBool(false), result.IsTruncated)
-	util.EqualPointerValues(assert, pointer.ToString(""), result.ErrorMessage)
+	util.EqualPointerValues(assert, pointer.ToString("Found 1 table(s) with error: test.a"), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
 	// Verify table result
