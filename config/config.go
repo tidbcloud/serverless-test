@@ -66,6 +66,9 @@ var (
 	ImportOSSSecretAccessKey            string
 	ImportOSSAccessKeyIdNoPrivilege     string
 	ImportOSSSecretAccessKeyNoPrivilege string
+	ImportOSSRoleArn                    string
+	ImportOSSRoleArnNoPrivilege         string
+	ImportOSSRoleArnDiffExternalID      string
 )
 
 var (
@@ -313,6 +316,15 @@ func getConfig() {
 	}
 	if ImportOSSSecretAccessKeyNoPrivilege == "" {
 		ImportOSSSecretAccessKeyNoPrivilege = viper.GetString("import.oss.secret-access-key-no-privilege")
+	}
+	if ImportOSSRoleArn == "" {
+		ImportOSSRoleArn = viper.GetString("import.oss.role-arn")
+	}
+	if ImportOSSRoleArnNoPrivilege == "" {
+		ImportOSSRoleArnNoPrivilege = viper.GetString("import.oss.role-arn-no-privilege")
+	}
+	if ImportOSSRoleArnDiffExternalID == "" {
+		ImportOSSRoleArnDiffExternalID = viper.GetString("import.oss.role-arn-diff-external-id")
 	}
 
 	if ConsoleApiHost == "" {

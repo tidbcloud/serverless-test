@@ -25,8 +25,11 @@ func TestPrecheckWithoutTable(t *testing.T) {
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
 				Uri:      config.ImportS3URI,
-				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &consoleimportapi.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 			},
 		},
 	})
@@ -70,8 +73,11 @@ func TestPrecheckWithEmptyTable(t *testing.T) {
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
 				Uri:      config.ImportS3URI,
-				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &consoleimportapi.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 			},
 		},
 	})
@@ -117,8 +123,11 @@ func TestPrecheckWithNonEmptyTable(t *testing.T) {
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
 				Uri:      config.ImportS3URI,
-				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &consoleimportapi.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 			},
 		},
 	})
@@ -158,8 +167,11 @@ func TestPrecheckTruncatedResult(t *testing.T) {
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
 				Uri:      "s3://tidbcloud-samples-us-east-1/import-data/gharchive_dev/",
-				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &consoleimportapi.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 			},
 		},
 	})
@@ -188,8 +200,11 @@ func TestPrecheckCustomMappingWithoutTable(t *testing.T) {
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
 				Uri:      config.ImportS3URI,
-				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &consoleimportapi.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 				TargetTableInfos: []consoleimportapi.ImportTargetTableInfo{
 					{
 						TargetTable: &consoleimportapi.ConsoleTable{
@@ -244,8 +259,11 @@ func TestPrecheckCustomMappingWithNonEmptyTable(t *testing.T) {
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
 				Uri:      config.ImportS3URI,
-				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &consoleimportapi.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 				TargetTableInfos: []consoleimportapi.ImportTargetTableInfo{
 					{
 						TargetTable: &consoleimportapi.ConsoleTable{
@@ -298,8 +316,11 @@ func TestPrecheckCustomMappingWithEmptyTable(t *testing.T) {
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
 				Uri:      config.ImportS3URI,
-				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+				AccessKey: &consoleimportapi.S3SourceAccessKey{
+					Id:     config.S3AccessKeyId,
+					Secret: config.S3SecretAccessKey,
+				},
 				TargetTableInfos: []consoleimportapi.ImportTargetTableInfo{
 					{
 						TargetTable: &consoleimportapi.ConsoleTable{

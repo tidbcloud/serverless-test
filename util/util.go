@@ -13,7 +13,9 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/icholy/digest"
+	"github.com/pingcap/log"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
 )
 
 func NewDigestTransport(publicKey, privateKey string) http.RoundTripper {
@@ -82,6 +84,7 @@ func ParseError(err error, resp *http.Response) error {
 	traceId := "<trace_id>"
 	if resp.Header.Get("X-Debug-Trace-Id") != "" {
 		traceId = resp.Header.Get("X-Debug-Trace-Id")
+		log.Info("trace id", zap.String("trace_id", traceId))
 	}
 	return fmt.Errorf("%s[%s][%s] %s", path, err.Error(), traceId, body)
 }

@@ -436,51 +436,6 @@ paths:
       tags:
       - ImportService
       x-codegen-request-body-name: body
-  /api/v1/serverless/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/imports:searchImportFiles:
-    post:
-      operationId: ImportService_SearchImportFiles
-      parameters:
-      - description: Required. The organize ID.
-        in: path
-        name: org_id
-        required: true
-        schema:
-          type: string
-      - description: Required. The project ID.
-        in: path
-        name: project_id
-        required: true
-        schema:
-          type: string
-      - description: Required. The cluster ID.
-        in: path
-        name: cluster_id
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ImportService.SearchImportFilesBody'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ImportsSearchImportFilesResp'
-          description: A successful response.
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-          description: An unexpected error response.
-      summary: Search for import files.
-      tags:
-      - ImportService
-      x-codegen-request-body-name: body
   /api/v1/serverless/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/imports:upload:
     post:
       operationId: ImportService_Upload
@@ -767,6 +722,7 @@ components:
             uri: uri
           oss:
             auth_type: ACCESS_KEY
+            role_arn: role_arn
             target_table_infos:
             - target_table:
                 database: database
@@ -1027,6 +983,7 @@ components:
               uri: uri
             oss:
               auth_type: ACCESS_KEY
+              role_arn: role_arn
               target_table_infos:
               - target_table:
                   database: database
@@ -1146,9 +1103,12 @@ components:
       - SERVICE_ACCOUNT_KEY
       type: string
     ImportOSSAuthType.Enum:
-      description: " - ACCESS_KEY: The access method is access key."
+      description: |2-
+         - ACCESS_KEY: The access method is access key.
+         - ROLE_ARN: The access method is role arn.
       enum:
       - ACCESS_KEY
+      - ROLE_ARN
       type: string
     ImportOptions:
       example:
@@ -1212,16 +1172,6 @@ components:
       required:
       - file_type
       - upload_id
-      type: object
-    ImportService.SearchImportFilesBody:
-      properties:
-        import_options:
-          $ref: '#/components/schemas/ImportOptions'
-        source:
-          $ref: '#/components/schemas/ImportSource'
-      required:
-      - import_options
-      - source
       type: object
     ImportService.UploadBody:
       properties:
@@ -1317,6 +1267,7 @@ components:
           uri: uri
         oss:
           auth_type: ACCESS_KEY
+          role_arn: role_arn
           target_table_infos:
           - target_table:
               database: database
@@ -1472,35 +1423,6 @@ components:
         base_resp:
           $ref: '#/components/schemas/BaseResp'
       type: object
-    ImportsSearchImportFilesResp:
-      example:
-        warning_message: warning_message
-        target_tables:
-        - warning_message: warning_message
-          target_table:
-            database: database
-            table: table
-        - warning_message: warning_message
-          target_table:
-            database: database
-            table: table
-        base_resp:
-          err_msg: err_msg
-          err_code: err_code
-          tags:
-            key: tags
-      properties:
-        target_tables:
-          description: The list of tables which has matched data files.
-          items:
-            $ref: '#/components/schemas/TableMatch'
-          type: array
-        warning_message:
-          description: The warning message consists of the unmatched tables.
-          type: string
-        base_resp:
-          $ref: '#/components/schemas/BaseResp'
-      type: object
     ImportsSupportedDataTypesResp:
       example:
         base_resp:
@@ -1593,6 +1515,7 @@ components:
     OSSSource:
       example:
         auth_type: ACCESS_KEY
+        role_arn: role_arn
         target_table_infos:
         - target_table:
             database: database
@@ -1614,6 +1537,8 @@ components:
           $ref: '#/components/schemas/ImportOSSAuthType.Enum'
         access_key:
           $ref: '#/components/schemas/OSSSource.AccessKey'
+        role_arn:
+          type: string
         target_table_infos:
           description: The target table information of the import.
           items:
@@ -1839,19 +1764,6 @@ components:
           items:
             $ref: '#/components/schemas/Any'
           type: array
-      type: object
-    TableMatch:
-      example:
-        warning_message: warning_message
-        target_table:
-          database: database
-          table: table
-      properties:
-        target_table:
-          $ref: '#/components/schemas/console.Table'
-        warning_message:
-          description: The warning message.
-          type: string
       type: object
     TableResult:
       example:
@@ -2080,6 +1992,7 @@ components:
                 uri: uri
               oss:
                 auth_type: ACCESS_KEY
+                role_arn: role_arn
                 target_table_infos:
                 - target_table:
                     database: database
@@ -2209,6 +2122,7 @@ components:
                 uri: uri
               oss:
                 auth_type: ACCESS_KEY
+                role_arn: role_arn
                 target_table_infos:
                 - target_table:
                     database: database

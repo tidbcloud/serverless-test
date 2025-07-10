@@ -4,10 +4,12 @@ import (
 	"context"
 	"crypto/tls"
 	"database/sql"
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -99,49 +101,39 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-//func waitImport(ctx context.Context, importID string) error {
-//	// Wait for the import task to finish
-//	ticker := time.NewTicker(10 * time.Second)
-//	defer ticker.Stop()
-//
-//	timeout := time.After(5 * time.Minute)
-//
-//	for {
-//		select {
-//		case <-ticker.C:
-//			getContext, cancel := context.WithTimeout(ctx, 30*time.Second)
-//			defer cancel()
-//			r := importClient.ImportServiceAPI.ImportServiceGetImport(getContext, clusterId, importID)
-//			i, resp, err := r.Execute()
-//			err = util.ParseError(err, resp)
-//			if err != nil {
-//				return err
-//			}
-//			if *i.State == imp.IMPORTSTATEENUM_COMPLETED {
-//				if i.HasTotalSize() && strings.EqualFold(*i.TotalSize, "0") {
-//					return errors.New("import succeeded but no data imported")
-//				}
-//				return nil
-//			} else if *i.State == imp.IMPORTSTATEENUM_FAILED {
-//				if i.Message == nil {
-//					return errors.New("import failed")
-//				}
-//				return errors.New(*i.Message)
-//			} else if *i.State == imp.IMPORTSTATEENUM_CANCELING || *i.State == imp.IMPORTSTATEENUM_CANCELED {
-//				return errors.New("import task cancelled")
-//			}
-//		case <-timeout:
-//			return errors.New("timed out to wait import task complete")
-//		}
-//	}
-//}
-//
-//func expectFail(err error, errorMsg string) error {
-//	if err != nil {
-//		if strings.Contains(err.Error(), errorMsg) {
-//			return nil
-//		}
-//		return fmt.Errorf("import failed, but not as expected. expected: %s, actual: %s", errorMsg, err.Error())
-//	}
-//	return errors.New("import should fail, but succeeded")
-//}
+func waitImport(ctx context.Context, importID string) error {
+	// Wait for the import task to finish
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	timeout := time.After(5 * time.Minute)
+
+	for {
+		select {
+		case <-ticker.C:
+			getContext, cancel := context.WithTimeout(ctx, 30*time.Second)
+			defer cancel()
+			r := importClient.ImportServiceAPI.ImportServiceGetImport(getContext, orgId, projectId, clusterId, importID)
+			i, resp, err := r.Execute()
+			err = util.ParseError(err, resp)
+			if err != nil {
+				return err
+			}
+			if *i.State == consoleimportapi.IMPORTSTATEENUM_COMPLETED {
+				if i.HasTotalSize() && strings.EqualFold(*i.TotalSize, "0") {
+					return errors.New("import succeeded but no data imported")
+				}
+				return nil
+			} else if *i.State == consoleimportapi.IMPORTSTATEENUM_FAILED {
+				if i.Message == nil {
+					return errors.New("import failed")
+				}
+				return errors.New(*i.Message)
+			} else if *i.State == consoleimportapi.IMPORTSTATEENUM_CANCELING || *i.State == consoleimportapi.IMPORTSTATEENUM_CANCELED {
+				return errors.New("import task cancelled")
+			}
+		case <-timeout:
+			return errors.New("timed out to wait import task complete")
+		}
+	}
+}
