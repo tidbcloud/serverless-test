@@ -1,8 +1,9 @@
 name: Import Scene Test
 
 on:
+  # Runs every two hours at even hours (0, 2, 4, ...)
   schedule:
-    - cron: "0 */2 * * *"  # every 2 hours
+    - cron: "0 */2 * * *"
   workflow_dispatch:
     inputs:
       testCase:

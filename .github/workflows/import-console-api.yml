@@ -1,8 +1,9 @@
 name: Import Console Api Test
 
 on:
+  # Runs every two hours at odd hours (1, 3, 5, ...)
   schedule:
-    - cron: "0 */2 * * *"  # every 2 hours
+    - cron: "0 1-23/2 * * *"
   workflow_dispatch:
     inputs:
       testCase:
