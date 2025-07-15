@@ -38,7 +38,7 @@ func TestPrecheckWithoutTable(t *testing.T) {
 
 	assert.NoError(err)
 	assert.NotNil(result)
-	util.EqualPointerValues(assert, pointer.ToBool(false), result.IsTruncated)
+	util.EqualPointerValues(assert, pointer.To(consoleimportapi.IMPORTPRECHECKSTATUSTYPEENUM_COMPLETED), result.Status)
 	util.EqualPointerValues(assert, pointer.ToString(""), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
@@ -86,7 +86,7 @@ func TestPrecheckWithEmptyTable(t *testing.T) {
 
 	assert.NoError(err)
 	assert.NotNil(result)
-	util.EqualPointerValues(assert, pointer.ToBool(false), result.IsTruncated)
+	util.EqualPointerValues(assert, pointer.To(consoleimportapi.IMPORTPRECHECKSTATUSTYPEENUM_COMPLETED), result.Status)
 	util.EqualPointerValues(assert, pointer.ToString(""), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
@@ -136,7 +136,7 @@ func TestPrecheckWithNonEmptyTable(t *testing.T) {
 
 	assert.NoError(err)
 	assert.NotNil(result)
-	util.EqualPointerValues(assert, pointer.ToBool(false), result.IsTruncated)
+	util.EqualPointerValues(assert, pointer.To(consoleimportapi.IMPORTPRECHECKSTATUSTYPEENUM_COMPLETED), result.Status)
 	util.EqualPointerValues(assert, pointer.ToString("Found 1 table(s) with error: test.a"), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
@@ -180,7 +180,7 @@ func TestPrecheckTruncatedResult(t *testing.T) {
 
 	assert.NoError(err)
 	assert.NotNil(result)
-	util.EqualPointerValues(assert, pointer.ToBool(true), result.IsTruncated)
+	util.EqualPointerValues(assert, pointer.To(consoleimportapi.IMPORTPRECHECKSTATUSTYPEENUM_TRUNCATED), result.Status)
 	util.EqualPointerValues(assert, pointer.ToString(""), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("997"), result.TotalDataFilesCount)
@@ -222,7 +222,7 @@ func TestPrecheckCustomMappingWithoutTable(t *testing.T) {
 
 	assert.NoError(err)
 	assert.NotNil(result)
-	util.EqualPointerValues(assert, pointer.ToBool(false), result.IsTruncated)
+	util.EqualPointerValues(assert, pointer.To(consoleimportapi.IMPORTPRECHECKSTATUSTYPEENUM_COMPLETED), result.Status)
 	util.EqualPointerValues(assert, pointer.ToString("Found 1 table(s) with error: test.a"), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
@@ -281,7 +281,7 @@ func TestPrecheckCustomMappingWithNonEmptyTable(t *testing.T) {
 
 	assert.NoError(err)
 	assert.NotNil(result)
-	util.EqualPointerValues(assert, pointer.ToBool(false), result.IsTruncated)
+	util.EqualPointerValues(assert, pointer.To(consoleimportapi.IMPORTPRECHECKSTATUSTYPEENUM_COMPLETED), result.Status)
 	util.EqualPointerValues(assert, pointer.ToString("Found 1 table(s) with error: test.a"), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
@@ -338,7 +338,7 @@ func TestPrecheckCustomMappingWithEmptyTable(t *testing.T) {
 
 	assert.NoError(err)
 	assert.NotNil(result)
-	util.EqualPointerValues(assert, pointer.ToBool(false), result.IsTruncated)
+	util.EqualPointerValues(assert, pointer.To(consoleimportapi.IMPORTPRECHECKSTATUSTYPEENUM_COMPLETED), result.Status)
 	util.EqualPointerValues(assert, pointer.ToString(""), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)

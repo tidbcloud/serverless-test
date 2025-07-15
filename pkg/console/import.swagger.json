@@ -536,6 +536,60 @@
         ]
       }
     },
+    "/api/v1/serverless/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/imports:searchImportFiles": {
+      "post": {
+        "summary": "Search for import files.",
+        "operationId": "ImportService_SearchImportFiles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ImportsSearchImportFilesResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/Status"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "org_id",
+            "description": "Required. The organize ID.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "project_id",
+            "description": "Required. The project ID.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "cluster_id",
+            "description": "Required. The cluster ID.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ImportService.SearchImportFilesBody"
+            }
+          }
+        ],
+        "tags": [
+          "ImportService"
+        ]
+      }
+    },
     "/api/v1/serverless/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/imports:upload": {
       "post": {
         "summary": "Generate Upload url for importing data.",
@@ -1006,10 +1060,9 @@
     "ImportOSSAuthType.Enum": {
       "type": "string",
       "enum": [
-        "ACCESS_KEY",
-        "ROLE_ARN"
+        "ACCESS_KEY"
       ],
-      "description": " - ACCESS_KEY: The access method is access key.\n - ROLE_ARN: The access method is role arn."
+      "description": " - ACCESS_KEY: The access method is access key."
     },
     "ImportOptions": {
       "type": "object",
@@ -1034,6 +1087,15 @@
       "required": [
         "file_type"
       ]
+    },
+    "ImportPrecheckStatusType.Enum": {
+      "type": "string",
+      "enum": [
+        "COMPLETED",
+        "TIMEOUT",
+        "TRUNCATED"
+      ],
+      "description": " - COMPLETED: The precheck is completed.\n - TIMEOUT: The precheck is timeout and return partial result.\n - TRUNCATED: The precheck result is truncated."
     },
     "ImportS3AuthType.Enum": {
       "type": "string",
@@ -1086,6 +1148,23 @@
       "required": [
         "upload_id",
         "file_type"
+      ]
+    },
+    "ImportService.SearchImportFilesBody": {
+      "type": "object",
+      "properties": {
+        "import_options": {
+          "$ref": "#/definitions/ImportOptions",
+          "description": "Required. The options of the import."
+        },
+        "source": {
+          "$ref": "#/definitions/ImportSource",
+          "description": "Required. The source of the import."
+        }
+      },
+      "required": [
+        "import_options",
+        "source"
       ]
     },
     "ImportService.UploadBody": {
@@ -1216,6 +1295,26 @@
         }
       }
     },
+    "ImportsSearchImportFilesResp": {
+      "type": "object",
+      "properties": {
+        "target_tables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/TableMatch"
+          },
+          "description": "The list of tables which has matched data files."
+        },
+        "warning_message": {
+          "type": "string",
+          "description": "The warning message consists of the unmatched tables."
+        },
+        "base_resp": {
+          "$ref": "#/definitions/BaseResp"
+        }
+      }
+    },
     "ImportsSupportedDataTypesResp": {
       "type": "object",
       "properties": {
@@ -1306,9 +1405,6 @@
           "$ref": "#/definitions/OSSSource.AccessKey",
           "description": "The access key."
         },
-        "role_arn": {
-          "type": "string"
-        },
         "target_table_infos": {
           "type": "array",
           "items": {
@@ -1365,9 +1461,9 @@
           "format": "uint64",
           "description": "The total tables count."
         },
-        "is_truncated": {
-          "type": "boolean",
-          "description": "If the result is truncated."
+        "status": {
+          "$ref": "#/definitions/ImportPrecheckStatusType.Enum",
+          "description": "The status."
         },
         "base_resp": {
           "$ref": "#/definitions/BaseResp"
@@ -1515,6 +1611,19 @@
             "type": "object",
             "$ref": "#/definitions/Any"
           }
+        }
+      }
+    },
+    "TableMatch": {
+      "type": "object",
+      "properties": {
+        "target_table": {
+          "$ref": "#/definitions/console.Table",
+          "description": "The target table."
+        },
+        "warning_message": {
+          "type": "string",
+          "description": "The warning message."
         }
       }
     },

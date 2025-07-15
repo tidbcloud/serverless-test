@@ -175,8 +175,7 @@ func TestGCSServiceAccountKeyNoPrivilege(t *testing.T) {
 
 	assert.NoError(err)
 	assert.NotNil(result)
-	util.EqualPointerValues(assert, pointer.ToString("GCS access deny, please check your GCS access key and uri."), result.GetBaseResp().ErrMsg)
-	//util.EqualPointerValues(assert, pointer.ToString("GCS access deny, please check your GCS Service Account Key and uri."), result.GetBaseResp().ErrMsg)
+	util.EqualPointerValues(assert, pointer.ToString("GCS access deny, please check your GCS Service Account Key and uri."), result.GetBaseResp().ErrMsg)
 }
 
 func TestAzureSASToken(t *testing.T) {
