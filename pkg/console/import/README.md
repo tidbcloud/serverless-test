@@ -88,6 +88,7 @@ Class | Method | HTTP request | Description
 *ImportServiceAPI* | [**ImportServiceListTargetTables**](docs/ImportServiceAPI.md#importservicelisttargettables) | **Get** /api/v1/serverless/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/imports:listTargetTables | List the target tables.
 *ImportServiceAPI* | [**ImportServicePrecheck**](docs/ImportServiceAPI.md#importserviceprecheck) | **Post** /api/v1/serverless/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/imports:precheck | Precheck and return the scan result.
 *ImportServiceAPI* | [**ImportServicePreviewLocal**](docs/ImportServiceAPI.md#importservicepreviewlocal) | **Post** /api/v1/serverless/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/imports:previewLocal | Preview the local import result.
+*ImportServiceAPI* | [**ImportServiceSearchImportFiles**](docs/ImportServiceAPI.md#importservicesearchimportfiles) | **Post** /api/v1/serverless/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/imports:searchImportFiles | Search for import files.
 *ImportServiceAPI* | [**ImportServiceUpload**](docs/ImportServiceAPI.md#importserviceupload) | **Post** /api/v1/serverless/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/imports:upload | Generate Upload url for importing data.
 *ImportServiceAPI* | [**ImportServiceValidateImport**](docs/ImportServiceAPI.md#importservicevalidateimport) | **Post** /api/v1/serverless/orgs/{org_id}/projects/{project_id}/clusters/{cluster_id}/imports:validate | Validate the import.
 
@@ -116,10 +117,12 @@ Class | Method | HTTP request | Description
  - [ImportGcsAuthTypeEnum](docs/ImportGcsAuthTypeEnum.md)
  - [ImportOSSAuthTypeEnum](docs/ImportOSSAuthTypeEnum.md)
  - [ImportOptions](docs/ImportOptions.md)
+ - [ImportPrecheckStatusTypeEnum](docs/ImportPrecheckStatusTypeEnum.md)
  - [ImportS3AuthTypeEnum](docs/ImportS3AuthTypeEnum.md)
  - [ImportS3CompatibleAuthTypeEnum](docs/ImportS3CompatibleAuthTypeEnum.md)
  - [ImportServicePrecheckBody](docs/ImportServicePrecheckBody.md)
  - [ImportServicePreviewLocalBody](docs/ImportServicePreviewLocalBody.md)
+ - [ImportServiceSearchImportFilesBody](docs/ImportServiceSearchImportFilesBody.md)
  - [ImportServiceUploadBody](docs/ImportServiceUploadBody.md)
  - [ImportServiceValidateImportBody](docs/ImportServiceValidateImportBody.md)
  - [ImportSource](docs/ImportSource.md)
@@ -129,6 +132,7 @@ Class | Method | HTTP request | Description
  - [ImportValidationTypeEnum](docs/ImportValidationTypeEnum.md)
  - [ImportsGetTableColumnsResp](docs/ImportsGetTableColumnsResp.md)
  - [ImportsPreviewLocalResp](docs/ImportsPreviewLocalResp.md)
+ - [ImportsSearchImportFilesResp](docs/ImportsSearchImportFilesResp.md)
  - [ImportsSupportedDataTypesResp](docs/ImportsSupportedDataTypesResp.md)
  - [ListTargetTablesResp](docs/ListTargetTablesResp.md)
  - [LocalSource](docs/LocalSource.md)
@@ -142,6 +146,7 @@ Class | Method | HTTP request | Description
  - [S3Source](docs/S3Source.md)
  - [S3SourceAccessKey](docs/S3SourceAccessKey.md)
  - [Status](docs/Status.md)
+ - [TableMatch](docs/TableMatch.md)
  - [TableResult](docs/TableResult.md)
  - [UploadResponse](docs/UploadResponse.md)
  - [ValidateImportResp](docs/ValidateImportResp.md)

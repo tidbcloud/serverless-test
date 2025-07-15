@@ -26,10 +26,9 @@ type PrecheckResp struct {
 	// The total data files count.
 	TotalDataFilesCount *string `json:"total_data_files_count,omitempty"`
 	// The total tables count.
-	TotalTablesCount *string `json:"total_tables_count,omitempty"`
-	// If the result is truncated.
-	IsTruncated *bool     `json:"is_truncated,omitempty"`
-	BaseResp    *BaseResp `json:"base_resp,omitempty"`
+	TotalTablesCount *string                       `json:"total_tables_count,omitempty"`
+	Status           *ImportPrecheckStatusTypeEnum `json:"status,omitempty"`
+	BaseResp         *BaseResp                     `json:"base_resp,omitempty"`
 }
 
 // NewPrecheckResp instantiates a new PrecheckResp object
@@ -177,36 +176,36 @@ func (o *PrecheckResp) SetTotalTablesCount(v string) {
 	o.TotalTablesCount = &v
 }
 
-// GetIsTruncated returns the IsTruncated field value if set, zero value otherwise.
-func (o *PrecheckResp) GetIsTruncated() bool {
-	if o == nil || IsNil(o.IsTruncated) {
-		var ret bool
+// GetStatus returns the Status field value if set, zero value otherwise.
+func (o *PrecheckResp) GetStatus() ImportPrecheckStatusTypeEnum {
+	if o == nil || IsNil(o.Status) {
+		var ret ImportPrecheckStatusTypeEnum
 		return ret
 	}
-	return *o.IsTruncated
+	return *o.Status
 }
 
-// GetIsTruncatedOk returns a tuple with the IsTruncated field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *PrecheckResp) GetIsTruncatedOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsTruncated) {
+func (o *PrecheckResp) GetStatusOk() (*ImportPrecheckStatusTypeEnum, bool) {
+	if o == nil || IsNil(o.Status) {
 		return nil, false
 	}
-	return o.IsTruncated, true
+	return o.Status, true
 }
 
-// HasIsTruncated returns a boolean if a field has been set.
-func (o *PrecheckResp) HasIsTruncated() bool {
-	if o != nil && !IsNil(o.IsTruncated) {
+// HasStatus returns a boolean if a field has been set.
+func (o *PrecheckResp) HasStatus() bool {
+	if o != nil && !IsNil(o.Status) {
 		return true
 	}
 
 	return false
 }
 
-// SetIsTruncated gets a reference to the given bool and assigns it to the IsTruncated field.
-func (o *PrecheckResp) SetIsTruncated(v bool) {
-	o.IsTruncated = &v
+// SetStatus gets a reference to the given ImportPrecheckStatusTypeEnum and assigns it to the Status field.
+func (o *PrecheckResp) SetStatus(v ImportPrecheckStatusTypeEnum) {
+	o.Status = &v
 }
 
 // GetBaseResp returns the BaseResp field value if set, zero value otherwise.
@@ -263,8 +262,8 @@ func (o PrecheckResp) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.TotalTablesCount) {
 		toSerialize["total_tables_count"] = o.TotalTablesCount
 	}
-	if !IsNil(o.IsTruncated) {
-		toSerialize["is_truncated"] = o.IsTruncated
+	if !IsNil(o.Status) {
+		toSerialize["status"] = o.Status
 	}
 	if !IsNil(o.BaseResp) {
 		toSerialize["base_resp"] = o.BaseResp

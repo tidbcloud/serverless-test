@@ -15,19 +15,17 @@ import (
 	"fmt"
 )
 
-// ImportOSSAuthTypeEnum  - ACCESS_KEY: The access method is access key.  - ROLE_ARN: The access method is role arn.
+// ImportOSSAuthTypeEnum  - ACCESS_KEY: The access method is access key.
 type ImportOSSAuthTypeEnum string
 
 // List of ImportOSSAuthType.Enum
 const (
 	IMPORTOSSAUTHTYPEENUM_ACCESS_KEY ImportOSSAuthTypeEnum = "ACCESS_KEY"
-	IMPORTOSSAUTHTYPEENUM_ROLE_ARN   ImportOSSAuthTypeEnum = "ROLE_ARN"
 )
 
 // All allowed values of ImportOSSAuthTypeEnum enum
 var AllowedImportOSSAuthTypeEnumEnumValues = []ImportOSSAuthTypeEnum{
 	"ACCESS_KEY",
-	"ROLE_ARN",
 }
 
 func (v *ImportOSSAuthTypeEnum) UnmarshalJSON(src []byte) error {
