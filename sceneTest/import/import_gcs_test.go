@@ -22,6 +22,7 @@ func TestGcsImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -32,9 +33,9 @@ func TestGcsImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_GCS,
 			Gcs: &imp.GCSSource{
-				Uri:               config.ImportGCSURI,
+				Uri:               cfg.ImportGCSURI,
 				AuthType:          imp.IMPORTGCSAUTHTYPEENUM_SERVICE_ACCOUNT_KEY,
-				ServiceAccountKey: &config.GCSServiceAccountKey,
+				ServiceAccountKey: &cfg.ImportGCSServiceAccountKey,
 			},
 		},
 	}
@@ -66,6 +67,7 @@ func TestGcsNoPrivilegeImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -76,9 +78,9 @@ func TestGcsNoPrivilegeImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_GCS,
 			Gcs: &imp.GCSSource{
-				Uri:               config.ImportGCSURI,
+				Uri:               cfg.ImportGCSURI,
 				AuthType:          imp.IMPORTGCSAUTHTYPEENUM_SERVICE_ACCOUNT_KEY,
-				ServiceAccountKey: &config.ImportGCSServiceAccountKeyNoPrivilege,
+				ServiceAccountKey: &cfg.ImportGCSServiceAccountKeyNoPrivilege,
 			},
 		},
 	}

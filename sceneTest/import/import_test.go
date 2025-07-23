@@ -22,6 +22,7 @@ func TestParquetImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_PARQUET,
@@ -29,11 +30,11 @@ func TestParquetImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      config.ImportS3ParquetURI,
+				Uri:      cfg.ImportS3ParquetURI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 			},
 		},
@@ -65,6 +66,7 @@ func TestSchemaCompressImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -75,11 +77,11 @@ func TestSchemaCompressImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      config.ImportS3SchemaCompressURI,
+				Uri:      cfg.ImportS3SchemaCompressURI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 			},
 		},
@@ -112,6 +114,7 @@ func TestSchemaTypeMisMatchedImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -122,11 +125,11 @@ func TestSchemaTypeMisMatchedImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      config.ImportS3SchemaTypeMisMatchedURI,
+				Uri:      cfg.ImportS3SchemaTypeMismatchedURI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 			},
 		},
@@ -161,6 +164,7 @@ func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -171,11 +175,11 @@ func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      config.ImportS3SchemaColumnNumberMismatchedURI,
+				Uri:      cfg.ImportS3SchemaColumnNumberMismatchedURI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 			},
 		},

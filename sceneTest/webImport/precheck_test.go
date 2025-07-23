@@ -16,6 +16,7 @@ func TestPrecheckWithoutTable(t *testing.T) {
 	assert := require.New(t)
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	assert.NoError(err)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -24,11 +25,11 @@ func TestPrecheckWithoutTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 			},
 		},
@@ -64,6 +65,7 @@ func TestPrecheckWithEmptyTable(t *testing.T) {
 	assert.NoError(err)
 	_, err = db.Exec("CREATE TABLE `test`.`a` (name VARCHAR(20) NOT NULL, age INT NOT NULL)")
 	assert.NoError(err)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -72,11 +74,11 @@ func TestPrecheckWithEmptyTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 			},
 		},
@@ -114,6 +116,7 @@ func TestPrecheckWithNonEmptyTable(t *testing.T) {
 	assert.NoError(err)
 	_, err = db.Exec("INSERT INTO `test`.`a` VALUES ('Alice', 30), ('Bob', 25)")
 	assert.NoError(err)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -122,11 +125,11 @@ func TestPrecheckWithNonEmptyTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 			},
 		},
@@ -158,6 +161,7 @@ func TestPrecheckWithNonEmptyTable(t *testing.T) {
 func TestPrecheckTruncatedResult(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -169,8 +173,8 @@ func TestPrecheckTruncatedResult(t *testing.T) {
 				Uri:      "s3://tidbcloud-samples-us-east-1/import-data/gharchive_dev/",
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 			},
 		},
@@ -191,6 +195,7 @@ func TestPrecheckCustomMappingWithoutTable(t *testing.T) {
 	assert := require.New(t)
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	assert.NoError(err)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -199,11 +204,11 @@ func TestPrecheckCustomMappingWithoutTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 				TargetTableInfos: []consoleimportapi.ImportTargetTableInfo{
 					{
@@ -250,6 +255,7 @@ func TestPrecheckCustomMappingWithNonEmptyTable(t *testing.T) {
 	assert.NoError(err)
 	_, err = db.Exec("INSERT INTO `test`.`a` VALUES ('Alice', 30), ('Bob', 25)")
 	assert.NoError(err)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -258,11 +264,11 @@ func TestPrecheckCustomMappingWithNonEmptyTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 				TargetTableInfos: []consoleimportapi.ImportTargetTableInfo{
 					{
@@ -307,6 +313,7 @@ func TestPrecheckCustomMappingWithEmptyTable(t *testing.T) {
 	assert.NoError(err)
 	_, err = db.Exec("CREATE TABLE `test`.`a` (name VARCHAR(20) NOT NULL, age INT NOT NULL)")
 	assert.NoError(err)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -315,11 +322,11 @@ func TestPrecheckCustomMappingWithEmptyTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 				TargetTableInfos: []consoleimportapi.ImportTargetTableInfo{
 					{

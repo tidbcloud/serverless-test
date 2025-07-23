@@ -14,15 +14,16 @@ import (
 func TestS3Arn(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				RoleArn:  &cfg.ImportS3RoleARN,
 			},
 		},
 	})
@@ -37,15 +38,16 @@ func TestS3Arn(t *testing.T) {
 func TestS3ArnNoPrivilege(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArnNoPrivilege,
+				RoleArn:  &cfg.ImportS3RoleARNNoPrivilege,
 			},
 		},
 	})
@@ -60,15 +62,16 @@ func TestS3ArnNoPrivilege(t *testing.T) {
 func TestS3ArnDiffExternalID(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArnDiffExternalID,
+				RoleArn:  &cfg.ImportS3RoleARNDiffExternalID,
 			},
 		},
 	})
@@ -83,17 +86,18 @@ func TestS3ArnDiffExternalID(t *testing.T) {
 func TestS3AccessKey(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 			},
 		},
@@ -109,17 +113,18 @@ func TestS3AccessKey(t *testing.T) {
 func TestS3AccessKeyNoPrivilege(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.ImportS3AccessKeyIdNoPrivilege,
-					Secret: config.ImportS3SecretAccessKeyNoPrivilege,
+					Id:     cfg.ImportS3AccessKeyIDNoPrivilege,
+					Secret: cfg.ImportS3SecretAccessKeyNoPrivilege,
 				},
 			},
 		},
@@ -135,15 +140,16 @@ func TestS3AccessKeyNoPrivilege(t *testing.T) {
 func TestGCSServiceAccountKey(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_GCS,
 			Gcs: &consoleimportapi.GCSSource{
-				Uri:               config.ImportGCSURI,
+				Uri:               cfg.ImportGCSURI,
 				AuthType:          consoleimportapi.IMPORTGCSAUTHTYPEENUM_SERVICE_ACCOUNT_KEY,
-				ServiceAccountKey: &config.ImportGCSServiceAccountKey,
+				ServiceAccountKey: &cfg.ImportGCSServiceAccountKey,
 			},
 		},
 	})
@@ -158,15 +164,16 @@ func TestGCSServiceAccountKey(t *testing.T) {
 func TestGCSServiceAccountKeyNoPrivilege(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_GCS,
 			Gcs: &consoleimportapi.GCSSource{
-				Uri:               config.ImportGCSURI,
+				Uri:               cfg.ImportGCSURI,
 				AuthType:          consoleimportapi.IMPORTGCSAUTHTYPEENUM_SERVICE_ACCOUNT_KEY,
-				ServiceAccountKey: &config.ImportGCSServiceAccountKeyNoPrivilege,
+				ServiceAccountKey: &cfg.ImportGCSServiceAccountKeyNoPrivilege,
 			},
 		},
 	})
@@ -181,15 +188,16 @@ func TestGCSServiceAccountKeyNoPrivilege(t *testing.T) {
 func TestAzureSASToken(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_AZURE_BLOB,
 			AzureBlob: &consoleimportapi.AzureBlobSource{
-				Uri:      config.ImportAzureURI,
+				Uri:      cfg.ImportAzureURI,
 				AuthType: consoleimportapi.IMPORTAZUREBLOBAUTHTYPEENUM_SAS_TOKEN,
-				SasToken: &config.ImportAzureSASToken,
+				SasToken: &cfg.ImportAzureSASToken,
 			},
 		},
 	})
@@ -204,15 +212,16 @@ func TestAzureSASToken(t *testing.T) {
 func TestAzureSASTokenNoPrivilege(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_AZURE_BLOB,
 			AzureBlob: &consoleimportapi.AzureBlobSource{
-				Uri:      config.ImportAzureURI,
+				Uri:      cfg.ImportAzureURI,
 				AuthType: consoleimportapi.IMPORTAZUREBLOBAUTHTYPEENUM_SAS_TOKEN,
-				SasToken: &config.ImportAzureSASTokenNoPrivilege,
+				SasToken: &cfg.ImportAzureSASTokenNoPrivilege,
 			},
 		},
 	})
@@ -227,16 +236,17 @@ func TestAzureSASTokenNoPrivilege(t *testing.T) {
 func TestOSSAccessKey(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_OSS,
 			Oss: &consoleimportapi.OSSSource{
-				Uri:      config.ImportOSSURI,
+				Uri:      cfg.ImportOSSURI,
 				AuthType: consoleimportapi.IMPORTOSSAUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: consoleimportapi.NewOSSSourceAccessKey(
-					config.ImportOSSAccessKeyId, config.ImportOSSSecretAccessKey),
+					cfg.ImportOSSAccessKeyID, cfg.ImportOSSSecretAccessKey),
 			},
 		},
 	})
@@ -251,16 +261,17 @@ func TestOSSAccessKey(t *testing.T) {
 func TestOSSAccessKeyNoPrivilege(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_OSS,
 			Oss: &consoleimportapi.OSSSource{
-				Uri:      config.ImportOSSURI,
+				Uri:      cfg.ImportOSSURI,
 				AuthType: consoleimportapi.IMPORTOSSAUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: consoleimportapi.NewOSSSourceAccessKey(
-					config.ImportOSSAccessKeyIdNoPrivilege, config.ImportOSSSecretAccessKeyNoPrivilege),
+					cfg.ImportOSSAccessKeyIDNoPrivilege, cfg.ImportOSSSecretAccessKeyNoPrivilege),
 			},
 		},
 	})

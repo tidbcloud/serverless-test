@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -16,65 +15,62 @@ import (
 )
 
 func setup() {
+	cfg := config.LoadConfig()
 	var err error
-	config.InitializeConfig()
-	branchClient, err = NewBranchClient()
+	branchClient, err = NewBranchClient(cfg)
 	if err != nil {
-		println(err.Error())
-		os.Exit(1)
+		panic(err)
 	}
-	clusterClient, err = NewClusterClient()
+	clusterClient, err = NewClusterClient(cfg)
 	if err != nil {
-		println(err.Error())
-		os.Exit(1)
+		panic(err)
 	}
-	clu, err := CreateCluster()
+	clu, err := CreateCluster(cfg.ProjectID)
 	if err != nil {
-		println(err.Error())
-		os.Exit(1)
+		panic(err)
 	}
 	clusterId = *clu.ClusterId
 	println(fmt.Sprintf("cluster created successfully, clusterId is %s, region is %s", *clu.ClusterId, *clu.Region.Name))
 }
 
-func NewBranchClient() (*branch.APIClient, error) {
+func NewBranchClient(cfg *config.Config) (*branch.APIClient, error) {
 	httpclient := &http.Client{
-		Transport: util.NewDigestTransport(config.PublicKey, config.PrivateKey),
+		Transport: util.NewDigestTransport(cfg.PublicKey, cfg.PrivateKey),
 	}
-	serverlessURL, err := util.ValidateApiUrl(config.ServerlessEndpoint)
+	serverlessURL, err := util.ValidateApiUrl(cfg.ServerlessEndpoint)
 	if err != nil {
 		return nil, err
 	}
-	cfg := branch.NewConfiguration()
-	cfg.HTTPClient = httpclient
-	cfg.Host = serverlessURL.Host
-	cfg.UserAgent = util.UserAgent
-	return branch.NewAPIClient(cfg), nil
+	bcfg := branch.NewConfiguration()
+	bcfg.HTTPClient = httpclient
+	bcfg.Host = serverlessURL.Host
+	bcfg.UserAgent = util.UserAgent
+	return branch.NewAPIClient(bcfg), nil
 }
 
-func NewClusterClient() (*cluster.APIClient, error) {
+func NewClusterClient(cfg *config.Config) (*cluster.APIClient, error) {
 	httpclient := &http.Client{
-		Transport: util.NewDigestTransport(config.PublicKey, config.PrivateKey),
+		Transport: util.NewDigestTransport(cfg.PublicKey, cfg.PrivateKey),
 	}
-	serverlessURL, err := util.ValidateApiUrl(config.ServerlessEndpoint)
+	serverlessURL, err := util.ValidateApiUrl(cfg.ServerlessEndpoint)
 	if err != nil {
 		return nil, err
 	}
-	cfg := cluster.NewConfiguration()
-	cfg.HTTPClient = httpclient
-	cfg.Host = serverlessURL.Host
-	cfg.UserAgent = util.UserAgent
-	return cluster.NewAPIClient(cfg), nil
+	ccfg := cluster.NewConfiguration()
+	ccfg.HTTPClient = httpclient
+	ccfg.Host = serverlessURL.Host
+	ccfg.UserAgent = util.UserAgent
+	return cluster.NewAPIClient(ccfg), nil
 }
 
-func CreateCluster() (*cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) {
+func CreateCluster(projectId string) (*cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) {
 	ctx := context.Background()
 	clusterName := "branch-test"
 
 	req := clusterClient.ServerlessServiceAPI.ServerlessServiceListClusters(ctx)
 	req = req.PageSize(100)
-	if config.ProjectId != "" {
-		projectFilter := fmt.Sprintf("projectId=%s", config.ProjectId)
+	if projectId != "" {
+		projectFilter := fmt.Sprintf("projectId=%s", projectId)
 		req = req.Filter(projectFilter)
 	}
 	clusters, h, err := req.Execute()
@@ -110,8 +106,8 @@ func CreateCluster() (*cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) 
 			MaxRcu: &maxRcu,
 		}
 	}
-	if config.ProjectId != "" {
-		clusterBody.Labels = &map[string]string{"tidb.cloud/project": config.ProjectId}
+	if projectId != "" {
+		clusterBody.Labels = &map[string]string{"tidb.cloud/project": projectId}
 	}
 
 	resp, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceCreateCluster(ctx).Cluster(clusterBody).Execute()

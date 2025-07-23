@@ -22,6 +22,7 @@ func TestAzureImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -32,9 +33,9 @@ func TestAzureImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_AZURE_BLOB,
 			AzureBlob: &imp.AzureBlobSource{
-				Uri:      config.ImportAzureURI,
+				Uri:      cfg.ImportAzureURI,
 				AuthType: imp.IMPORTAZUREBLOBAUTHTYPEENUM_SAS_TOKEN,
-				SasToken: &config.AzureSASToken,
+				SasToken: &cfg.ImportAzureSASToken,
 			},
 		},
 	}
@@ -66,6 +67,7 @@ func TestAzureNoPrivilegeImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -76,9 +78,9 @@ func TestAzureNoPrivilegeImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_AZURE_BLOB,
 			AzureBlob: &imp.AzureBlobSource{
-				Uri:      config.ImportAzureURI,
+				Uri:      cfg.ImportAzureURI,
 				AuthType: imp.IMPORTAZUREBLOBAUTHTYPEENUM_SAS_TOKEN,
-				SasToken: &config.ImportAzureSASTokenNoPrivilege,
+				SasToken: &cfg.ImportAzureSASTokenNoPrivilege,
 			},
 		},
 	}

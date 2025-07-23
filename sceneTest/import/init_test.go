@@ -32,31 +32,29 @@ func init() {
 }
 
 func setup() {
+	cfg := config.LoadConfig()
 	var err error
-	config.InitializeConfig()
-	importClient, err = NewImportClient()
+	importClient, err = NewImportClient(cfg)
 	if err != nil {
-		println(err.Error())
-		os.Exit(1)
+		panic(err)
 	}
-	db, err = NewDB()
+	db, err = NewDB(cfg)
 	if err != nil {
-		println(err.Error())
-		os.Exit(1)
+		panic(err)
 	}
 }
 
-func NewDB() (*sql.DB, error) {
+func NewDB(cfg *config.Config) (*sql.DB, error) {
 	err := mysql.RegisterTLSConfig("tidb", &tls.Config{
 		MinVersion: tls.VersionTLS12,
-		ServerName: config.ImportClusterHost,
+		ServerName: cfg.ImportClusterHost,
 	})
 	if err != nil {
 		log.Fatal("failed to register tls config -> ", zap.Error(err))
 	}
 	db, err = sql.Open("mysql", fmt.Sprintf(
 		"%s:%s@tcp(%s:4000)/test?tls=tidb",
-		config.ImportClusterUser, config.ImportClusterPassWord, config.ImportClusterHost),
+		cfg.ImportClusterUser, cfg.ImportClusterPassword, cfg.ImportClusterHost),
 	)
 	db.SetConnMaxLifetime(3 * time.Minute)
 	db.SetMaxOpenConns(3)
@@ -67,11 +65,11 @@ func NewDB() (*sql.DB, error) {
 	return db, nil
 }
 
-func NewImportClient() (*imp.APIClient, error) {
+func NewImportClient(cfg *config.Config) (*imp.APIClient, error) {
 	httpclient := &http.Client{
-		Transport: util.NewDigestTransport(config.PublicKey, config.PrivateKey),
+		Transport: util.NewDigestTransport(cfg.PublicKey, cfg.PrivateKey),
 	}
-	serverlessURL, err := util.ValidateApiUrl(config.ServerlessEndpoint)
+	serverlessURL, err := util.ValidateApiUrl(cfg.ServerlessEndpoint)
 	if err != nil {
 		return nil, err
 	}

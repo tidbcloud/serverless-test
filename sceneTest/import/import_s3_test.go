@@ -22,6 +22,7 @@ func TestS3ArnNoPrivilegeImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -32,9 +33,9 @@ func TestS3ArnNoPrivilegeImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArnNoPrivilege,
+				RoleArn:  &cfg.ImportS3RoleARNNoPrivilege,
 			},
 		},
 	}
@@ -67,6 +68,7 @@ func TestS3ArnDiffExternalIDImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -77,9 +79,9 @@ func TestS3ArnDiffExternalIDImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArnDiffExternalID,
+				RoleArn:  &cfg.ImportS3RoleARNDiffExternalID,
 			},
 		},
 	}
@@ -112,6 +114,7 @@ func TestS3AccessKeyNoPrivilegeImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -122,11 +125,11 @@ func TestS3AccessKeyNoPrivilegeImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     config.ImportS3AccessKeyIdNoPrivilege,
-					Secret: config.ImportS3SecretAccessKeyNoPrivilege,
+					Id:     cfg.ImportS3AccessKeyIDNoPrivilege,
+					Secret: cfg.ImportS3SecretAccessKeyNoPrivilege,
 				},
 			},
 		},
@@ -160,6 +163,7 @@ func TestS3AccessKeyImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -170,11 +174,11 @@ func TestS3AccessKeyImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 			},
 		},
@@ -206,6 +210,7 @@ func TestS3ArnImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -216,9 +221,9 @@ func TestS3ArnImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &config.ImportS3RoleArn,
+				RoleArn:  &cfg.ImportS3RoleARN,
 			},
 		},
 	}

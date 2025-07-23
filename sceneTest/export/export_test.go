@@ -243,10 +243,11 @@ func TestExportWithTableFilter(t *testing.T) {
 func TestExportToS3AccessKey(t *testing.T) {
 	ctx := context.Background()
 
+	cfg := config.LoadConfig()
 	exportType := export.EXPORTTARGETTYPEENUM_S3
-	s3AccessKeyId := config.S3AccessKeyId
-	s3SecretKeyId := config.S3SecretAccessKey
-	exportS3Uri := config.S3URI
+	s3AccessKeyId := cfg.S3AccessKeyID
+	s3SecretKeyId := cfg.S3SecretAccessKey
+	exportS3Uri := cfg.S3URI
 	if s3AccessKeyId == "" || s3SecretKeyId == "" || exportS3Uri == "" {
 		t.Fatal("s3 access key or secret key or uri is empty")
 	}
@@ -282,9 +283,10 @@ func TestExportToS3AccessKey(t *testing.T) {
 func TestExportToS3RoleArn(t *testing.T) {
 	ctx := context.Background()
 
+	cfg := config.LoadConfig()
 	exportType := export.EXPORTTARGETTYPEENUM_S3
-	roleArn := config.S3RoleArn
-	exportS3Uri := config.S3URI
+	roleArn := cfg.S3RoleARN
+	exportS3Uri := cfg.S3URI
 	if roleArn == "" || exportS3Uri == "" {
 		t.Fatal("s3 role arn or uri is empty")
 	}
@@ -320,9 +322,10 @@ func TestExportToS3RoleArn(t *testing.T) {
 func TestExportToAzure(t *testing.T) {
 	ctx := context.Background()
 
+	cfg := config.LoadConfig()
 	exportType := export.EXPORTTARGETTYPEENUM_AZURE_BLOB
-	azureUri := config.AzureURI
-	azureSASToken := config.AzureSASToken
+	azureUri := cfg.AzureURI
+	azureSASToken := cfg.AzureSASToken
 	if azureUri == "" || azureSASToken == "" {
 		t.Fatal("azure uri or sas token is empty")
 	}
@@ -358,9 +361,10 @@ func TestExportToAzure(t *testing.T) {
 func TestExportToGCS(t *testing.T) {
 	ctx := context.Background()
 
+	cfg := config.LoadConfig()
 	exportType := export.EXPORTTARGETTYPEENUM_GCS
-	gcsUri := config.GCSURI
-	gcsServiceAccountKey := config.GCSServiceAccountKey
+	gcsUri := cfg.GCSURI
+	gcsServiceAccountKey := cfg.GCSServiceAccountKey
 	if gcsUri == "" || gcsServiceAccountKey == "" {
 		t.Fatal("gcs uri or service account key is empty")
 	}

@@ -20,7 +20,7 @@ func TestImportWithoutTargetTables(t *testing.T) {
 	t.Log("start import")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
-
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ConsoleImportServiceCreateImportBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -32,11 +32,11 @@ func TestImportWithoutTargetTables(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 			},
 		},
@@ -59,7 +59,7 @@ func TestImportWithTargetTables(t *testing.T) {
 	t.Log("start import")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
-
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ConsoleImportServiceCreateImportBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -71,11 +71,11 @@ func TestImportWithTargetTables(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.ImportS3URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3AccessKeyID,
+					Secret: cfg.S3SecretAccessKey,
 				},
 				TargetTableInfos: []consoleimportapi.ImportTargetTableInfo{
 					{

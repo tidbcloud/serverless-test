@@ -22,6 +22,7 @@ func TestOSSAccessKeyNoPrivilegeImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -32,11 +33,11 @@ func TestOSSAccessKeyNoPrivilegeImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_OSS,
 			Oss: &imp.OSSSource{
-				Uri:      config.ImportOSSURI,
+				Uri:      cfg.ImportOSSURI,
 				AuthType: imp.IMPORTOSSAUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.OSSSourceAccessKey{
-					Id:     config.ImportOSSAccessKeyIdNoPrivilege,
-					Secret: config.ImportOSSSecretAccessKeyNoPrivilege,
+					Id:     cfg.ImportOSSAccessKeyIDNoPrivilege,
+					Secret: cfg.ImportOSSSecretAccessKeyNoPrivilege,
 				},
 			},
 		},
@@ -66,6 +67,7 @@ func TestOSSAccessKeyImport(t *testing.T) {
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	body := &imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
@@ -76,11 +78,11 @@ func TestOSSAccessKeyImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_OSS,
 			Oss: &imp.OSSSource{
-				Uri:      config.ImportOSSURI,
+				Uri:      cfg.ImportOSSURI,
 				AuthType: imp.IMPORTOSSAUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.OSSSourceAccessKey{
-					Id:     config.ImportOSSAccessKeyId,
-					Secret: config.ImportOSSSecretAccessKey,
+					Id:     cfg.ImportOSSAccessKeyID,
+					Secret: cfg.ImportOSSSecretAccessKey,
 				},
 			},
 		},

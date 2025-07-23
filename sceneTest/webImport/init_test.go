@@ -38,30 +38,30 @@ func init() {
 
 func setup() {
 	var err error
-	config.InitializeConfig()
-	importClient, err = NewImportConsoleClient()
+	cfg := config.LoadConfig()
+	importClient, err = NewImportConsoleClient(cfg)
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
 	}
-	db, err = NewDB()
+	db, err = NewDB(cfg)
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
 	}
 }
 
-func NewDB() (*sql.DB, error) {
+func NewDB(cfg *config.Config) (*sql.DB, error) {
 	err := mysql.RegisterTLSConfig("tidb", &tls.Config{
 		MinVersion: tls.VersionTLS12,
-		ServerName: config.ImportClusterHost,
+		ServerName: cfg.ImportClusterHost,
 	})
 	if err != nil {
 		log.Fatal("failed to register tls config -> ", zap.Error(err))
 	}
 	db, err = sql.Open("mysql", fmt.Sprintf(
 		"%s:%s@tcp(%s:4000)/test?tls=tidb",
-		config.ImportClusterUser, config.ImportClusterPassWord, config.ImportClusterHost),
+		cfg.ImportClusterUser, cfg.ImportClusterPassword, cfg.ImportClusterHost),
 	)
 	db.SetConnMaxLifetime(3 * time.Minute)
 	db.SetMaxOpenConns(3)
@@ -72,13 +72,13 @@ func NewDB() (*sql.DB, error) {
 	return db, nil
 }
 
-func NewImportConsoleClient() (*consoleimportapi.APIClient, error) {
+func NewImportConsoleClient(cfg *config.Config) (*consoleimportapi.APIClient, error) {
 	c := tidbcloudlogin.WebApiLoginContext{
-		Host:              config.ConsoleApiHost,
-		Auth0Domain:       config.Auth0Domain,
-		Auth0ClientID:     config.Auth0ClientID,
-		Auth0ClientSecret: config.Auth0ClientSecret,
-		UserEmail:         config.UserEmail,
+		Host:              cfg.ConsoleAPIHost,
+		Auth0Domain:       cfg.Auth0Domain,
+		Auth0ClientID:     cfg.Auth0ClientID,
+		Auth0ClientSecret: cfg.Auth0ClientSecret,
+		UserEmail:         cfg.UserEmail,
 	}
 	token, err := c.LoginAndGetToken(context.Background())
 	if err != nil {
@@ -89,7 +89,7 @@ func NewImportConsoleClient() (*consoleimportapi.APIClient, error) {
 	}
 	importCfg := consoleimportapi.NewConfiguration()
 	importCfg.HTTPClient = httpclient
-	importCfg.Host = config.ConsoleApiHost
+	importCfg.Host = cfg.ConsoleAPIHost
 	importCfg.UserAgent = util.UserAgent
 	importCfg.Scheme = "https"
 	return consoleimportapi.NewAPIClient(importCfg), nil
