@@ -21,21 +21,23 @@ var (
 	exportClient *export.APIClient
 )
 
+// TestMain sets up the export client and parses flags before running tests
 func TestMain(m *testing.M) {
 	setup()
 	code := m.Run()
 	os.Exit(code)
 }
 
+// TestExportToLocalAndDownload tests exporting to local and downloading files
 func TestExportToLocalAndDownload(t *testing.T) {
 	ctx := context.Background()
 
 	t.Log("start to create export")
 	res, err := CreateExport(ctx, clusterId, nil)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
-	// the firtst export may run slowly
+	// the first export may run slowly
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 6*time.Minute)
 	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
 
@@ -45,30 +47,28 @@ func TestExportToLocalAndDownload(t *testing.T) {
 	exportFilesRes, h, err := exportFilesReq.Execute()
 	err = util.ParseError(err, h)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to list export files: %v", err)
 	}
 
 	t.Log("start to download files")
 	path := shortuuid.New()
 	for _, exportFile := range exportFilesRes.Files {
-		// download file
 		downloadRes, err := util.GetResponse(*exportFile.Url)
 		if err != nil {
-			t.Fatal(err)
+			t.Fatalf("failed to download file: %v", err)
 		}
 		if downloadRes.ContentLength <= 0 {
-			t.Fatal("file is empty")
+			t.Fatalf("file is empty: %s", *exportFile.Name)
 		}
 		fileName := *exportFile.Name + path
 		file, err := os.Create(fileName)
 		if err != nil {
-			t.Fatal(err)
+			t.Fatalf("failed to create file: %v", err)
 		}
 		_, err = io.Copy(file, downloadRes.Body)
-		// check file
 		targetFileInfo, err := os.Stat(fileName)
 		if err != nil {
-			t.Fatal(err)
+			t.Fatalf("failed to stat file: %v", err)
 		}
 		assert.Equal(t, targetFileInfo.Name(), fileName)
 	}
@@ -93,7 +93,7 @@ func TestExportWithParquetFile(t *testing.T) {
 	t.Log("start to create export")
 	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
@@ -126,7 +126,7 @@ func TestExportWithCSVFile(t *testing.T) {
 	t.Log("start to create export")
 	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
@@ -152,7 +152,7 @@ func TestExportWithSQLFile(t *testing.T) {
 	t.Log("start to create export")
 	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
@@ -174,7 +174,7 @@ func TestExportWithCompression(t *testing.T) {
 	t.Log("start to create export")
 	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
@@ -198,7 +198,7 @@ func TestExportWithSQLFilter(t *testing.T) {
 	t.Log("start to create export")
 	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
@@ -228,7 +228,7 @@ func TestExportWithTableFilter(t *testing.T) {
 	t.Log("start to create export")
 	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
@@ -249,7 +249,7 @@ func TestExportToS3AccessKey(t *testing.T) {
 	s3SecretKeyId := cfg.S3SecretAccessKey
 	exportS3Uri := cfg.S3URI
 	if s3AccessKeyId == "" || s3SecretKeyId == "" || exportS3Uri == "" {
-		t.Fatal("s3 access key or secret key or uri is empty")
+		t.Fatalf("s3 access key or secret key or uri is empty")
 	}
 	if strings.HasSuffix(exportS3Uri, "/") {
 		exportS3Uri = exportS3Uri + shortuuid.New()
@@ -270,7 +270,7 @@ func TestExportToS3AccessKey(t *testing.T) {
 	t.Logf("start to create export to s3: %s", exportS3Uri)
 	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
@@ -288,7 +288,7 @@ func TestExportToS3RoleArn(t *testing.T) {
 	roleArn := cfg.S3RoleARN
 	exportS3Uri := cfg.S3URI
 	if roleArn == "" || exportS3Uri == "" {
-		t.Fatal("s3 role arn or uri is empty")
+		t.Fatalf("s3 role arn or uri is empty")
 	}
 	if strings.HasSuffix(exportS3Uri, "/") {
 		exportS3Uri = exportS3Uri + shortuuid.New()
@@ -309,7 +309,7 @@ func TestExportToS3RoleArn(t *testing.T) {
 	t.Logf("start to create export to s3: %s", exportS3Uri)
 	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
@@ -327,7 +327,7 @@ func TestExportToAzure(t *testing.T) {
 	azureUri := cfg.AzureURI
 	azureSASToken := cfg.AzureSASToken
 	if azureUri == "" || azureSASToken == "" {
-		t.Fatal("azure uri or sas token is empty")
+		t.Fatalf("azure uri or sas token is empty")
 	}
 	if strings.HasSuffix(azureUri, "/") {
 		azureUri = azureUri + shortuuid.New()
@@ -348,7 +348,7 @@ func TestExportToAzure(t *testing.T) {
 	t.Logf("start to create export to %s", azureUri)
 	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
@@ -366,7 +366,7 @@ func TestExportToGCS(t *testing.T) {
 	gcsUri := cfg.GCSURI
 	gcsServiceAccountKey := cfg.GCSServiceAccountKey
 	if gcsUri == "" || gcsServiceAccountKey == "" {
-		t.Fatal("gcs uri or service account key is empty")
+		t.Fatalf("gcs uri or service account key is empty")
 	}
 	if strings.HasSuffix(gcsUri, "/") {
 		gcsUri = gcsUri + shortuuid.New()
@@ -387,7 +387,7 @@ func TestExportToGCS(t *testing.T) {
 	t.Logf("start to create export to %s", gcsUri)
 	res, err := CreateExport(ctx, clusterId, body)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
@@ -403,7 +403,7 @@ func TestCancelExport(t *testing.T) {
 	t.Log("start to create export")
 	res, err := CreateExport(ctx, clusterId, nil)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("failed to create export: %v", err)
 	}
 
 	t.Log("start to cancel export")
@@ -417,7 +417,7 @@ func TestCancelExport(t *testing.T) {
 		time.Sleep(time.Millisecond * 10)
 	}
 	if err != nil {
-		t.Fatal(util.ParseError(err, h))
+		t.Fatalf("failed to cancel export: %v", util.ParseError(err, h))
 	}
 	assert.Equal(t, *cancelRes.State, export.EXPORTSTATEENUM_CANCELED)
 
@@ -441,7 +441,7 @@ func checkServerlessExportState(ctx context.Context, t *testing.T, clusterId, ex
 				return res
 			}
 		case <-timeout:
-			t.Fatal("export timeout")
+			t.Fatalf("export timeout")
 		}
 	}
 }

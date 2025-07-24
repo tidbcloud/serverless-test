@@ -143,6 +143,7 @@ func initializeConfig(cfg *Config) error {
 	flag.StringVar(&cfg.ImportOSSRoleARNNoPrivilege, "import.oss.role-arn-no-privilege", "", "")
 	flag.StringVar(&cfg.ImportOSSRoleARNDiffExternalID, "import.oss.role-arn-diff-external-id", "", "")
 
+	// need to act this like since testing.Run will call flag.Parse() if not parsed
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
