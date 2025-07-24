@@ -3,6 +3,7 @@ package config
 import (
 	"bytes"
 	"flag"
+	"fmt"
 	"sync"
 	"time"
 
@@ -81,11 +82,6 @@ const (
 	defaultIamEndpoint        = "https://iam.tidbapi.com"
 )
 
-func init() {
-	pflag.StringVar(&configContent, "config", "", "")
-	pflag.StringVar(&configAddress, "config-address", ".", "")
-}
-
 func LoadConfig() *Config {
 	once.Do(func() {
 		configInstance = &Config{}
@@ -97,6 +93,8 @@ func LoadConfig() *Config {
 }
 
 func initializeConfig(cfg *Config) error {
+	flag.StringVar(&configContent, "config", "", "")
+	flag.StringVar(&configAddress, "config-address", ".", "")
 	flag.StringVar(&cfg.PublicKey, "public-key", "", "")
 	flag.StringVar(&cfg.PrivateKey, "private-key", "", "")
 	flag.StringVar(&cfg.ServerlessEndpoint, "endpoint.serverless", defaultServerlessEndpoint, "")
@@ -147,7 +145,7 @@ func initializeConfig(cfg *Config) error {
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
-
+	fmt.Println("configContent", configContent)
 	viper.SetConfigType("toml")
 	if configContent != "" {
 		err := viper.ReadConfig(bytes.NewBuffer([]byte(configContent)))
