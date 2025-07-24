@@ -15,7 +15,7 @@ on:
 jobs:
   notify-on-failure:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    if: ${{ github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.head_branch == 'master' }}
     steps:
       - name: Send Notification
         uses: northwang-lucky/chatbot-webhook-client@v1.1.1
