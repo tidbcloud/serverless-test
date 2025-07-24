@@ -98,8 +98,8 @@ func LoadConfig() *Config {
 func initializeConfig(cfg *Config) error {
 	pflag.StringVar(&cfg.PublicKey, "public-key", "", "")
 	pflag.StringVar(&cfg.PrivateKey, "private-key", "", "")
-	pflag.StringVar(&cfg.ServerlessEndpoint, "endpoint.serverless", "", "")
-	pflag.StringVar(&cfg.IamEndpoint, "endpoint.iam", "", "")
+	pflag.StringVar(&cfg.ServerlessEndpoint, "endpoint.serverless", defaultServerlessEndpoint, "")
+	pflag.StringVar(&cfg.IamEndpoint, "endpoint.iam", defaultIamEndpoint, "")
 	pflag.StringVar(&cfg.ConsoleAPIHost, "console-api-host", "", "")
 	pflag.StringVar(&cfg.Auth0Domain, "auth0-domain", "", "")
 	pflag.StringVar(&cfg.Auth0ClientID, "auth0-client-id", "", "")
@@ -160,8 +160,6 @@ func initializeConfig(cfg *Config) error {
 		}
 	}
 
-	viper.SetDefault("endpoint.serverless", defaultServerlessEndpoint)
-	viper.SetDefault("endpoint.iam", defaultIamEndpoint)
 	return viper.Unmarshal(cfg)
 }
 
