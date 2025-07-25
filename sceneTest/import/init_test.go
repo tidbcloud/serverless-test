@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"database/sql"
 	"errors"
-	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -15,12 +14,14 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/pingcap/log"
+	"github.com/spf13/pflag"
 	"github.com/tidbcloud/serverless-test/config"
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/imp"
 	"go.uber.org/zap"
 )
 
+// Test state variables
 var (
 	clusterId    string
 	importClient *imp.APIClient
@@ -28,66 +29,100 @@ var (
 )
 
 func init() {
-	flag.StringVar(&clusterId, "cid", "", "")
+	pflag.StringVar(&clusterId, "cid", "", "Cluster ID for import tests")
 }
 
+// setup initializes the test environment by creating API clients and database connection
 func setup() {
 	cfg := config.LoadConfig()
+
+	// Initialize import client
 	var err error
 	importClient, err = NewImportClient(cfg)
 	if err != nil {
-		panic(err)
+		log.Fatal("Failed to create import client", zap.Error(err))
 	}
+
+	// Initialize database connection
 	db, err = NewDB(cfg)
 	if err != nil {
-		panic(err)
+		log.Fatal("Failed to create database connection", zap.Error(err))
 	}
 }
 
+// NewDB creates a new database connection with TLS configuration
 func NewDB(cfg *config.Config) (*sql.DB, error) {
+	// Register TLS configuration for TiDB
 	err := mysql.RegisterTLSConfig("tidb", &tls.Config{
 		MinVersion: tls.VersionTLS12,
 		ServerName: cfg.Import.Cluster.Host,
 	})
 	if err != nil {
-		log.Fatal("failed to register tls config -> ", zap.Error(err))
+		return nil, fmt.Errorf("failed to register TLS config: %w", err)
 	}
-	db, err = sql.Open("mysql", fmt.Sprintf(
+
+	// Create database connection string
+	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:4000)/test?tls=tidb",
-		cfg.Import.Cluster.User, cfg.Import.Cluster.Password, cfg.Import.Cluster.Host),
+		cfg.Import.Cluster.User,
+		cfg.Import.Cluster.Password,
+		cfg.Import.Cluster.Host,
 	)
+
+	// Open database connection
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open database connection: %w", err)
+	}
+
+	// Configure connection pool
 	db.SetConnMaxLifetime(3 * time.Minute)
 	db.SetMaxOpenConns(3)
 	db.SetMaxIdleConns(3)
-	if err != nil {
-		log.Fatal("failed to connect database -> ", zap.Error(err))
-	}
+
 	return db, nil
 }
 
+// NewImportClient creates a new import API client with the given configuration
 func NewImportClient(cfg *config.Config) (*imp.APIClient, error) {
-	httpclient := &http.Client{
+	// Create HTTP client with digest authentication
+	httpClient := &http.Client{
 		Transport: util.NewDigestTransport(cfg.PublicKey, cfg.PrivateKey),
 	}
+
+	// Validate and parse serverless endpoint
 	serverlessURL, err := util.ValidateApiUrl(cfg.Endpoint.Serverless)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid serverless endpoint: %w", err)
 	}
+
+	// Configure import API client
 	importCfg := imp.NewConfiguration()
-	importCfg.HTTPClient = httpclient
+	importCfg.HTTPClient = httpClient
 	importCfg.Host = serverlessURL.Host
 	importCfg.UserAgent = util.UserAgent
+
 	return imp.NewAPIClient(importCfg), nil
 }
 
+// TestMain runs before all tests and sets up the test environment
 func TestMain(m *testing.M) {
 	setup()
 	code := m.Run()
 	os.Exit(code)
 }
 
+// cleanupTestTable removes the test table if it exists
+func cleanupTestTable(ctx context.Context) error {
+	_, err := db.ExecContext(ctx, "DROP TABLE IF EXISTS `test`.`a`")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// waitImport waits for an import task to complete and returns an error if it fails
 func waitImport(ctx context.Context, importID string) error {
-	// Wait for the import task to finish
 	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 
@@ -96,39 +131,67 @@ func waitImport(ctx context.Context, importID string) error {
 	for {
 		select {
 		case <-ticker.C:
-			getContext, cancel := context.WithTimeout(ctx, 30*time.Second)
-			defer cancel()
-			r := importClient.ImportServiceAPI.ImportServiceGetImport(getContext, clusterId, importID)
-			i, resp, err := r.Execute()
-			err = util.ParseError(err, resp)
-			if err != nil {
+			if err := checkImportStatus(ctx, importID); err != nil {
 				return err
 			}
-			if *i.State == imp.IMPORTSTATEENUM_COMPLETED {
-				if i.HasTotalSize() && strings.EqualFold(*i.TotalSize, "0") {
-					return errors.New("import succeeded but no data imported")
-				}
-				return nil
-			} else if *i.State == imp.IMPORTSTATEENUM_FAILED {
-				if i.Message == nil {
-					return errors.New("import failed")
-				}
-				return errors.New(*i.Message)
-			} else if *i.State == imp.IMPORTSTATEENUM_CANCELING || *i.State == imp.IMPORTSTATEENUM_CANCELED {
-				return errors.New("import task cancelled")
-			}
 		case <-timeout:
-			return errors.New("timed out to wait import task complete")
+			return errors.New("import task timed out after 5 minutes")
 		}
 	}
 }
 
-func expectFail(err error, errorMsg string) error {
-	if err != nil {
-		if strings.Contains(err.Error(), errorMsg) {
-			return nil
-		}
-		return fmt.Errorf("import failed, but not as expected. expected: %s, actual: %s", errorMsg, err.Error())
+// checkImportStatus checks the current status of an import task
+func checkImportStatus(ctx context.Context, importID string) error {
+	getContext, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	// Get import status
+	r := importClient.ImportServiceAPI.ImportServiceGetImport(getContext, clusterId, importID)
+	importTask, resp, err := r.Execute()
+	if err := util.ParseError(err, resp); err != nil {
+		return fmt.Errorf("failed to get import status: %w", err)
 	}
-	return errors.New("import should fail, but succeeded")
+
+	// Check import state
+	switch *importTask.State {
+	case imp.IMPORTSTATEENUM_COMPLETED:
+		return validateImportCompletion(importTask)
+	case imp.IMPORTSTATEENUM_FAILED:
+		return handleImportFailure(importTask)
+	case imp.IMPORTSTATEENUM_CANCELING, imp.IMPORTSTATEENUM_CANCELED:
+		return errors.New("import task was cancelled")
+	default:
+		// Import is still in progress, continue waiting
+		return nil
+	}
+}
+
+// validateImportCompletion checks if the import completed successfully with data
+func validateImportCompletion(importTask *imp.Import) error {
+	if importTask.HasTotalSize() && strings.EqualFold(*importTask.TotalSize, "0") {
+		return errors.New("import succeeded but no data was imported")
+	}
+	return nil
+}
+
+// handleImportFailure extracts error message from failed import
+func handleImportFailure(importTask *imp.Import) error {
+	if importTask.Message == nil {
+		return errors.New("import failed with no error message")
+	}
+	return errors.New(*importTask.Message)
+}
+
+// expectFail validates that an error contains the expected error message
+func expectFail(err error, expectedErrorMsg string) error {
+	if err == nil {
+		return errors.New("import should have failed, but succeeded")
+	}
+
+	if strings.Contains(err.Error(), expectedErrorMsg) {
+		return nil
+	}
+
+	return fmt.Errorf("import failed, but not as expected. expected: %s, actual: %s",
+		expectedErrorMsg, err.Error())
 }

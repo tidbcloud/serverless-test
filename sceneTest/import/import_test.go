@@ -11,19 +11,26 @@ import (
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/imp"
 )
 
+// TestParquetImport tests successful Parquet file import
 func TestParquetImport(t *testing.T) {
 	ctx := context.Background()
-	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`ppp`")
+
+	// Clean up existing table
+	_, err := db.ExecContext(ctx, "DROP TABLE IF EXISTS `test`.`ppp`")
 	if err != nil {
-		t.Fatalf("failed to drop table, err: %s", err.Error())
+		t.Fatalf("Failed to cleanup test table: %v", err)
 	}
 
-	t.Log("start import")
+	t.Log("Starting Parquet import test")
+
+	// Set timeout for import creation
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
 	cfg := config.LoadConfig()
-	body := &imp.ImportServiceCreateImportBody{
+
+	// Build import request body
+	body := imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_PARQUET,
 		},
@@ -39,35 +46,43 @@ func TestParquetImport(t *testing.T) {
 			},
 		},
 	}
+
+	// Execute import request
 	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
-	if body != nil {
-		r = r.Body(*body)
+	r = r.Body(body)
+
+	importTask, resp, err := r.Execute()
+	if err := util.ParseError(err, resp); err != nil {
+		t.Fatalf("Failed to create Parquet import: %v", err)
 	}
-	i, resp, err := r.Execute()
-	err = util.ParseError(err, resp)
-	if err != nil {
-		t.Fatal(err)
+
+	// Wait for import completion
+	if err := waitImport(ctx, *importTask.ImportId); err != nil {
+		t.Fatalf("Import failed, importId: %s, error: %v", *importTask.ImportId, err)
 	}
-	err = waitImport(ctx, *i.ImportId)
-	if err != nil {
-		t.Fatalf("import failed, importId: %s, error: %s", *i.ImportId, err.Error())
-	}
-	t.Log("import finished")
+
+	t.Log("Parquet import completed successfully")
 }
 
+// TestSchemaCompressImport tests successful CSV import with schema compression
 func TestSchemaCompressImport(t *testing.T) {
 	ctx := context.Background()
-	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
-	if err != nil {
-		t.Fatalf("failed to drop table, err: %s", err.Error())
+
+	// Clean up existing table
+	if err := cleanupTestTable(ctx); err != nil {
+		t.Fatalf("Failed to cleanup test table: %v", err)
 	}
 
-	t.Log("start import")
+	t.Log("Starting schema compress import test")
+
+	// Set timeout for import creation
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
 	cfg := config.LoadConfig()
-	body := &imp.ImportServiceCreateImportBody{
+
+	// Build import request body
+	body := imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
 			CsvFormat: &imp.CSVFormat{
@@ -86,36 +101,43 @@ func TestSchemaCompressImport(t *testing.T) {
 			},
 		},
 	}
+
+	// Execute import request
 	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
-	if body != nil {
-		r = r.Body(*body)
-	}
-	i, resp, err := r.Execute()
-	err = util.ParseError(err, resp)
-	if err != nil {
-		t.Fatal(err)
+	r = r.Body(body)
+
+	importTask, resp, err := r.Execute()
+	if err := util.ParseError(err, resp); err != nil {
+		t.Fatalf("Failed to create schema compress import: %v", err)
 	}
 
-	err = waitImport(ctx, *i.ImportId)
-	if err != nil {
-		t.Fatalf("import failed, importId: %s, error: %s", *i.ImportId, err.Error())
+	// Wait for import completion
+	if err := waitImport(ctx, *importTask.ImportId); err != nil {
+		t.Fatalf("Import failed, importId: %s, error: %v", *importTask.ImportId, err)
 	}
-	t.Log("import finished")
+
+	t.Log("Schema compress import completed successfully")
 }
 
-func TestSchemaTypeMisMatchedImport(t *testing.T) {
+// TestSchemaTypeMismatchedImport tests import with type mismatch error
+func TestSchemaTypeMismatchedImport(t *testing.T) {
 	ctx := context.Background()
-	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
-	if err != nil {
-		t.Fatalf("failed to drop table, err: %s", err.Error())
+
+	// Clean up existing table
+	if err := cleanupTestTable(ctx); err != nil {
+		t.Fatalf("Failed to cleanup test table: %v", err)
 	}
 
-	t.Log("start import")
+	t.Log("Starting schema type mismatch import test")
+
+	// Set timeout for import creation
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
 	cfg := config.LoadConfig()
-	body := &imp.ImportServiceCreateImportBody{
+
+	// Build import request body
+	body := imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
 			CsvFormat: &imp.CSVFormat{
@@ -134,38 +156,48 @@ func TestSchemaTypeMisMatchedImport(t *testing.T) {
 			},
 		},
 	}
+
+	// Execute import request
 	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
-	if body != nil {
-		r = r.Body(*body)
-	}
-	i, resp, err := r.Execute()
-	err = util.ParseError(err, resp)
-	if err != nil {
-		t.Fatal(err)
+	r = r.Body(body)
+
+	importTask, resp, err := r.Execute()
+	if err := util.ParseError(err, resp); err != nil {
+		t.Fatalf("Failed to create type mismatch import: %v", err)
 	}
 
-	err = waitImport(ctx, *i.ImportId)
-	err = expectFail(err, "failed to cast value as int(11) for column `name`")
-	if err != nil {
-		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
-	} else {
-		t.Log("import failed as expected")
+	// Wait for import and expect failure
+	if err := waitImport(ctx, *importTask.ImportId); err != nil {
+		// Check if failure is expected
+		if expectErr := expectFail(err, "failed to cast value as int(11) for column `name`"); expectErr != nil {
+			t.Fatalf("Test failed, importId: %s, err: %v", *importTask.ImportId, expectErr)
+		}
+		t.Log("Import failed as expected")
+		return
 	}
+
+	t.Fatal("Import should have failed but succeeded")
 }
 
+// TestSchemaColumnNumberMismatchedImport tests import with column number mismatch error
 func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 	ctx := context.Background()
-	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
-	if err != nil {
-		t.Fatalf("failed to drop table, err: %s", err.Error())
+
+	// Clean up existing table
+	if err := cleanupTestTable(ctx); err != nil {
+		t.Fatalf("Failed to cleanup test table: %v", err)
 	}
 
-	t.Log("start import")
+	t.Log("Starting schema column number mismatch import test")
+
+	// Set timeout for import creation
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
 	cfg := config.LoadConfig()
-	body := &imp.ImportServiceCreateImportBody{
+
+	// Build import request body
+	body := imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
 			CsvFormat: &imp.CSVFormat{
@@ -184,21 +216,25 @@ func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 			},
 		},
 	}
+
+	// Execute import request
 	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
-	if body != nil {
-		r = r.Body(*body)
-	}
-	i, resp, err := r.Execute()
-	err = util.ParseError(err, resp)
-	if err != nil {
-		t.Fatal(err)
+	r = r.Body(body)
+
+	importTask, resp, err := r.Execute()
+	if err := util.ParseError(err, resp); err != nil {
+		t.Fatalf("Failed to create column mismatch import: %v", err)
 	}
 
-	err = waitImport(ctx, *i.ImportId)
-	err = expectFail(err, "TiDB schema `test`.`a` doesn't have the default value for number")
-	if err != nil {
-		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
-	} else {
-		t.Log("import failed as expected")
+	// Wait for import and expect failure
+	if err := waitImport(ctx, *importTask.ImportId); err != nil {
+		// Check if failure is expected
+		if expectErr := expectFail(err, "TiDB schema `test`.`a` doesn't have the default value for number"); expectErr != nil {
+			t.Fatalf("Test failed, importId: %s, err: %v", *importTask.ImportId, expectErr)
+		}
+		t.Log("Import failed as expected")
+		return
 	}
+
+	t.Fatal("Import should have failed but succeeded")
 }

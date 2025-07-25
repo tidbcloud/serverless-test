@@ -11,64 +11,79 @@ import (
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/imp"
 )
 
+// TestAzureImport tests successful Azure Blob import with valid SAS token
 func TestAzureImport(t *testing.T) {
 	ctx := context.Background()
-	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
-	if err != nil {
-		t.Fatalf("failed to drop table, err: %s", err.Error())
+
+	// Clean up existing table
+	if err := cleanupTestTable(ctx); err != nil {
+		t.Fatalf("Failed to cleanup test table: %v", err)
 	}
 
-	t.Log("start import")
-	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
-	defer cancel()
+	t.Log("Starting Azure import test")
 
-	cfg := config.LoadConfig()
-	body := &imp.ImportServiceCreateImportBody{
-		ImportOptions: imp.ImportOptions{
-			FileType: imp.IMPORTFILETYPEENUM_CSV,
-			CsvFormat: &imp.CSVFormat{
-				Separator: pointer.ToString(";"),
-			},
-		},
-		Source: imp.ImportSource{
-			Type: imp.IMPORTSOURCETYPEENUM_AZURE_BLOB,
-			AzureBlob: &imp.AzureBlobSource{
-				Uri:      cfg.Import.Azure.URI,
-				AuthType: imp.IMPORTAZUREBLOBAUTHTYPEENUM_SAS_TOKEN,
-				SasToken: &cfg.Import.Azure.SASToken,
-			},
-		},
-	}
-	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
-	if body != nil {
-		r = r.Body(*body)
-	}
-	i, resp, err := r.Execute()
-	err = util.ParseError(err, resp)
+	// Create and execute import
+	importID, err := createAzureImport(ctx, false)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("Failed to create Azure import: %v", err)
 	}
 
-	err = waitImport(ctx, *i.ImportId)
-	if err != nil {
-		t.Fatalf("import failed, importId: %s, error: %s", *i.ImportId, err.Error())
+	// Wait for import completion
+	if err := waitImport(ctx, importID); err != nil {
+		t.Fatalf("Import failed, importId: %s, error: %v", importID, err)
 	}
-	t.Log("import finished")
+
+	t.Log("Azure import completed successfully")
 }
 
+// TestAzureNoPrivilegeImport tests Azure Blob import with insufficient privileges
 func TestAzureNoPrivilegeImport(t *testing.T) {
 	ctx := context.Background()
-	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
-	if err != nil {
-		t.Fatalf("failed to drop table, err: %s", err.Error())
+
+	// Clean up existing table
+	if err := cleanupTestTable(ctx); err != nil {
+		t.Fatalf("Failed to cleanup test table: %v", err)
 	}
 
-	t.Log("start import")
+	t.Log("Starting Azure import test with no privilege")
+
+	// Create and execute import with no privilege token
+	importID, err := createAzureImport(ctx, true)
+	if err != nil {
+		t.Fatalf("Failed to create Azure import: %v", err)
+	}
+
+	// Wait for import and expect failure
+	if err := waitImport(ctx, importID); err != nil {
+		// Check if failure is expected
+		if expectErr := expectFail(err, "AzBlobAccessDenied"); expectErr != nil {
+			t.Fatalf("Test failed, importId: %s, err: %v", importID, expectErr)
+		}
+		t.Log("Import failed as expected")
+		return
+	}
+
+	t.Fatal("Import should have failed but succeeded")
+}
+
+// createAzureImport creates an Azure Blob import with the specified configuration
+func createAzureImport(ctx context.Context, useNoPrivilegeToken bool) (string, error) {
+	// Set timeout for import creation
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
 	cfg := config.LoadConfig()
-	body := &imp.ImportServiceCreateImportBody{
+
+	// Determine which SAS token to use
+	var sasToken string
+	if useNoPrivilegeToken {
+		sasToken = cfg.Import.Azure.SASTokenNoPrivilege
+	} else {
+		sasToken = cfg.Import.Azure.SASToken
+	}
+
+	// Build import request body
+	body := imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
 			CsvFormat: &imp.CSVFormat{
@@ -80,24 +95,19 @@ func TestAzureNoPrivilegeImport(t *testing.T) {
 			AzureBlob: &imp.AzureBlobSource{
 				Uri:      cfg.Import.Azure.URI,
 				AuthType: imp.IMPORTAZUREBLOBAUTHTYPEENUM_SAS_TOKEN,
-				SasToken: &cfg.Import.Azure.SASTokenNoPrivilege,
+				SasToken: &sasToken,
 			},
 		},
 	}
+
+	// Execute import request
 	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
-	if body != nil {
-		r = r.Body(*body)
+	r = r.Body(body)
+
+	importTask, resp, err := r.Execute()
+	if err := util.ParseError(err, resp); err != nil {
+		return "", err
 	}
-	i, resp, err := r.Execute()
-	err = util.ParseError(err, resp)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = waitImport(ctx, *i.ImportId)
-	err = expectFail(err, "AzBlobAccessDenied")
-	if err != nil {
-		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
-	} else {
-		t.Log("import failed as expected")
-	}
+
+	return *importTask.ImportId, nil
 }
