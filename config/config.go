@@ -32,12 +32,6 @@ type GCS struct {
 	ServiceAccountKey string `mapstructure:"service-account-key"`
 }
 
-type ImportCluster struct {
-	Host     string `mapstructure:"host"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-}
-
 type ImportS3 struct {
 	RoleARN                         string `mapstructure:"role-arn"`
 	ParquetURI                      string `mapstructure:"parquet-uri"`
@@ -75,11 +69,13 @@ type ImportOSS struct {
 }
 
 type Import struct {
-	Cluster ImportCluster `mapstructure:"cluster"`
-	S3      ImportS3      `mapstructure:"s3"`
-	Azure   ImportAzure   `mapstructure:"azure"`
-	GCS     ImportGCS     `mapstructure:"gcs"`
-	OSS     ImportOSS     `mapstructure:"oss"`
+	ClusterHost     string      `mapstructure:"cluster-host"`
+	ClusterUser     string      `mapstructure:"cluster-user"`
+	ClusterPassword string      `mapstructure:"cluster-password"`
+	S3              ImportS3    `mapstructure:"s3"`
+	Azure           ImportAzure `mapstructure:"azure"`
+	GCS             ImportGCS   `mapstructure:"gcs"`
+	OSS             ImportOSS   `mapstructure:"oss"`
 }
 
 type Config struct {
@@ -143,9 +139,9 @@ func initializeConfig(cfg *Config) error {
 	flag.StringVar(&cfg.GCS.URI, "gcs.uri", "", "")
 	flag.StringVar(&cfg.GCS.ServiceAccountKey, "gcs.service-account-key", "", "")
 	flag.StringVar(&cfg.ProjectID, "project-id", "", "")
-	flag.StringVar(&cfg.Import.Cluster.Host, "import.cluster-host", "", "")
-	flag.StringVar(&cfg.Import.Cluster.User, "import.cluster-user", "", "")
-	flag.StringVar(&cfg.Import.Cluster.Password, "import.cluster-password", "", "")
+	flag.StringVar(&cfg.Import.ClusterHost, "import.cluster-host", "", "")
+	flag.StringVar(&cfg.Import.ClusterUser, "import.cluster-user", "", "")
+	flag.StringVar(&cfg.Import.ClusterPassword, "import.cluster-password", "", "")
 	flag.StringVar(&cfg.Import.S3.RoleARN, "import.s3.role-arn", "", "")
 	flag.StringVar(&cfg.Import.S3.ParquetURI, "import.s3.parquet-uri", "", "")
 	flag.StringVar(&cfg.Import.S3.SchemaCompressURI, "import.s3.schema-compress-uri", "", "")

@@ -55,7 +55,7 @@ func NewDB(cfg *config.Config) (*sql.DB, error) {
 	// Register TLS configuration for TiDB
 	err := mysql.RegisterTLSConfig("tidb", &tls.Config{
 		MinVersion: tls.VersionTLS12,
-		ServerName: cfg.Import.Cluster.Host,
+		ServerName: cfg.Import.ClusterHost,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to register TLS config: %w", err)
@@ -64,9 +64,9 @@ func NewDB(cfg *config.Config) (*sql.DB, error) {
 	// Create database connection string
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:4000)/test?tls=tidb",
-		cfg.Import.Cluster.User,
-		cfg.Import.Cluster.Password,
-		cfg.Import.Cluster.Host,
+		cfg.Import.ClusterUser,
+		cfg.Import.ClusterPassword,
+		cfg.Import.ClusterHost,
 	)
 
 	// Open database connection
@@ -115,10 +115,7 @@ func TestMain(m *testing.M) {
 // cleanupTestTable removes the test table if it exists
 func cleanupTestTable(ctx context.Context) error {
 	_, err := db.ExecContext(ctx, "DROP TABLE IF EXISTS `test`.`a`")
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // waitImport waits for an import task to complete and returns an error if it fails
