@@ -30,11 +30,11 @@ func TestParquetImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      cfg.ImportS3ParquetURI,
+				Uri:      cfg.Import.S3.ParquetURI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     cfg.S3AccessKeyID,
-					Secret: cfg.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 			},
 		},
@@ -77,11 +77,11 @@ func TestSchemaCompressImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      cfg.ImportS3SchemaCompressURI,
+				Uri:      cfg.Import.S3.SchemaCompressURI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     cfg.S3AccessKeyID,
-					Secret: cfg.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 			},
 		},
@@ -125,11 +125,11 @@ func TestSchemaTypeMisMatchedImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      cfg.ImportS3SchemaTypeMismatchedURI,
+				Uri:      cfg.Import.S3.SchemaTypeMismatchedURI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     cfg.S3AccessKeyID,
-					Secret: cfg.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 			},
 		},
@@ -175,11 +175,11 @@ func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      cfg.ImportS3SchemaColumnNumberMismatchedURI,
+				Uri:      cfg.Import.S3.SchemaColumnNumberMismatchedURI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     cfg.S3AccessKeyID,
-					Secret: cfg.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 			},
 		},

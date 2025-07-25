@@ -33,9 +33,9 @@ func TestS3ArnNoPrivilegeImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      cfg.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &cfg.ImportS3RoleARNNoPrivilege,
+				RoleArn:  &cfg.Import.S3.RoleARNNoPrivilege,
 			},
 		},
 	}
@@ -79,9 +79,9 @@ func TestS3ArnDiffExternalIDImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      cfg.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &cfg.ImportS3RoleARNDiffExternalID,
+				RoleArn:  &cfg.Import.S3.RoleARNDiffExternalID,
 			},
 		},
 	}
@@ -125,11 +125,11 @@ func TestS3AccessKeyNoPrivilegeImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      cfg.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     cfg.ImportS3AccessKeyIDNoPrivilege,
-					Secret: cfg.ImportS3SecretAccessKeyNoPrivilege,
+					Id:     cfg.Import.S3.AccessKeyIDNoPrivilege,
+					Secret: cfg.Import.S3.SecretAccessKeyNoPrivilege,
 				},
 			},
 		},
@@ -174,11 +174,11 @@ func TestS3AccessKeyImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      cfg.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.S3SourceAccessKey{
-					Id:     cfg.S3AccessKeyID,
-					Secret: cfg.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 			},
 		},
@@ -221,9 +221,9 @@ func TestS3ArnImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3: &imp.S3Source{
-				Uri:      cfg.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &cfg.ImportS3RoleARN,
+				RoleArn:  &cfg.Import.S3.RoleARN,
 			},
 		},
 	}

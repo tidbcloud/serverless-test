@@ -54,14 +54,14 @@ func setup() {
 func NewDB(cfg *config.Config) (*sql.DB, error) {
 	err := mysql.RegisterTLSConfig("tidb", &tls.Config{
 		MinVersion: tls.VersionTLS12,
-		ServerName: cfg.ImportClusterHost,
+		ServerName: cfg.Import.Cluster.Host,
 	})
 	if err != nil {
 		log.Fatal("failed to register tls config -> ", zap.Error(err))
 	}
 	db, err = sql.Open("mysql", fmt.Sprintf(
 		"%s:%s@tcp(%s:4000)/test?tls=tidb",
-		cfg.ImportClusterUser, cfg.ImportClusterPassword, cfg.ImportClusterHost),
+		cfg.Import.Cluster.User, cfg.Import.Cluster.Password, cfg.Import.Cluster.Host),
 	)
 	db.SetConnMaxLifetime(3 * time.Minute)
 	db.SetMaxOpenConns(3)

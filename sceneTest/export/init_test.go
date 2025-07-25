@@ -27,7 +27,7 @@ func NewExportClient(cfg *config.Config) (*export.APIClient, error) {
 	httpClient := &http.Client{
 		Transport: util.NewDigestTransport(cfg.PublicKey, cfg.PrivateKey),
 	}
-	serverlessURL, err := util.ValidateApiUrl(cfg.ServerlessEndpoint)
+	serverlessURL, err := util.ValidateApiUrl(cfg.Endpoint.Serverless)
 	if err != nil {
 		return nil, err
 	}

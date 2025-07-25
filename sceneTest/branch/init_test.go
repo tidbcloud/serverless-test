@@ -48,7 +48,7 @@ func NewBranchClient(cfg *config.Config) (*branch.APIClient, error) {
 		Transport: util.NewDigestTransport(cfg.PublicKey, cfg.PrivateKey),
 	}
 
-	serverlessURL, err := util.ValidateApiUrl(cfg.ServerlessEndpoint)
+	serverlessURL, err := util.ValidateApiUrl(cfg.Endpoint.Serverless)
 	if err != nil {
 		return nil, fmt.Errorf("invalid serverless endpoint: %w", err)
 	}
@@ -67,7 +67,7 @@ func NewClusterClient(cfg *config.Config) (*cluster.APIClient, error) {
 		Transport: util.NewDigestTransport(cfg.PublicKey, cfg.PrivateKey),
 	}
 
-	serverlessURL, err := util.ValidateApiUrl(cfg.ServerlessEndpoint)
+	serverlessURL, err := util.ValidateApiUrl(cfg.Endpoint.Serverless)
 	if err != nil {
 		return nil, fmt.Errorf("invalid serverless endpoint: %w", err)
 	}

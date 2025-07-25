@@ -33,9 +33,9 @@ func TestGcsImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_GCS,
 			Gcs: &imp.GCSSource{
-				Uri:               cfg.ImportGCSURI,
+				Uri:               cfg.Import.GCS.URI,
 				AuthType:          imp.IMPORTGCSAUTHTYPEENUM_SERVICE_ACCOUNT_KEY,
-				ServiceAccountKey: &cfg.ImportGCSServiceAccountKey,
+				ServiceAccountKey: &cfg.Import.GCS.ServiceAccountKey,
 			},
 		},
 	}
@@ -78,9 +78,9 @@ func TestGcsNoPrivilegeImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_GCS,
 			Gcs: &imp.GCSSource{
-				Uri:               cfg.ImportGCSURI,
+				Uri:               cfg.Import.GCS.URI,
 				AuthType:          imp.IMPORTGCSAUTHTYPEENUM_SERVICE_ACCOUNT_KEY,
-				ServiceAccountKey: &cfg.ImportGCSServiceAccountKeyNoPrivilege,
+				ServiceAccountKey: &cfg.Import.GCS.ServiceAccountKeyNoPrivilege,
 			},
 		},
 	}

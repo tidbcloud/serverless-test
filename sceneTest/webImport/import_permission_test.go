@@ -21,9 +21,9 @@ func TestS3Arn(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      cfg.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &cfg.ImportS3RoleARN,
+				RoleArn:  &cfg.Import.S3.RoleARN,
 			},
 		},
 	})
@@ -45,9 +45,9 @@ func TestS3ArnNoPrivilege(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      cfg.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &cfg.ImportS3RoleARNNoPrivilege,
+				RoleArn:  &cfg.Import.S3.RoleARNNoPrivilege,
 			},
 		},
 	})
@@ -69,9 +69,9 @@ func TestS3ArnDiffExternalID(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      cfg.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
-				RoleArn:  &cfg.ImportS3RoleARNDiffExternalID,
+				RoleArn:  &cfg.Import.S3.RoleARNDiffExternalID,
 			},
 		},
 	})
@@ -93,11 +93,11 @@ func TestS3AccessKey(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      cfg.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     cfg.S3AccessKeyID,
-					Secret: cfg.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 			},
 		},
@@ -120,11 +120,11 @@ func TestS3AccessKeyNoPrivilege(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      cfg.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     cfg.ImportS3AccessKeyIDNoPrivilege,
-					Secret: cfg.ImportS3SecretAccessKeyNoPrivilege,
+					Id:     cfg.Import.S3.AccessKeyIDNoPrivilege,
+					Secret: cfg.Import.S3.SecretAccessKeyNoPrivilege,
 				},
 			},
 		},
@@ -147,9 +147,9 @@ func TestGCSServiceAccountKey(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_GCS,
 			Gcs: &consoleimportapi.GCSSource{
-				Uri:               cfg.ImportGCSURI,
+				Uri:               cfg.Import.GCS.URI,
 				AuthType:          consoleimportapi.IMPORTGCSAUTHTYPEENUM_SERVICE_ACCOUNT_KEY,
-				ServiceAccountKey: &cfg.ImportGCSServiceAccountKey,
+				ServiceAccountKey: &cfg.Import.GCS.ServiceAccountKey,
 			},
 		},
 	})
@@ -171,9 +171,9 @@ func TestGCSServiceAccountKeyNoPrivilege(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_GCS,
 			Gcs: &consoleimportapi.GCSSource{
-				Uri:               cfg.ImportGCSURI,
+				Uri:               cfg.Import.GCS.URI,
 				AuthType:          consoleimportapi.IMPORTGCSAUTHTYPEENUM_SERVICE_ACCOUNT_KEY,
-				ServiceAccountKey: &cfg.ImportGCSServiceAccountKeyNoPrivilege,
+				ServiceAccountKey: &cfg.Import.GCS.ServiceAccountKeyNoPrivilege,
 			},
 		},
 	})
@@ -195,9 +195,9 @@ func TestAzureSASToken(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_AZURE_BLOB,
 			AzureBlob: &consoleimportapi.AzureBlobSource{
-				Uri:      cfg.ImportAzureURI,
+				Uri:      cfg.Import.Azure.URI,
 				AuthType: consoleimportapi.IMPORTAZUREBLOBAUTHTYPEENUM_SAS_TOKEN,
-				SasToken: &cfg.ImportAzureSASToken,
+				SasToken: &cfg.Import.Azure.SASToken,
 			},
 		},
 	})
@@ -219,9 +219,9 @@ func TestAzureSASTokenNoPrivilege(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_AZURE_BLOB,
 			AzureBlob: &consoleimportapi.AzureBlobSource{
-				Uri:      cfg.ImportAzureURI,
+				Uri:      cfg.Import.Azure.URI,
 				AuthType: consoleimportapi.IMPORTAZUREBLOBAUTHTYPEENUM_SAS_TOKEN,
-				SasToken: &cfg.ImportAzureSASTokenNoPrivilege,
+				SasToken: &cfg.Import.Azure.SASTokenNoPrivilege,
 			},
 		},
 	})
@@ -243,10 +243,10 @@ func TestOSSAccessKey(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_OSS,
 			Oss: &consoleimportapi.OSSSource{
-				Uri:      cfg.ImportOSSURI,
+				Uri:      cfg.Import.OSS.URI,
 				AuthType: consoleimportapi.IMPORTOSSAUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: consoleimportapi.NewOSSSourceAccessKey(
-					cfg.ImportOSSAccessKeyID, cfg.ImportOSSSecretAccessKey),
+					cfg.Import.OSS.AccessKeyID, cfg.Import.OSS.SecretAccessKey),
 			},
 		},
 	})
@@ -268,10 +268,10 @@ func TestOSSAccessKeyNoPrivilege(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_OSS,
 			Oss: &consoleimportapi.OSSSource{
-				Uri:      cfg.ImportOSSURI,
+				Uri:      cfg.Import.OSS.URI,
 				AuthType: consoleimportapi.IMPORTOSSAUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: consoleimportapi.NewOSSSourceAccessKey(
-					cfg.ImportOSSAccessKeyIDNoPrivilege, cfg.ImportOSSSecretAccessKeyNoPrivilege),
+					cfg.Import.OSS.AccessKeyIDNoPrivilege, cfg.Import.OSS.SecretAccessKeyNoPrivilege),
 			},
 		},
 	})

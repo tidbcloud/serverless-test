@@ -33,9 +33,9 @@ func TestAzureImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_AZURE_BLOB,
 			AzureBlob: &imp.AzureBlobSource{
-				Uri:      cfg.ImportAzureURI,
+				Uri:      cfg.Import.Azure.URI,
 				AuthType: imp.IMPORTAZUREBLOBAUTHTYPEENUM_SAS_TOKEN,
-				SasToken: &cfg.ImportAzureSASToken,
+				SasToken: &cfg.Import.Azure.SASToken,
 			},
 		},
 	}
@@ -78,9 +78,9 @@ func TestAzureNoPrivilegeImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_AZURE_BLOB,
 			AzureBlob: &imp.AzureBlobSource{
-				Uri:      cfg.ImportAzureURI,
+				Uri:      cfg.Import.Azure.URI,
 				AuthType: imp.IMPORTAZUREBLOBAUTHTYPEENUM_SAS_TOKEN,
-				SasToken: &cfg.ImportAzureSASTokenNoPrivilege,
+				SasToken: &cfg.Import.Azure.SASTokenNoPrivilege,
 			},
 		},
 	}

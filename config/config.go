@@ -3,7 +3,6 @@ package config
 import (
 	"bytes"
 	"flag"
-	"fmt"
 	"sync"
 	"time"
 
@@ -11,11 +10,82 @@ import (
 	"github.com/spf13/viper"
 )
 
+type Endpoint struct {
+	Serverless string `mapstructure:"serverless"`
+	IAM        string `mapstructure:"iam"`
+}
+
+type Azure struct {
+	URI      string `mapstructure:"uri"`
+	SASToken string `mapstructure:"sas-token"`
+}
+
+type S3 struct {
+	URI             string `mapstructure:"uri"`
+	SecretAccessKey string `mapstructure:"secret-access-key"`
+	AccessKeyID     string `mapstructure:"access-key-id"`
+	RoleARN         string `mapstructure:"role-arn"`
+}
+
+type GCS struct {
+	URI               string `mapstructure:"uri"`
+	ServiceAccountKey string `mapstructure:"service-account-key"`
+}
+
+type ImportCluster struct {
+	Host     string `mapstructure:"host"`
+	User     string `mapstructure:"user"`
+	Password string `mapstructure:"password"`
+}
+
+type ImportS3 struct {
+	RoleARN                         string `mapstructure:"role-arn"`
+	ParquetURI                      string `mapstructure:"parquet-uri"`
+	SchemaCompressURI               string `mapstructure:"schema-compress-uri"`
+	SchemaTypeMismatchedURI         string `mapstructure:"schema-type-mismatched-uri"`
+	SchemaColumnNumberMismatchedURI string `mapstructure:"schema-column-number-mismatched-uri"`
+	URI                             string `mapstructure:"uri"`
+	RoleARNNoPrivilege              string `mapstructure:"role-arn-no-privilege"`
+	RoleARNDiffExternalID           string `mapstructure:"role-arn-diff-external-id"`
+	AccessKeyIDNoPrivilege          string `mapstructure:"access-key-id-no-privilege"`
+	SecretAccessKeyNoPrivilege      string `mapstructure:"secret-access-key-no-privilege"`
+}
+
+type ImportAzure struct {
+	URI                 string `mapstructure:"uri"`
+	SASToken            string `mapstructure:"sas-token"`
+	SASTokenNoPrivilege string `mapstructure:"sas-token-no-privilege"`
+}
+
+type ImportGCS struct {
+	URI                          string `mapstructure:"uri"`
+	ServiceAccountKey            string `mapstructure:"service-account-key"`
+	ServiceAccountKeyNoPrivilege string `mapstructure:"service-account-key-no-privilege"`
+}
+
+type ImportOSS struct {
+	URI                        string `mapstructure:"uri"`
+	AccessKeyID                string `mapstructure:"access-key-id"`
+	SecretAccessKey            string `mapstructure:"secret-access-key"`
+	AccessKeyIDNoPrivilege     string `mapstructure:"access-key-id-no-privilege"`
+	SecretAccessKeyNoPrivilege string `mapstructure:"secret-access-key-no-privilege"`
+	RoleARN                    string `mapstructure:"role-arn"`
+	RoleARNNoPrivilege         string `mapstructure:"role-arn-no-privilege"`
+	RoleARNDiffExternalID      string `mapstructure:"role-arn-diff-external-id"`
+}
+
+type Import struct {
+	Cluster ImportCluster `mapstructure:"cluster"`
+	S3      ImportS3      `mapstructure:"s3"`
+	Azure   ImportAzure   `mapstructure:"azure"`
+	GCS     ImportGCS     `mapstructure:"gcs"`
+	OSS     ImportOSS     `mapstructure:"oss"`
+}
+
 type Config struct {
-	PublicKey          string `mapstructure:"public-key"`
-	PrivateKey         string `mapstructure:"private-key"`
-	ServerlessEndpoint string `mapstructure:"endpoint.serverless"`
-	IamEndpoint        string `mapstructure:"endpoint.iam"`
+	PublicKey  string   `mapstructure:"public-key"`
+	PrivateKey string   `mapstructure:"private-key"`
+	Endpoint   Endpoint `mapstructure:"endpoint"`
 
 	ConsoleAPIHost    string `mapstructure:"console-api-host"`
 	Auth0Domain       string `mapstructure:"auth0-domain"`
@@ -23,51 +93,11 @@ type Config struct {
 	Auth0ClientSecret string `mapstructure:"auth0-client-secret"`
 	UserEmail         string `mapstructure:"user-email"`
 
-	AzureURI      string `mapstructure:"azure.uri"`
-	AzureSASToken string `mapstructure:"azure.sas-token"`
-
-	S3URI             string `mapstructure:"s3.uri"`
-	S3SecretAccessKey string `mapstructure:"s3.secret-access-key"`
-	S3AccessKeyID     string `mapstructure:"s3.access-key-id"`
-	S3RoleARN         string `mapstructure:"s3.role-arn"`
-
-	GCSURI               string `mapstructure:"gcs.uri"`
-	GCSServiceAccountKey string `mapstructure:"gcs.service-account-key"`
-
+	Azure     Azure  `mapstructure:"azure"`
+	S3        S3     `mapstructure:"s3"`
+	GCS       GCS    `mapstructure:"gcs"`
 	ProjectID string `mapstructure:"project-id"`
-
-	ImportClusterHost     string `mapstructure:"import.cluster-host"`
-	ImportClusterUser     string `mapstructure:"import.cluster-user"`
-	ImportClusterPassword string `mapstructure:"import.cluster-password"`
-
-	ImportS3RoleARN                         string `mapstructure:"import.s3.role-arn"`
-	ImportS3ParquetURI                      string `mapstructure:"import.s3.parquet-uri"`
-	ImportS3SchemaCompressURI               string `mapstructure:"import.s3.schema-compress-uri"`
-	ImportS3SchemaTypeMismatchedURI         string `mapstructure:"import.s3.schema-type-mismatched-uri"`
-	ImportS3SchemaColumnNumberMismatchedURI string `mapstructure:"import.s3.schema-column-number-mismatched-uri"`
-
-	ImportAzureURI                 string `mapstructure:"import.azure.uri"`
-	ImportAzureSASToken            string `mapstructure:"import.azure.sas-token"`
-	ImportAzureSASTokenNoPrivilege string `mapstructure:"import.azure.sas-token-no-privilege"`
-
-	ImportGCSURI                          string `mapstructure:"import.gcs.uri"`
-	ImportGCSServiceAccountKey            string `mapstructure:"import.gcs.service-account-key"`
-	ImportGCSServiceAccountKeyNoPrivilege string `mapstructure:"import.gcs.service-account-key-no-privilege"`
-
-	ImportS3URI                        string `mapstructure:"import.s3.uri"`
-	ImportS3RoleARNNoPrivilege         string `mapstructure:"import.s3.role-arn-no-privilege"`
-	ImportS3RoleARNDiffExternalID      string `mapstructure:"import.s3.role-arn-diff-external-id"`
-	ImportS3AccessKeyIDNoPrivilege     string `mapstructure:"import.s3.access-key-id-no-privilege"`
-	ImportS3SecretAccessKeyNoPrivilege string `mapstructure:"import.s3.secret-access-key-no-privilege"`
-
-	ImportOSSURI                        string `mapstructure:"import.oss.uri"`
-	ImportOSSAccessKeyID                string `mapstructure:"import.oss.access-key-id"`
-	ImportOSSSecretAccessKey            string `mapstructure:"import.oss.secret-access-key"`
-	ImportOSSAccessKeyIDNoPrivilege     string `mapstructure:"import.oss.access-key-id-no-privilege"`
-	ImportOSSSecretAccessKeyNoPrivilege string `mapstructure:"import.oss.secret-access-key-no-privilege"`
-	ImportOSSRoleARN                    string `mapstructure:"import.oss.role-arn"`
-	ImportOSSRoleARNNoPrivilege         string `mapstructure:"import.oss.role-arn-no-privilege"`
-	ImportOSSRoleARNDiffExternalID      string `mapstructure:"import.oss.role-arn-diff-external-id"`
+	Import    Import `mapstructure:"import"`
 }
 
 var (
@@ -97,55 +127,55 @@ func initializeConfig(cfg *Config) error {
 	flag.StringVar(&configAddress, "config-address", ".", "")
 	flag.StringVar(&cfg.PublicKey, "public-key", "", "")
 	flag.StringVar(&cfg.PrivateKey, "private-key", "", "")
-	flag.StringVar(&cfg.ServerlessEndpoint, "endpoint.serverless", defaultServerlessEndpoint, "")
-	flag.StringVar(&cfg.IamEndpoint, "endpoint.iam", defaultIamEndpoint, "")
+	flag.StringVar(&cfg.Endpoint.Serverless, "endpoint.serverless", defaultServerlessEndpoint, "")
+	flag.StringVar(&cfg.Endpoint.IAM, "endpoint.iam", defaultIamEndpoint, "")
 	flag.StringVar(&cfg.ConsoleAPIHost, "console-api-host", "", "")
 	flag.StringVar(&cfg.Auth0Domain, "auth0-domain", "", "")
 	flag.StringVar(&cfg.Auth0ClientID, "auth0-client-id", "", "")
 	flag.StringVar(&cfg.Auth0ClientSecret, "auth0-client-secret", "", "")
 	flag.StringVar(&cfg.UserEmail, "user-email", "", "")
-	flag.StringVar(&cfg.S3URI, "s3.uri", "", "")
-	flag.StringVar(&cfg.S3SecretAccessKey, "s3.secret-access-key", "", "")
-	flag.StringVar(&cfg.S3AccessKeyID, "s3.access-key-id", "", "")
-	flag.StringVar(&cfg.S3RoleARN, "s3.role-arn", "", "")
-	flag.StringVar(&cfg.AzureURI, "azure.uri", "", "")
-	flag.StringVar(&cfg.AzureSASToken, "azure.sas-token", "", "")
-	flag.StringVar(&cfg.GCSURI, "gcs.uri", "", "")
-	flag.StringVar(&cfg.GCSServiceAccountKey, "gcs.service-account-key", "", "")
+	flag.StringVar(&cfg.Azure.URI, "azure.uri", "", "")
+	flag.StringVar(&cfg.Azure.SASToken, "azure.sas-token", "", "")
+	flag.StringVar(&cfg.S3.URI, "s3.uri", "", "")
+	flag.StringVar(&cfg.S3.SecretAccessKey, "s3.secret-access-key", "", "")
+	flag.StringVar(&cfg.S3.AccessKeyID, "s3.access-key-id", "", "")
+	flag.StringVar(&cfg.S3.RoleARN, "s3.role-arn", "", "")
+	flag.StringVar(&cfg.GCS.URI, "gcs.uri", "", "")
+	flag.StringVar(&cfg.GCS.ServiceAccountKey, "gcs.service-account-key", "", "")
 	flag.StringVar(&cfg.ProjectID, "project-id", "", "")
-	flag.StringVar(&cfg.ImportClusterHost, "import.cluster-host", "", "")
-	flag.StringVar(&cfg.ImportClusterUser, "import.cluster-user", "", "")
-	flag.StringVar(&cfg.ImportClusterPassword, "import.cluster-password", "", "")
-	flag.StringVar(&cfg.ImportS3RoleARN, "import.s3.role-arn", "", "")
-	flag.StringVar(&cfg.ImportS3ParquetURI, "import.s3.parquet-uri", "", "")
-	flag.StringVar(&cfg.ImportS3SchemaCompressURI, "import.s3.schema-compress-uri", "", "")
-	flag.StringVar(&cfg.ImportS3SchemaTypeMismatchedURI, "import.s3.schema-type-mismatched-uri", "", "")
-	flag.StringVar(&cfg.ImportS3SchemaColumnNumberMismatchedURI, "import.s3.schema-column-number-mismatched-uri", "", "")
-	flag.StringVar(&cfg.ImportAzureURI, "import.azure.uri", "", "")
-	flag.StringVar(&cfg.ImportAzureSASToken, "import.azure.sas-token", "", "")
-	flag.StringVar(&cfg.ImportAzureSASTokenNoPrivilege, "import.azure.sas-token-no-privilege", "", "")
-	flag.StringVar(&cfg.ImportGCSURI, "import.gcs.uri", "", "")
-	flag.StringVar(&cfg.ImportGCSServiceAccountKey, "import.gcs.service-account-key", "", "")
-	flag.StringVar(&cfg.ImportGCSServiceAccountKeyNoPrivilege, "import.gcs.service-account-key-no-privilege", "", "")
-	flag.StringVar(&cfg.ImportS3URI, "import.s3.uri", "", "")
-	flag.StringVar(&cfg.ImportS3RoleARNNoPrivilege, "import.s3.role-arn-no-privilege", "", "")
-	flag.StringVar(&cfg.ImportS3RoleARNDiffExternalID, "import.s3.role-arn-diff-external-id", "", "")
-	flag.StringVar(&cfg.ImportS3AccessKeyIDNoPrivilege, "import.s3.access-key-id-no-privilege", "", "")
-	flag.StringVar(&cfg.ImportS3SecretAccessKeyNoPrivilege, "import.s3.secret-access-key-no-privilege", "", "")
-	flag.StringVar(&cfg.ImportOSSURI, "import.oss.uri", "", "")
-	flag.StringVar(&cfg.ImportOSSAccessKeyID, "import.oss.access-key-id", "", "")
-	flag.StringVar(&cfg.ImportOSSSecretAccessKey, "import.oss.secret-access-key", "", "")
-	flag.StringVar(&cfg.ImportOSSAccessKeyIDNoPrivilege, "import.oss.access-key-id-no-privilege", "", "")
-	flag.StringVar(&cfg.ImportOSSSecretAccessKeyNoPrivilege, "import.oss.secret-access-key-no-privilege", "", "")
-	flag.StringVar(&cfg.ImportOSSRoleARN, "import.oss.role-arn", "", "")
-	flag.StringVar(&cfg.ImportOSSRoleARNNoPrivilege, "import.oss.role-arn-no-privilege", "", "")
-	flag.StringVar(&cfg.ImportOSSRoleARNDiffExternalID, "import.oss.role-arn-diff-external-id", "", "")
+	flag.StringVar(&cfg.Import.Cluster.Host, "import.cluster-host", "", "")
+	flag.StringVar(&cfg.Import.Cluster.User, "import.cluster-user", "", "")
+	flag.StringVar(&cfg.Import.Cluster.Password, "import.cluster-password", "", "")
+	flag.StringVar(&cfg.Import.S3.RoleARN, "import.s3.role-arn", "", "")
+	flag.StringVar(&cfg.Import.S3.ParquetURI, "import.s3.parquet-uri", "", "")
+	flag.StringVar(&cfg.Import.S3.SchemaCompressURI, "import.s3.schema-compress-uri", "", "")
+	flag.StringVar(&cfg.Import.S3.SchemaTypeMismatchedURI, "import.s3.schema-type-mismatched-uri", "", "")
+	flag.StringVar(&cfg.Import.S3.SchemaColumnNumberMismatchedURI, "import.s3.schema-column-number-mismatched-uri", "", "")
+	flag.StringVar(&cfg.Import.Azure.URI, "import.azure.uri", "", "")
+	flag.StringVar(&cfg.Import.Azure.SASToken, "import.azure.sas-token", "", "")
+	flag.StringVar(&cfg.Import.Azure.SASTokenNoPrivilege, "import.azure.sas-token-no-privilege", "", "")
+	flag.StringVar(&cfg.Import.GCS.URI, "import.gcs.uri", "", "")
+	flag.StringVar(&cfg.Import.GCS.ServiceAccountKey, "import.gcs.service-account-key", "", "")
+	flag.StringVar(&cfg.Import.GCS.ServiceAccountKeyNoPrivilege, "import.gcs.service-account-key-no-privilege", "", "")
+	flag.StringVar(&cfg.Import.S3.URI, "import.s3.uri", "", "")
+	flag.StringVar(&cfg.Import.S3.RoleARNNoPrivilege, "import.s3.role-arn-no-privilege", "", "")
+	flag.StringVar(&cfg.Import.S3.RoleARNDiffExternalID, "import.s3.role-arn-diff-external-id", "", "")
+	flag.StringVar(&cfg.Import.S3.AccessKeyIDNoPrivilege, "import.s3.access-key-id-no-privilege", "", "")
+	flag.StringVar(&cfg.Import.S3.SecretAccessKeyNoPrivilege, "import.s3.secret-access-key-no-privilege", "", "")
+	flag.StringVar(&cfg.Import.OSS.URI, "import.oss.uri", "", "")
+	flag.StringVar(&cfg.Import.OSS.AccessKeyID, "import.oss.access-key-id", "", "")
+	flag.StringVar(&cfg.Import.OSS.SecretAccessKey, "import.oss.secret-access-key", "", "")
+	flag.StringVar(&cfg.Import.OSS.AccessKeyIDNoPrivilege, "import.oss.access-key-id-no-privilege", "", "")
+	flag.StringVar(&cfg.Import.OSS.SecretAccessKeyNoPrivilege, "import.oss.secret-access-key-no-privilege", "", "")
+	flag.StringVar(&cfg.Import.OSS.RoleARN, "import.oss.role-arn", "", "")
+	flag.StringVar(&cfg.Import.OSS.RoleARNNoPrivilege, "import.oss.role-arn-no-privilege", "", "")
+	flag.StringVar(&cfg.Import.OSS.RoleARNDiffExternalID, "import.oss.role-arn-diff-external-id", "", "")
 
 	// need to act this like since testing.Run will call flag.Parse() if not parsed
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
-	fmt.Println("configContent", configContent)
+
 	viper.SetConfigType("toml")
 	if configContent != "" {
 		err := viper.ReadConfig(bytes.NewBuffer([]byte(configContent)))

@@ -33,11 +33,11 @@ func TestOSSAccessKeyNoPrivilegeImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_OSS,
 			Oss: &imp.OSSSource{
-				Uri:      cfg.ImportOSSURI,
+				Uri:      cfg.Import.OSS.URI,
 				AuthType: imp.IMPORTOSSAUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.OSSSourceAccessKey{
-					Id:     cfg.ImportOSSAccessKeyIDNoPrivilege,
-					Secret: cfg.ImportOSSSecretAccessKeyNoPrivilege,
+					Id:     cfg.Import.OSS.AccessKeyIDNoPrivilege,
+					Secret: cfg.Import.OSS.SecretAccessKeyNoPrivilege,
 				},
 			},
 		},
@@ -78,11 +78,11 @@ func TestOSSAccessKeyImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_OSS,
 			Oss: &imp.OSSSource{
-				Uri:      cfg.ImportOSSURI,
+				Uri:      cfg.Import.OSS.URI,
 				AuthType: imp.IMPORTOSSAUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &imp.OSSSourceAccessKey{
-					Id:     cfg.ImportOSSAccessKeyID,
-					Secret: cfg.ImportOSSSecretAccessKey,
+					Id:     cfg.Import.OSS.AccessKeyID,
+					Secret: cfg.Import.OSS.SecretAccessKey,
 				},
 			},
 		},
