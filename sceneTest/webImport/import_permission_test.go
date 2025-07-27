@@ -15,6 +15,7 @@ func TestS3Arn(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
@@ -27,6 +28,7 @@ func TestS3Arn(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -39,6 +41,7 @@ func TestS3ArnNoPrivilege(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
@@ -51,6 +54,7 @@ func TestS3ArnNoPrivilege(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -63,6 +67,7 @@ func TestS3ArnDiffExternalID(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
@@ -75,6 +80,7 @@ func TestS3ArnDiffExternalID(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -87,6 +93,7 @@ func TestS3AccessKey(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
@@ -102,6 +109,7 @@ func TestS3AccessKey(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -114,6 +122,7 @@ func TestS3AccessKeyNoPrivilege(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
@@ -129,6 +138,7 @@ func TestS3AccessKeyNoPrivilege(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -141,6 +151,7 @@ func TestGCSServiceAccountKey(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
@@ -153,6 +164,7 @@ func TestGCSServiceAccountKey(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -165,6 +177,7 @@ func TestGCSServiceAccountKeyNoPrivilege(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
@@ -177,6 +190,7 @@ func TestGCSServiceAccountKeyNoPrivilege(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -189,6 +203,7 @@ func TestAzureSASToken(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
@@ -201,6 +216,7 @@ func TestAzureSASToken(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -213,6 +229,7 @@ func TestAzureSASTokenNoPrivilege(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
@@ -225,6 +242,7 @@ func TestAzureSASTokenNoPrivilege(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -237,6 +255,7 @@ func TestOSSAccessKey(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
@@ -250,6 +269,7 @@ func TestOSSAccessKey(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -262,6 +282,7 @@ func TestOSSAccessKeyNoPrivilege(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServiceValidateImport(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServiceValidateImportBody{
 		ValidationType: consoleimportapi.IMPORTVALIDATIONTYPEENUM_SOURCE_ACCESS_CHECK,
@@ -275,6 +296,7 @@ func TestOSSAccessKeyNoPrivilege(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 

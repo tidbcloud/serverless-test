@@ -37,17 +37,17 @@ func init() {
 }
 
 func setup() {
-	var err error
 	cfg := config.LoadConfig()
+
+	var err error
 	importClient, err = NewImportConsoleClient(cfg)
 	if err != nil {
-		println(err.Error())
-		os.Exit(1)
+		log.Fatal("failed to create import client", zap.Error(err))
 	}
+
 	db, err = NewDB(cfg)
 	if err != nil {
-		println(err.Error())
-		os.Exit(1)
+		log.Fatal("failed to create database connection", zap.Error(err))
 	}
 }
 
@@ -57,41 +57,49 @@ func NewDB(cfg *config.Config) (*sql.DB, error) {
 		ServerName: cfg.Import.ClusterHost,
 	})
 	if err != nil {
-		log.Fatal("failed to register tls config -> ", zap.Error(err))
+		return nil, fmt.Errorf("failed to register tls config: %w", err)
 	}
-	db, err = sql.Open("mysql", fmt.Sprintf(
+
+	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:4000)/test?tls=tidb",
-		cfg.Import.ClusterUser, cfg.Import.ClusterPassword, cfg.Import.ClusterHost),
+		cfg.Import.ClusterUser, cfg.Import.ClusterPassword, cfg.Import.ClusterHost,
 	)
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open database connection: %w", err)
+	}
+
 	db.SetConnMaxLifetime(3 * time.Minute)
 	db.SetMaxOpenConns(3)
 	db.SetMaxIdleConns(3)
-	if err != nil {
-		log.Fatal("failed to connect database -> ", zap.Error(err))
-	}
+
 	return db, nil
 }
 
 func NewImportConsoleClient(cfg *config.Config) (*consoleimportapi.APIClient, error) {
-	c := tidbcloudlogin.WebApiLoginContext{
+	loginCtx := tidbcloudlogin.WebApiLoginContext{
 		Host:              cfg.ConsoleAPIHost,
 		Auth0Domain:       cfg.Auth0Domain,
 		Auth0ClientID:     cfg.Auth0ClientID,
 		Auth0ClientSecret: cfg.Auth0ClientSecret,
 		UserEmail:         cfg.UserEmail,
 	}
-	token, err := c.LoginAndGetToken(context.Background())
+
+	token, err := loginCtx.LoginAndGetToken(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to login and get token: %w", err)
 	}
-	httpclient := &http.Client{
+
+	httpClient := &http.Client{
 		Transport: util.NewBearerTransport(token),
 	}
+
 	importCfg := consoleimportapi.NewConfiguration()
-	importCfg.HTTPClient = httpclient
+	importCfg.HTTPClient = httpClient
 	importCfg.Host = cfg.ConsoleAPIHost
 	importCfg.UserAgent = util.UserAgent
 	importCfg.Scheme = "https"
+
 	return consoleimportapi.NewAPIClient(importCfg), nil
 }
 
@@ -102,7 +110,6 @@ func TestMain(m *testing.M) {
 }
 
 func waitImport(ctx context.Context, importID string) error {
-	// Wait for the import task to finish
 	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 
@@ -113,27 +120,32 @@ func waitImport(ctx context.Context, importID string) error {
 		case <-ticker.C:
 			getContext, cancel := context.WithTimeout(ctx, 30*time.Second)
 			defer cancel()
+
 			r := importClient.ImportServiceAPI.ImportServiceGetImport(getContext, orgId, projectId, clusterId, importID)
-			i, resp, err := r.Execute()
-			err = util.ParseError(err, resp)
-			if err != nil {
-				return err
+			importTask, resp, err := r.Execute()
+			if err := util.ParseError(err, resp); err != nil {
+				return fmt.Errorf("failed to get import status: %w", err)
 			}
-			if *i.State == consoleimportapi.IMPORTSTATEENUM_COMPLETED {
-				if i.HasTotalSize() && strings.EqualFold(*i.TotalSize, "0") {
-					return errors.New("import succeeded but no data imported")
+
+			switch *importTask.State {
+			case consoleimportapi.IMPORTSTATEENUM_COMPLETED:
+				if importTask.HasTotalSize() && strings.EqualFold(*importTask.TotalSize, "0") {
+					return errors.New("import succeeded but no data was imported")
 				}
 				return nil
-			} else if *i.State == consoleimportapi.IMPORTSTATEENUM_FAILED {
-				if i.Message == nil {
-					return errors.New("import failed")
+			case consoleimportapi.IMPORTSTATEENUM_FAILED:
+				if importTask.Message == nil {
+					return errors.New("import failed with no error message")
 				}
-				return errors.New(*i.Message)
-			} else if *i.State == consoleimportapi.IMPORTSTATEENUM_CANCELING || *i.State == consoleimportapi.IMPORTSTATEENUM_CANCELED {
-				return errors.New("import task cancelled")
+				return errors.New(*importTask.Message)
+			case consoleimportapi.IMPORTSTATEENUM_CANCELING, consoleimportapi.IMPORTSTATEENUM_CANCELED:
+				return errors.New("import task was cancelled")
+			default:
+				// Import is still in progress, continue waiting
+				continue
 			}
 		case <-timeout:
-			return errors.New("timed out to wait import task complete")
+			return errors.New("import task timed out after 5 minutes")
 		}
 	}
 }
