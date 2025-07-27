@@ -128,55 +128,37 @@ func waitImport(ctx context.Context, importID string) error {
 	for {
 		select {
 		case <-ticker.C:
-			if err := checkImportStatus(ctx, importID); err != nil {
-				return err
+			// Get import status
+			getContext, cancel := context.WithTimeout(ctx, 30*time.Second)
+			defer cancel()
+			r := importClient.ImportServiceAPI.ImportServiceGetImport(getContext, clusterId, importID)
+			importTask, resp, err := r.Execute()
+			if err := util.ParseError(err, resp); err != nil {
+				return fmt.Errorf("failed to get import status: %w", err)
+			}
+
+			// Check import state
+			switch *importTask.State {
+			case imp.IMPORTSTATEENUM_COMPLETED:
+				if importTask.HasTotalSize() && strings.EqualFold(*importTask.TotalSize, "0") {
+					return errors.New("import succeeded but no data was imported")
+				}
+				return nil
+			case imp.IMPORTSTATEENUM_FAILED:
+				if importTask.Message == nil {
+					return errors.New("import failed with no error message")
+				}
+				return errors.New(*importTask.Message)
+			case imp.IMPORTSTATEENUM_CANCELING, imp.IMPORTSTATEENUM_CANCELED:
+				return errors.New("import task was cancelled")
+			default:
+				// Import is still in progress, continue waiting
+				continue
 			}
 		case <-timeout:
 			return errors.New("import task timed out after 5 minutes")
 		}
 	}
-}
-
-// checkImportStatus checks the current status of an import task
-func checkImportStatus(ctx context.Context, importID string) error {
-	getContext, cancel := context.WithTimeout(ctx, 30*time.Second)
-	defer cancel()
-
-	// Get import status
-	r := importClient.ImportServiceAPI.ImportServiceGetImport(getContext, clusterId, importID)
-	importTask, resp, err := r.Execute()
-	if err := util.ParseError(err, resp); err != nil {
-		return fmt.Errorf("failed to get import status: %w", err)
-	}
-
-	// Check import state
-	switch *importTask.State {
-	case imp.IMPORTSTATEENUM_COMPLETED:
-		return validateImportCompletion(importTask)
-	case imp.IMPORTSTATEENUM_FAILED:
-		return handleImportFailure(importTask)
-	case imp.IMPORTSTATEENUM_CANCELING, imp.IMPORTSTATEENUM_CANCELED:
-		return errors.New("import task was cancelled")
-	default:
-		// Import is still in progress, continue waiting
-		return nil
-	}
-}
-
-// validateImportCompletion checks if the import completed successfully with data
-func validateImportCompletion(importTask *imp.Import) error {
-	if importTask.HasTotalSize() && strings.EqualFold(*importTask.TotalSize, "0") {
-		return errors.New("import succeeded but no data was imported")
-	}
-	return nil
-}
-
-// handleImportFailure extracts error message from failed import
-func handleImportFailure(importTask *imp.Import) error {
-	if importTask.Message == nil {
-		return errors.New("import failed with no error message")
-	}
-	return errors.New(*importTask.Message)
 }
 
 // expectFail validates that an error contains the expected error message
