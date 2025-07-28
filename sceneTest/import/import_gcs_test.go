@@ -11,62 +11,79 @@ import (
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/imp"
 )
 
+// TestGcsImport tests successful Google Cloud Storage import with valid service account key
 func TestGcsImport(t *testing.T) {
 	ctx := context.Background()
-	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
-	if err != nil {
-		t.Fatalf("failed to drop table, err: %s", err.Error())
+
+	// Clean up existing table
+	if err := cleanupTestTable(ctx); err != nil {
+		t.Fatalf("Failed to cleanup test table: %v", err)
 	}
 
-	t.Log("start import")
-	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
-	defer cancel()
+	t.Log("Starting GCS import test")
 
-	body := &imp.ImportServiceCreateImportBody{
-		ImportOptions: imp.ImportOptions{
-			FileType: imp.IMPORTFILETYPEENUM_CSV,
-			CsvFormat: &imp.CSVFormat{
-				Separator: pointer.ToString(";"),
-			},
-		},
-		Source: imp.ImportSource{
-			Type: imp.IMPORTSOURCETYPEENUM_GCS,
-			Gcs: &imp.GCSSource{
-				Uri:               config.ImportGCSURI,
-				AuthType:          imp.IMPORTGCSAUTHTYPEENUM_SERVICE_ACCOUNT_KEY,
-				ServiceAccountKey: &config.GCSServiceAccountKey,
-			},
-		},
-	}
-	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
-	if body != nil {
-		r = r.Body(*body)
-	}
-	i, resp, err := r.Execute()
-	err = util.ParseError(err, resp)
+	// Create and execute import
+	importID, err := createGcsImport(ctx, false)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("Failed to create GCS import: %v", err)
 	}
 
-	err = waitImport(ctx, *i.ImportId)
-	if err != nil {
-		t.Fatalf("import failed, importId: %s, error: %s", *i.ImportId, err.Error())
+	// Wait for import completion
+	if err := waitImport(ctx, importID); err != nil {
+		t.Fatalf("Import failed, importId: %s, error: %v", importID, err)
 	}
-	t.Log("import finished")
+
+	t.Log("GCS import completed successfully")
 }
 
+// TestGcsNoPrivilegeImport tests GCS import with insufficient privileges
 func TestGcsNoPrivilegeImport(t *testing.T) {
 	ctx := context.Background()
-	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
-	if err != nil {
-		t.Fatalf("failed to drop table, err: %s", err.Error())
+
+	// Clean up existing table
+	if err := cleanupTestTable(ctx); err != nil {
+		t.Fatalf("Failed to cleanup test table: %v", err)
 	}
 
-	t.Log("start import")
+	t.Log("Starting GCS import test with no privilege")
+
+	// Create and execute import with no privilege service account key
+	importID, err := createGcsImport(ctx, true)
+	if err != nil {
+		t.Fatalf("Failed to create GCS import: %v", err)
+	}
+
+	// Wait for import and expect failure
+	if err := waitImport(ctx, importID); err != nil {
+		// Check if failure is expected
+		if expectErr := expectFail(err, "Permission 'storage.objects.list' denied on resource"); expectErr != nil {
+			t.Fatalf("Test failed, importId: %s, err: %v", importID, expectErr)
+		}
+		t.Log("Import failed as expected")
+		return
+	}
+
+	t.Fatal("Import should have failed but succeeded")
+}
+
+// createGcsImport creates a Google Cloud Storage import with the specified configuration
+func createGcsImport(ctx context.Context, useNoPrivilegeKey bool) (string, error) {
+	// Set timeout for import creation
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
-	body := &imp.ImportServiceCreateImportBody{
+	cfg := config.LoadConfig()
+
+	// Determine which service account key to use
+	var serviceAccountKey string
+	if useNoPrivilegeKey {
+		serviceAccountKey = cfg.Import.GCS.ServiceAccountKeyNoPrivilege
+	} else {
+		serviceAccountKey = cfg.Import.GCS.ServiceAccountKey
+	}
+
+	// Build import request body
+	body := imp.ImportServiceCreateImportBody{
 		ImportOptions: imp.ImportOptions{
 			FileType: imp.IMPORTFILETYPEENUM_CSV,
 			CsvFormat: &imp.CSVFormat{
@@ -76,26 +93,21 @@ func TestGcsNoPrivilegeImport(t *testing.T) {
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_GCS,
 			Gcs: &imp.GCSSource{
-				Uri:               config.ImportGCSURI,
+				Uri:               cfg.Import.GCS.URI,
 				AuthType:          imp.IMPORTGCSAUTHTYPEENUM_SERVICE_ACCOUNT_KEY,
-				ServiceAccountKey: &config.ImportGCSServiceAccountKeyNoPrivilege,
+				ServiceAccountKey: &serviceAccountKey,
 			},
 		},
 	}
+
+	// Execute import request
 	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, clusterId)
-	if body != nil {
-		r = r.Body(*body)
+	r = r.Body(body)
+
+	importTask, resp, err := r.Execute()
+	if err := util.ParseError(err, resp); err != nil {
+		return "", err
 	}
-	i, resp, err := r.Execute()
-	err = util.ParseError(err, resp)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = waitImport(ctx, *i.ImportId)
-	err = expectFail(err, "Permission 'storage.objects.list' denied on resource")
-	if err != nil {
-		t.Fatalf("test failed, importId: %s, err: %s", *i.ImportId, err.Error())
-	} else {
-		t.Log("import failed as expected")
-	}
+
+	return *importTask.ImportId, nil
 }

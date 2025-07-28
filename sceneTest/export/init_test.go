@@ -1,38 +1,38 @@
 package export
 
 import (
-	"flag"
+	"log"
+	"net/http"
+
+	"github.com/spf13/pflag"
 	"github.com/tidbcloud/serverless-test/config"
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/export"
-	"net/http"
-	"os"
 )
 
 func init() {
-	flag.StringVar(&clusterId, "cid", "", "")
+	pflag.StringVar(&clusterId, "cid", "", "")
 }
 
 func setup() {
 	var err error
-	config.InitializeConfig()
-	exportClient, err = NewExportClient()
+	exportClient, err = NewExportClient(config.LoadConfig())
 	if err != nil {
-		println(err.Error())
-		os.Exit(1)
+		log.Panicf("failed to create export client: %v", err)
 	}
 }
 
-func NewExportClient() (*export.APIClient, error) {
-	httpclient := &http.Client{
-		Transport: util.NewDigestTransport(config.PublicKey, config.PrivateKey),
+// NewExportClient creates a new export API client with the given configuration
+func NewExportClient(cfg *config.Config) (*export.APIClient, error) {
+	httpClient := &http.Client{
+		Transport: util.NewDigestTransport(cfg.PublicKey, cfg.PrivateKey),
 	}
-	serverlessURL, err := util.ValidateApiUrl(config.ServerlessEndpoint)
+	serverlessURL, err := util.ValidateApiUrl(cfg.Endpoint.Serverless)
 	if err != nil {
 		return nil, err
 	}
 	exportCfg := export.NewConfiguration()
-	exportCfg.HTTPClient = httpclient
+	exportCfg.HTTPClient = httpClient
 	exportCfg.Host = serverlessURL.Host
 	exportCfg.UserAgent = util.UserAgent
 	return export.NewAPIClient(exportCfg), nil

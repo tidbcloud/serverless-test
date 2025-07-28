@@ -14,8 +14,12 @@ import (
 func TestPrecheckWithoutTable(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+
+	// Clean up existing table
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	assert.NoError(err)
+
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -24,15 +28,16 @@ func TestPrecheckWithoutTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -42,6 +47,7 @@ func TestPrecheckWithoutTable(t *testing.T) {
 	util.EqualPointerValues(assert, pointer.ToString(""), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
+
 	// Verify table result
 	assert.ElementsMatch([]consoleimportapi.TableResult{
 		{
@@ -60,10 +66,15 @@ func TestPrecheckWithoutTable(t *testing.T) {
 func TestPrecheckWithEmptyTable(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+
+	// Clean up and create empty table
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	assert.NoError(err)
+
 	_, err = db.Exec("CREATE TABLE `test`.`a` (name VARCHAR(20) NOT NULL, age INT NOT NULL)")
 	assert.NoError(err)
+
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -72,15 +83,16 @@ func TestPrecheckWithEmptyTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -90,6 +102,7 @@ func TestPrecheckWithEmptyTable(t *testing.T) {
 	util.EqualPointerValues(assert, pointer.ToString(""), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
+
 	// Verify table result
 	assert.ElementsMatch([]consoleimportapi.TableResult{
 		{
@@ -108,12 +121,18 @@ func TestPrecheckWithEmptyTable(t *testing.T) {
 func TestPrecheckWithNonEmptyTable(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+
+	// Clean up, create table, and insert data
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	assert.NoError(err)
+
 	_, err = db.Exec("CREATE TABLE `test`.`a` (name VARCHAR(20) NOT NULL, age INT NOT NULL)")
 	assert.NoError(err)
+
 	_, err = db.Exec("INSERT INTO `test`.`a` VALUES ('Alice', 30), ('Bob', 25)")
 	assert.NoError(err)
+
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -122,15 +141,16 @@ func TestPrecheckWithNonEmptyTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -140,6 +160,7 @@ func TestPrecheckWithNonEmptyTable(t *testing.T) {
 	util.EqualPointerValues(assert, pointer.ToString("Found 1 table(s) with error: test.a"), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
+
 	// Verify table result
 	assert.ElementsMatch([]consoleimportapi.TableResult{
 		{
@@ -158,6 +179,8 @@ func TestPrecheckWithNonEmptyTable(t *testing.T) {
 func TestPrecheckTruncatedResult(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+	cfg := config.LoadConfig()
+
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -169,12 +192,13 @@ func TestPrecheckTruncatedResult(t *testing.T) {
 				Uri:      "s3://tidbcloud-samples-us-east-1/import-data/gharchive_dev/",
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -189,8 +213,12 @@ func TestPrecheckTruncatedResult(t *testing.T) {
 func TestPrecheckCustomMappingWithoutTable(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+
+	// Clean up existing table
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	assert.NoError(err)
+
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -199,11 +227,11 @@ func TestPrecheckCustomMappingWithoutTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 				TargetTableInfos: []consoleimportapi.ImportTargetTableInfo{
 					{
@@ -217,6 +245,7 @@ func TestPrecheckCustomMappingWithoutTable(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -226,6 +255,7 @@ func TestPrecheckCustomMappingWithoutTable(t *testing.T) {
 	util.EqualPointerValues(assert, pointer.ToString("Found 1 table(s) with error: test.a"), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
+
 	// Verify table result
 	assert.ElementsMatch([]consoleimportapi.TableResult{
 		{
@@ -244,12 +274,18 @@ func TestPrecheckCustomMappingWithoutTable(t *testing.T) {
 func TestPrecheckCustomMappingWithNonEmptyTable(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+
+	// Clean up, create table, and insert data
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	assert.NoError(err)
+
 	_, err = db.Exec("CREATE TABLE `test`.`a` (name VARCHAR(20) NOT NULL, age INT NOT NULL)")
 	assert.NoError(err)
+
 	_, err = db.Exec("INSERT INTO `test`.`a` VALUES ('Alice', 30), ('Bob', 25)")
 	assert.NoError(err)
+
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -258,11 +294,11 @@ func TestPrecheckCustomMappingWithNonEmptyTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 				TargetTableInfos: []consoleimportapi.ImportTargetTableInfo{
 					{
@@ -276,6 +312,7 @@ func TestPrecheckCustomMappingWithNonEmptyTable(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -285,6 +322,7 @@ func TestPrecheckCustomMappingWithNonEmptyTable(t *testing.T) {
 	util.EqualPointerValues(assert, pointer.ToString("Found 1 table(s) with error: test.a"), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
+
 	// Verify table result
 	assert.ElementsMatch([]consoleimportapi.TableResult{
 		{
@@ -303,10 +341,15 @@ func TestPrecheckCustomMappingWithNonEmptyTable(t *testing.T) {
 func TestPrecheckCustomMappingWithEmptyTable(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+
+	// Clean up and create empty table
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	assert.NoError(err)
+
 	_, err = db.Exec("CREATE TABLE `test`.`a` (name VARCHAR(20) NOT NULL, age INT NOT NULL)")
 	assert.NoError(err)
+
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServicePrecheck(ctx, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ImportServicePrecheckBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -315,11 +358,11 @@ func TestPrecheckCustomMappingWithEmptyTable(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 				TargetTableInfos: []consoleimportapi.ImportTargetTableInfo{
 					{
@@ -333,6 +376,7 @@ func TestPrecheckCustomMappingWithEmptyTable(t *testing.T) {
 			},
 		},
 	})
+
 	result, resp, err := r.Execute()
 	err = util.ParseError(err, resp)
 
@@ -342,6 +386,7 @@ func TestPrecheckCustomMappingWithEmptyTable(t *testing.T) {
 	util.EqualPointerValues(assert, pointer.ToString(""), result.ErrorMessage)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalTablesCount)
 	util.EqualPointerValues(assert, pointer.ToString("1"), result.TotalDataFilesCount)
+
 	// Verify table result
 	assert.ElementsMatch([]consoleimportapi.TableResult{
 		{

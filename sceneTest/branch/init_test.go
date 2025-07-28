@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -15,74 +15,117 @@ import (
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/cluster"
 )
 
+// setup initializes the test environment by creating API clients and a test cluster
 func setup() {
+	cfg := config.LoadConfig()
+
+	// Initialize branch client
 	var err error
-	config.InitializeConfig()
-	branchClient, err = NewBranchClient()
+	branchClient, err = NewBranchClient(cfg)
 	if err != nil {
-		println(err.Error())
-		os.Exit(1)
+		log.Panicf("failed to create branch client: %v", err)
 	}
-	clusterClient, err = NewClusterClient()
+
+	// Initialize cluster client
+	clusterClient, err = NewClusterClient(cfg)
 	if err != nil {
-		println(err.Error())
-		os.Exit(1)
+		log.Panicf("failed to create cluster client: %v", err)
 	}
-	clu, err := CreateCluster()
+
+	// Create test cluster
+	cluster, err := CreateCluster(cfg.ProjectID, "branch-test")
 	if err != nil {
-		println(err.Error())
-		os.Exit(1)
+		log.Panicf("failed to create test cluster: %v", err)
 	}
-	clusterId = *clu.ClusterId
-	println(fmt.Sprintf("cluster created successfully, clusterId is %s, region is %s", *clu.ClusterId, *clu.Region.Name))
+
+	clusterId = *cluster.ClusterId
+	log.Printf("Test cluster created successfully - ClusterID: %s, Region: %s", *cluster.ClusterId, *cluster.Region.Name)
 }
 
-func NewBranchClient() (*branch.APIClient, error) {
-	httpclient := &http.Client{
-		Transport: util.NewDigestTransport(config.PublicKey, config.PrivateKey),
+// NewBranchClient creates a new branch API client with the given configuration
+func NewBranchClient(cfg *config.Config) (*branch.APIClient, error) {
+	httpClient := &http.Client{
+		Transport: util.NewDigestTransport(cfg.PublicKey, cfg.PrivateKey),
 	}
-	serverlessURL, err := util.ValidateApiUrl(config.ServerlessEndpoint)
+
+	serverlessURL, err := util.ValidateApiUrl(cfg.Endpoint.Serverless)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid serverless endpoint: %w", err)
 	}
-	cfg := branch.NewConfiguration()
-	cfg.HTTPClient = httpclient
-	cfg.Host = serverlessURL.Host
-	cfg.UserAgent = util.UserAgent
-	return branch.NewAPIClient(cfg), nil
+
+	branchCfg := branch.NewConfiguration()
+	branchCfg.HTTPClient = httpClient
+	branchCfg.Host = serverlessURL.Host
+	branchCfg.UserAgent = util.UserAgent
+
+	return branch.NewAPIClient(branchCfg), nil
 }
 
-func NewClusterClient() (*cluster.APIClient, error) {
-	httpclient := &http.Client{
-		Transport: util.NewDigestTransport(config.PublicKey, config.PrivateKey),
+// NewClusterClient creates a new cluster API client with the given configuration
+func NewClusterClient(cfg *config.Config) (*cluster.APIClient, error) {
+	httpClient := &http.Client{
+		Transport: util.NewDigestTransport(cfg.PublicKey, cfg.PrivateKey),
 	}
-	serverlessURL, err := util.ValidateApiUrl(config.ServerlessEndpoint)
+
+	serverlessURL, err := util.ValidateApiUrl(cfg.Endpoint.Serverless)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid serverless endpoint: %w", err)
 	}
-	cfg := cluster.NewConfiguration()
-	cfg.HTTPClient = httpclient
-	cfg.Host = serverlessURL.Host
-	cfg.UserAgent = util.UserAgent
-	return cluster.NewAPIClient(cfg), nil
+
+	clusterCfg := cluster.NewConfiguration()
+	clusterCfg.HTTPClient = httpClient
+	clusterCfg.Host = serverlessURL.Host
+	clusterCfg.UserAgent = util.UserAgent
+
+	return cluster.NewAPIClient(clusterCfg), nil
 }
 
-func CreateCluster() (*cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) {
+// CreateCluster creates a new test cluster with the specified project ID and cluster name
+func CreateCluster(projectId, clusterName string) (*cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) {
 	ctx := context.Background()
-	clusterName := "branch-test"
 
-	req := clusterClient.ServerlessServiceAPI.ServerlessServiceListClusters(ctx)
-	req = req.PageSize(100)
-	if config.ProjectId != "" {
-		projectFilter := fmt.Sprintf("projectId=%s", config.ProjectId)
+	// Clean up any existing test cluster
+	if err := cleanupExistingCluster(ctx, projectId, clusterName); err != nil {
+		return nil, fmt.Errorf("failed to cleanup existing cluster: %w", err)
+	}
+
+	// Create new cluster configuration
+	clusterBody, err := buildClusterConfig(projectId, clusterName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build cluster config: %w", err)
+	}
+
+	// Create the cluster
+	resp, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceCreateCluster(ctx).
+		Cluster(clusterBody).Execute()
+	if err := util.ParseError(err, h); err != nil {
+		return nil, fmt.Errorf("failed to create cluster: %w", err)
+	}
+
+	// Wait for cluster to become active
+	activeCluster, err := waitForClusterActive(ctx, *resp.ClusterId)
+	if err != nil {
+		return nil, fmt.Errorf("cluster failed to become active: %w", err)
+	}
+
+	return activeCluster, nil
+}
+
+// cleanupExistingCluster removes any existing test cluster with the given project ID and cluster name
+func cleanupExistingCluster(ctx context.Context, projectId, clusterName string) error {
+	req := clusterClient.ServerlessServiceAPI.ServerlessServiceListClusters(ctx).PageSize(100)
+
+	if projectId != "" {
+		projectFilter := fmt.Sprintf("projectId=%s", projectId)
 		req = req.Filter(projectFilter)
 	}
+
 	clusters, h, err := req.Execute()
-	err = util.ParseError(err, h)
-	if err != nil {
-		return nil, err
+	if err := util.ParseError(err, h); err != nil {
+		return fmt.Errorf("failed to list clusters: %w", err)
 	}
 
+	// Find and delete existing test cluster
 	for _, clu := range clusters.Clusters {
 		if clu.DisplayName == clusterName {
 			DeleteCluster(*clu.ClusterId)
@@ -90,15 +133,24 @@ func CreateCluster() (*cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) 
 		}
 	}
 
-	var spendLimit int32 = 100
+	return nil
+}
+
+// buildClusterConfig creates a cluster configuration based on the project ID and cluster name
+func buildClusterConfig(projectId, clusterName string) (cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) {
 	region := config.GetRandomRegion()
+
 	clusterBody := cluster.TidbCloudOpenApiserverlessv1beta1Cluster{
 		DisplayName: clusterName,
 		Region: cluster.Commonv1beta1Region{
 			Name: &region,
 		},
 	}
+
+	// Configure based on cloud provider
 	if strings.Contains(region, "aws") {
+		// AWS configuration with spending limit
+		spendLimit := int32(100)
 		clusterBody.SpendingLimit = &cluster.ClusterSpendingLimit{
 			Monthly: &spendLimit,
 		}
@@ -110,53 +162,54 @@ func CreateCluster() (*cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) 
 			MaxRcu: &maxRcu,
 		}
 	}
-	if config.ProjectId != "" {
-		clusterBody.Labels = &map[string]string{"tidb.cloud/project": config.ProjectId}
+
+	// Add project labels if project ID is provided
+	if projectId != "" {
+		clusterBody.Labels = &map[string]string{"tidb.cloud/project": projectId}
 	}
 
-	resp, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceCreateCluster(ctx).Cluster(clusterBody).Execute()
-	err = util.ParseError(err, h)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err = checkServerlessState(ctx, *resp.ClusterId)
-	if err != nil {
-		return nil, err
-	}
-	if *resp.State != cluster.COMMONV1BETA1CLUSTERSTATE_ACTIVE {
-		return nil, errors.New("create cluster failed, state is" + string(*resp.State))
-	}
-	return resp, nil
+	return clusterBody, nil
 }
 
-func checkServerlessState(ctx context.Context, clusterId string) (*cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) {
-	ticker := time.NewTicker(time.Second * 10)
-	timeout := time.After(time.Minute * 3)
+// waitForClusterActive waits for the cluster to reach active state with timeout
+func waitForClusterActive(ctx context.Context, clusterID string) (*cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) {
+	const (
+		checkInterval = 10 * time.Second
+		timeout       = 3 * time.Minute
+	)
+
+	ticker := time.NewTicker(checkInterval)
+	defer ticker.Stop()
+
+	timeoutTimer := time.After(timeout)
+
 	for {
 		select {
 		case <-ticker.C:
-			res, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceGetCluster(ctx, clusterId).Execute()
-			if util.ParseError(err, h) != nil {
-				println("get cluster failed: " + util.ParseError(err, h).Error())
+			c, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceGetCluster(ctx, clusterID).Execute()
+			if err := util.ParseError(err, h); err != nil {
+				log.Printf("Failed to get cluster status: %v", err)
 				continue
 			}
-			if *res.State != cluster.COMMONV1BETA1CLUSTERSTATE_CREATING {
-				return res, nil
+
+			if *c.State == cluster.COMMONV1BETA1CLUSTERSTATE_ACTIVE {
+				return c, nil
 			}
-		case <-timeout:
-			return nil, errors.New("create cluster timeout")
+
+		case <-timeoutTimer:
+			return nil, errors.New("cluster creation timed out after 3 minutes")
 		}
 	}
 }
 
-func DeleteCluster(clusterId string) {
+// DeleteCluster deletes a cluster by its ID
+func DeleteCluster(clusterID string) {
 	ctx := context.Background()
-	_, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceDeleteCluster(ctx, clusterId).Execute()
-	err = util.ParseError(err, h)
-	if err != nil {
-		println("delete cluster failed: " + err.Error())
+
+	_, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceDeleteCluster(ctx, clusterID).Execute()
+	if err := util.ParseError(err, h); err != nil {
+		log.Printf("Failed to delete cluster %s: %v", clusterID, err)
 	} else {
-		println("delete cluster success")
+		log.Printf("Successfully deleted cluster %s", clusterID)
 	}
 }

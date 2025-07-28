@@ -15,12 +15,16 @@ import (
 func TestImportWithoutTargetTables(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+
+	// Clean up existing table
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`a`")
 	assert.NoError(err)
-	t.Log("start import")
+
+	t.Log("Starting import without target tables")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ConsoleImportServiceCreateImportBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -32,11 +36,11 @@ func TestImportWithoutTargetTables(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 			},
 		},
@@ -52,14 +56,19 @@ func TestImportWithoutTargetTables(t *testing.T) {
 func TestImportWithTargetTables(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
+
+	// Clean up and prepare test table
 	_, err := db.Exec("DROP TABLE IF EXISTS `test`.`b`")
 	assert.NoError(err)
+
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS `test`.`b` (name VARCHAR(20) NOT NULL, age INT NOT NULL)")
 	assert.NoError(err)
-	t.Log("start import")
+
+	t.Log("Starting import with target tables")
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	cfg := config.LoadConfig()
 	r := importClient.ImportServiceAPI.ImportServiceCreateImport(startImportContext, orgId, projectId, clusterId)
 	r = r.Body(consoleimportapi.ConsoleImportServiceCreateImportBody{
 		ImportOptions: consoleimportapi.ImportOptions{
@@ -71,11 +80,11 @@ func TestImportWithTargetTables(t *testing.T) {
 		Source: consoleimportapi.ImportSource{
 			Type: consoleimportapi.IMPORTSOURCETYPEENUM_S3,
 			S3: &consoleimportapi.S3Source{
-				Uri:      config.ImportS3URI,
+				Uri:      cfg.Import.S3.URI,
 				AuthType: consoleimportapi.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
 				AccessKey: &consoleimportapi.S3SourceAccessKey{
-					Id:     config.S3AccessKeyId,
-					Secret: config.S3SecretAccessKey,
+					Id:     cfg.S3.AccessKeyID,
+					Secret: cfg.S3.SecretAccessKey,
 				},
 				TargetTableInfos: []consoleimportapi.ImportTargetTableInfo{
 					{
@@ -95,8 +104,11 @@ func TestImportWithTargetTables(t *testing.T) {
 	err = waitImport(ctx, *i.Id)
 	assert.NoError(err)
 
+	// Verify data was imported
 	query, err := db.Query("SELECT COUNT(*) FROM `test`.`b`")
 	assert.NoError(err)
+	defer query.Close()
+
 	var count int
 	if query.Next() {
 		_ = query.Scan(&count)
