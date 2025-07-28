@@ -35,7 +35,7 @@ jobs:
         run: |
           if [ -z ${{ github.event.inputs.testCase }} ]; then
             echo "Running all tests"
-            go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/webImport/* -args --cid 10278121821273448857 --pid 1372813089454562808 --oid 1372813089187041280 --config "${{ secrets.TEST_CONFIG }}" --test.timeout 30m --test.skip "TestOSSArn.*"
+            go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/webImport/* -timeout 30m -args --cid 10278121821273448857 --pid 1372813089454562808 --oid 1372813089187041280 --config "${{ secrets.TEST_CONFIG }}" --test.timeout 30m --test.skip "TestOSSArn.*"
           else
             echo "Running test ${{ github.event.inputs.testCase }}"
             go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/webImport/* -args --cid 10278121821273448857 --pid 1372813089454562808 --oid 1372813089187041280 --config "${{ secrets.TEST_CONFIG }}" --test.run ${{ github.event.inputs.testCase }} 
