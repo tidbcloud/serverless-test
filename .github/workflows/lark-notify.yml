@@ -9,6 +9,7 @@ on:
       - "Import Scene Test Alicloud"
       - "Import Console Api Test"
       - "Import Console Api Test Alicloud"
+      - "Cluster Scene Test"
     types:
       - completed
 
