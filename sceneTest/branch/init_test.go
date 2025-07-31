@@ -138,7 +138,7 @@ func cleanupExistingCluster(ctx context.Context, projectId, clusterName string) 
 
 // buildClusterConfig creates a cluster configuration based on the project ID and cluster name
 func buildClusterConfig(projectId, clusterName string) (cluster.TidbCloudOpenApiserverlessv1beta1Cluster, error) {
-	region := config.GetRandomRegion()
+	region := "regions/aws-us-east-1"
 
 	clusterBody := cluster.TidbCloudOpenApiserverlessv1beta1Cluster{
 		DisplayName: clusterName,

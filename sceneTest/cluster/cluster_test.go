@@ -14,6 +14,7 @@ import (
 )
 
 var testClusterId string
+var region = "regions/aws-us-east-1"
 
 // go test -v sceneTest/cluster/* -project-id {project-id}
 func TestMain(m *testing.M) {
@@ -36,9 +37,6 @@ func TestCreateCluster(t *testing.T) {
 	}
 
 	t.Logf("Creating cluster: %s", clusterName)
-
-	// Set region to ap-northeast-1
-	region := "regions/aws-ap-northeast-1"
 
 	// Set spending limit
 	spendLimit := int32(100)
@@ -135,7 +133,7 @@ func TestGetCluster(t *testing.T) {
 	assert.NotNil(resp)
 	assert.Equal(testClusterId, *resp.ClusterId)
 	assert.NotEmpty(resp.DisplayName)
-	assert.Equal("regions/aws-ap-northeast-1", *resp.Region.Name)
+	assert.Equal(region, *resp.Region.Name)
 	assert.NotNil(resp.SpendingLimit)
 	assert.Equal(int32(100), *resp.SpendingLimit.Monthly)
 
