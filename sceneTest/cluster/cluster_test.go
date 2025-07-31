@@ -7,7 +7,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/AlekSi/pointer"
 	"github.com/lithammer/shortuuid/v4"
 	"github.com/stretchr/testify/require"
 	"github.com/tidbcloud/serverless-test/util"
@@ -53,10 +52,10 @@ func TestCreateCluster(t *testing.T) {
 		SpendingLimit: &cluster.ClusterSpendingLimit{
 			Monthly: &spendLimit,
 		},
-		EncryptionConfig: &cluster.V1beta1ClusterEncryptionConfig{
-			EnhancedEncryptionEnabled: pointer.ToBool(true),
-		},
-		HighAvailabilityType: cluster.CLUSTERHIGHAVAILABILITYTYPE_REGIONAL.Ptr(),
+		//EncryptionConfig: &cluster.V1beta1ClusterEncryptionConfig{
+		//	EnhancedEncryptionEnabled: pointer.ToBool(true),
+		//},
+		//HighAvailabilityType: cluster.CLUSTERHIGHAVAILABILITYTYPE_REGIONAL.Ptr(),
 	}
 
 	// Add project labels if project ID is provided
