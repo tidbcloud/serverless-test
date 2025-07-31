@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"sync"
-	"time"
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -188,17 +187,4 @@ func initializeConfig(cfg *Config) error {
 	}
 
 	return viper.Unmarshal(cfg)
-}
-
-func GetRandomRegion() string {
-	regionLists := []string{
-		"regions/aws-us-west-2",
-		"regions/aws-us-east-1",
-		"regions/aws-ap-northeast-1",
-		"regions/aws-ap-southeast-1",
-		"regions/aws-eu-central-1",
-		"regions/alicloud-ap-southeast-1",
-	}
-	size := len(regionLists)
-	return regionLists[time.Now().Unix()%int64(size)]
 }
