@@ -39,7 +39,7 @@ func TestExportToLocalAndDownload(t *testing.T) {
 	}
 	// the first export may run slowly
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 6*time.Minute)
-	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED, exp.Reason.Get())
 
 	t.Log("start to list download files")
 	exportFilesReq := exportClient.ExportServiceAPI.ExportServiceListExportFiles(ctx, clusterId, *res.ExportId)
@@ -97,7 +97,7 @@ func TestExportWithParquetFile(t *testing.T) {
 	}
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
-	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED, exp.Reason.Get())
 	assert.Equal(t, *exp.ExportOptions.FileType, fileType)
 	assert.Equal(t, *exp.ExportOptions.ParquetFormat.Compression, parquetCompressionType)
 
@@ -130,7 +130,7 @@ func TestExportWithCSVFile(t *testing.T) {
 	}
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
-	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED, exp.Reason.Get())
 	assert.Equal(t, *exp.ExportOptions.FileType, fileType)
 	assert.Equal(t, *exp.ExportOptions.CsvFormat.SkipHeader, skipHeader)
 	assert.Equal(t, *exp.ExportOptions.CsvFormat.Separator, separator)
@@ -156,7 +156,7 @@ func TestExportWithSQLFile(t *testing.T) {
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
-	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED, exp.Reason.Get())
 	assert.Equal(t, *exp.ExportOptions.FileType, fileType)
 
 	DeleteExport(ctx, clusterId, *res.ExportId)
@@ -178,7 +178,7 @@ func TestExportWithCompression(t *testing.T) {
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
-	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED, exp.Reason.Get())
 	assert.Equal(t, *exp.ExportOptions.Compression, compression)
 
 	DeleteExport(ctx, clusterId, *res.ExportId)
@@ -202,7 +202,7 @@ func TestExportWithSQLFilter(t *testing.T) {
 	}
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
-	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED, exp.Reason.Get())
 	assert.Equal(t, *exp.ExportOptions.Filter.Sql, sql)
 
 	DeleteExport(ctx, clusterId, *res.ExportId)
@@ -232,7 +232,7 @@ func TestExportWithTableFilter(t *testing.T) {
 	}
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
 
-	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED, exp.Reason.Get())
 	assert.Equal(t, *exp.ExportOptions.Filter.Table.Where, where)
 	assert.Equal(t, exp.ExportOptions.Filter.Table.Patterns[0], table0)
 	assert.Equal(t, exp.ExportOptions.Filter.Table.Patterns[1], table1)
@@ -274,7 +274,7 @@ func TestExportToS3AccessKey(t *testing.T) {
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
-	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED, exp.Reason.Get())
 	assert.Equal(t, *exp.Target.S3.Uri, exportS3Uri)
 
 	DeleteExport(ctx, clusterId, *res.ExportId)
@@ -313,7 +313,7 @@ func TestExportToS3RoleArn(t *testing.T) {
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
-	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED, exp.Reason.Get())
 	assert.Equal(t, *exp.Target.S3.Uri, exportS3Uri)
 
 	DeleteExport(ctx, clusterId, *res.ExportId)
@@ -352,7 +352,7 @@ func TestExportToAzure(t *testing.T) {
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
-	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED, exp.Reason.Get())
 	assert.Equal(t, exp.Target.AzureBlob.Uri, azureUri)
 
 	DeleteExport(ctx, clusterId, *res.ExportId)
@@ -391,7 +391,7 @@ func TestExportToGCS(t *testing.T) {
 	}
 
 	exp := checkServerlessExportState(ctx, t, clusterId, *res.ExportId, 3*time.Minute)
-	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED)
+	assert.Equal(t, *exp.State, export.EXPORTSTATEENUM_SUCCEEDED, exp.Reason.Get())
 	assert.Equal(t, exp.Target.Gcs.Uri, gcsUri)
 
 	DeleteExport(ctx, clusterId, *res.ExportId)
