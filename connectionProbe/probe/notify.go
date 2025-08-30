@@ -27,7 +27,22 @@ func NotifyFailure(notify *NotifyInfo, webhook string, actionURL string) (err er
 		}
 	}()
 
-	content := fmt.Sprintf("**Cluster_ID:** %s\n**Region:** %s\n**Plan:** %s\n**Port:** %d\n**Error:** %s", db.ClusterID, db.Region, db.Plan, db.Port, notify.ErrorMsg)
+	contentItems := []struct {
+		key   string
+		value string
+	}{
+		{"Cluster_ID", db.ClusterID},
+		{"Region", db.Region},
+		{"Plan", db.Plan},
+		{"Port", fmt.Sprintf("%d", db.Port)},
+		{"Pool", db.TiDBPool},
+		{"Error", notify.ErrorMsg},
+	}
+	var contentBuilder bytes.Buffer
+	for _, item := range contentItems {
+		fmt.Fprintf(&contentBuilder, "**%s:** %s\n", item.key, item.value)
+	}
+	content := contentBuilder.String()
 	elements := []interface{}{
 		map[string]interface{}{
 			"tag": "div",
