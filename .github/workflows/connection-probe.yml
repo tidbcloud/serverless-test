@@ -1,0 +1,27 @@
+name: Connection Probe
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+
+      - name: Install dependencies
+        run: go mod tidy
+        working-directory: ./connectionProbe
+
+      - name: Run connection probe
+        working-directory: ./connectionProbe
+        run: |
+          go run main.go --password "${{ secrets.PROBE_PASSWORD }}" --lark-webhook "{{ secrets.PROBE_LARK_WEBHOOK }}" --action-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
