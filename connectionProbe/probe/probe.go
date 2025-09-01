@@ -24,6 +24,8 @@ type DBConfig struct {
 	TiDBPool  string `yaml:"tidb_pool"`
 }
 
+const probeTimeoutSec = 8
+
 func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (err error) {
 	start := time.Now()
 	defer func() {
@@ -42,8 +44,7 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 		ServerName: db.Host,
 	})
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/test?tls=%s&timeout=5s", db.User, db.Password, db.Host, db.Port, db.Host)
-
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/test?tls=%s", db.User, db.Password, db.Host, db.Port, db.Host)
 	conn, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return err
@@ -51,11 +52,11 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 	defer conn.Close()
 
 	// probe the connection with a timeout context
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, probeTimeoutSec*time.Second)
 	defer cancel()
 	if err := conn.PingContext(ctx); err != nil {
 		if ctx.Err() == context.DeadlineExceeded {
-			return errors.New("connection timeout(5s)")
+			return fmt.Errorf("connection timeout(%ds)", probeTimeoutSec)
 		}
 		return err
 	}
