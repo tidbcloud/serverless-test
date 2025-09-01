@@ -46,6 +46,7 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/test?tls=%s&timeout=%ds", db.User, db.Password, db.Host, db.Port, db.ClusterID, probeTimeoutSec)
 	conn, err := sql.Open("mysql", dsn)
 	if err != nil {
+		println("Failed to open mysql connection:", err.Error())
 		return err
 	}
 	defer conn.Close()
