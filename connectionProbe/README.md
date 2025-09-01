@@ -1,44 +1,56 @@
-# Dev guide
+# Dev Guide
 
-This project is used to probe the connection status of TiDB Cloud starter&essential in different regions.
+This project is used to probe the connection status of TiDB Cloud Starter & Essential clusters in different regions.
 
-The prject consists of:
-1. Github Action: The github action will be triggered every 5 minutes, and run the probe code.
-2. Probe Code: The probe code will read the db_config.yaml file to get the connection info of different regions.
+The project consists of:
+1. GitHub Action: The GitHub Action will be triggered every 5 minutes to run the probe code.
+2. Probe Code: The probe code will read the `db_config.yaml` file to get the connection info of different regions.
    1. Try to connect and ping the TiDB Cloud cluster.
-   2. Notify the slack channel if the connection fails.
-   3. Reocrd the probe result in the meta db.
-3. Frontend: The frontend will read the meta db and display the probe result in a table.
-   1. can be deployed on Netlify.
+   2. Notify the Lark channel if the connection fails.
+   3. Record the probe result in the meta DB.
+3. Frontend: The frontend will read the meta DB and display the probe results in a table.
+   1. Can be deployed on Netlify.
 
-# User Guide
+### Manage GitHub Action
 
-### manage github action
+The GitHub Action is defined in the `.github/workflows/connection-probe.yml` file.
 
-The github action is defined in the `.github/workflows/connection_probe.yml` file.
+You need to configure the following secrets in the GitHub repository:
+- PROBE_PASSWORD: The password for all TiDB Cloud clusters (unified for simplicity).
+- PROBE_LARK_WEBHOOK: The webhook URL of the Lark channel for notifications.
+- PROBE_META_DB_DSN: The DSN in "<user>:<PASSWORD>@tcp(<host>:<port>)/<db>" format of the meta DB to record probe results. (Optional, if not provided, the probe results will not be recorded)
 
-Add you need to configure the following secrets in the github repo:
-- PROBE_PASSWORD: the password of all the TiDB Cloud cluster (unify the password for simplicity).
-- PROBE_LARK_WEBHOOK: The webhook url of the slack channel to notify.
-- PROBE_META_DB_DSN: The DSN in "<user>:<PASSWORD>@tcp(<hosr>:<port>)/<db>" format of the meta db to record the probe result. (Optinal, if not provided, the probe result will not be recorded)
+### Manage Meta DB
 
-### manage meta db
+The DDL of the meta DB is defined in the `connectionProbe/storage/meta_db.sql` file.
 
-The DDL of the meta db is defined in the `connectionProbe/storage/meta_db.sql` file.
+The meta DB requires TLS to be enabled by default.
 
-The meta db needs open TLS in default.
+### Manage DB Config
 
-### manage db config
+The DB config is defined in the `connectionProbe/db_config.yaml` file. Modify this file to add/remove TiDB Cloud clusters to probe.
 
-The db config is defined in the `connectionProbe/db_config.yaml` file. Modify this file to add/remove the TiDB Cloud cluster to probe.
-
-### manage frontend
+### Manage Frontend
 
 The frontend code is in the `connectionProbe/frontend` folder. You can deploy it on Netlify or any other static site hosting service.
 
-Needed env variables:
-- MYSQL_HOST: The host of the meta db.
-- MYSQL_PASSWORD: The password of the meta db.
-- MYSQL_USER: The user of the meta db.
+Required environment variables:
+- MYSQL_HOST: The host of the meta DB.
+- MYSQL_PASSWORD: The password of the meta DB.
+- MYSQL_USER: The user of the meta DB.
+
+You can also deploy locally for testing:
+```bash
+cd connectionProbe/frontend
+export MYSQL_HOST=<meta_db_host>
+export MYSQL_USER=<meta_db_user>
+export MYSQL_PASSWORD=<meta_db_password>
+npm install
+npm run dev
+```
 
 
+# User guide
+
+1. To manage probe clusters, edit the `connectionProbe/db_config.yaml` file to add or remove TiDB Cloud clusters.
+2. To view the probe results, see the [deployed frontend]()

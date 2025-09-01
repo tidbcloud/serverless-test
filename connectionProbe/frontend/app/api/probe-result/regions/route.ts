@@ -19,5 +19,5 @@ export async function GET() {
     `SELECT DISTINCT region FROM connection_probe_result ORDER BY region`
   );
   await pool.end();
-  return NextResponse.json(rows.map((r: any) => r.region));
+  return NextResponse.json((rows as any[]).map((r: any) => r.region));
 }
