@@ -51,6 +51,8 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 	}
 	defer conn.Close()
 
+	conn.SetMaxIdleConns(0)
+
 	// probe the connection with a timeout context
 	ctx, cancel := context.WithTimeout(ctx, probeTimeoutSec*time.Second)
 	defer cancel()
