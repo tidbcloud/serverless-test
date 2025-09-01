@@ -4,10 +4,10 @@ import mysql from 'mysql2/promise';
 export async function GET() {
   const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
-    port: Number(process.env.MYSQL_PORT),
+    port: 4000,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
+    database: "test",
     waitForConnections: true,
     connectionLimit: 5,
     ssl: {

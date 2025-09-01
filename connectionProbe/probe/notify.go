@@ -13,9 +13,10 @@ type LarkCard struct {
 }
 
 type NotifyInfo struct {
-	DBConfig *DBConfig
-	Success  bool
-	ErrorMsg string
+	DBConfig  *DBConfig
+	Success   bool
+	LatencyMs int64
+	ErrorMsg  string
 }
 
 func NotifyFailure(notify *NotifyInfo, webhook string, actionURL string) (err error) {
@@ -57,7 +58,7 @@ func NotifyFailure(notify *NotifyInfo, webhook string, actionURL string) (err er
 				map[string]interface{}{
 					"tag": "button",
 					"text": map[string]interface{}{
-						"content": "more infomation",
+						"content": "action url",
 						"tag":     "lark_md",
 					},
 					"url":   actionURL,

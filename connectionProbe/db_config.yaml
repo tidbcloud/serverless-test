@@ -1,20 +1,47 @@
-ap-northeast-1:
-  - name: ap-northeast-1
-    cluster_id: 10959546687428216535
+aws-ap-northeast-1:
+  - name: aws-ap-northeast-1
+    cluster_id: "10959546687428216535"
     host: gateway01.ap-northeast-1.prod.aws.tidbcloud.com
-    user: 3L7skcinRJz38TD.root
+    user: 3L7skcinRJz38TD.probe
     plan: starter
     tidb_pool: vip-tidb-pool
-  - name: ap-northeast-1
-    cluster_id: 10959546687428216535
-    host: gateway01.ap-northeast-1.prod.aws.tidbcloud.com
-    user: 3L7skcinRJz38TD.root
-    plan: essential
+
+alicloud-ap-southeast-1:
+  - name: alicloud-ap-southeast-1
+    cluster_id: "10314062803745678922"
+    host: gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com
+    user: 3NiskATQkYM4uuN.probe
+    plan: starter
     tidb_pool: vip-tidb-pool
-us-west-2:
-  - name: ap-northeast-1
-    cluster_id: 10959546687428216535
-    host: gateway01.ap-northeast-1.prod.aws.tidbcloud.com
-    user: 3L7skcinRJz38TD.root
-    plan: essential
+
+aws-eu-central-1:
+  - name: aws-eu-central-1
+    cluster_id: "10738148427695470632"
+    host: gateway01.eu-central-1.prod.aws.tidbcloud.com
+    user: 3Sr1Z3nfg9xRGBM.probe
+    plan: starter
+    tidb_pool: vip-tidb-pool
+
+aws-ap-southeast-1:
+  - name: aws-ap-southeast-1
+    cluster_id: "10801139632124539502"
+    host: gateway01.ap-southeast-1.prod.aws.tidbcloud.com
+    user: 2U91Fpb4yPuXJW5.probe
+    plan: starter
+    tidb_pool: vip-tidb-pool
+
+aws-us-east-1:
+  - name: aws-us-east-1
+    cluster_id: "10542482610742827921"
+    host: gateway01.us-east-1.prod.aws.tidbcloud.com
+    user: DvQ7ki1tB3CTq26.probe
+    plan: starter
+    tidb_pool: vip-tidb-pool
+
+aws-us-west-2:
+  - name: aws-us-west-2
+    cluster_id: "10925915939244576672"
+    host: gateway01.us-west-2.prod.aws.tidbcloud.com
+    user: 3mKqSdmrWzLXTJ4.probe
+    plan: starter
     tidb_pool: vip-tidb-pool

@@ -25,22 +25,25 @@ type DBConfig struct {
 }
 
 func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (err error) {
+	start := time.Now()
 	defer func() {
+		latencyMS := time.Since(start).Milliseconds()
 		if err != nil {
 			fmt.Printf("Probe failed: %s(%d) error:%s\n", db.ClusterID, db.Port, err.Error())
-			notifyCh <- &NotifyInfo{db, false, err.Error()}
+			notifyCh <- &NotifyInfo{db, false, latencyMS, err.Error()}
 		} else {
 			fmt.Printf("Probe success: %s(%d)\n", db.ClusterID, db.Port)
-			notifyCh <- &NotifyInfo{db, true, ""}
+			notifyCh <- &NotifyInfo{db, true, latencyMS, ""}
 		}
 	}()
 
-	mysql.RegisterTLSConfig("tidb", &tls.Config{
+	mysql.RegisterTLSConfig(db.Host, &tls.Config{
 		MinVersion: tls.VersionTLS12,
 		ServerName: db.Host,
 	})
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/test?tls=tidb&timeout=5s", db.User, db.Password, db.Host, db.Port)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/test?tls=%s&timeout=5s", db.User, db.Password, db.Host, db.Port, db.Host)
+
 	conn, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return err
