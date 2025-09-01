@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import RegionSelector from '@/components/RegionSelector';
 import ProbeChart from '@/components/ProbeChart';
+// important, must have this line to make the tailwindcss work
 import './globals.css';
 
 import { DateTime } from 'luxon';
