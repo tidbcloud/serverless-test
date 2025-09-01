@@ -51,7 +51,7 @@ export default function ProbeChart({ data = [], lastNDays = [] }: Props) {
         const overallAvailability = totalRequests > 0
           ? Number(((totalRequests - totalFailed) / totalRequests * 100).toFixed(2))
           : null;
-        const isHealthy = overallAvailability != null && overallAvailability >= 90;
+        const isHealthy = overallAvailability != null && overallAvailability >= 99;
 
         return (
           <div key={plan} className={`w-full bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col px-6 py-6 sm:px-8 sm:py-8 ${plan === 'essential' ? 'mt-16' : ''}`}>
