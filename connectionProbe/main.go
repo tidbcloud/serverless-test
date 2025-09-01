@@ -101,7 +101,7 @@ func main() {
 
 	storage, err := storage.NewStorage(metaDSN)
 	if err != nil {
-		println("Failed to connect to storage:", err.Error())
+		println("Failed to connect to meta db, skip record probe result:", err.Error())
 	}
 	defer storage.Close()
 

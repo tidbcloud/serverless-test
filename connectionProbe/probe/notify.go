@@ -58,11 +58,11 @@ func NotifyFailure(notify *NotifyInfo, webhook string, actionURL string) (err er
 				map[string]interface{}{
 					"tag": "button",
 					"text": map[string]interface{}{
-						"content": "action url",
+						"content": "GitHub Action URL",
 						"tag":     "lark_md",
 					},
 					"url":   actionURL,
-					"type":  "default",
+					"type":  "primary",
 					"value": map[string]interface{}{},
 				},
 			},
@@ -71,9 +71,12 @@ func NotifyFailure(notify *NotifyInfo, webhook string, actionURL string) (err er
 
 	card := map[string]interface{}{
 		"elements": elements,
+		"card_link": map[string]interface{}{
+			"url": "https://tidbcloud-connection-probe.netlify.app/",
+		},
 		"header": map[string]interface{}{
 			"title": map[string]interface{}{
-				"content": "TiDB Cloud Probe Failure Alert",
+				"content": "TiDB Cloud Probe Alert",
 				"tag":     "plain_text",
 			},
 			"template": "red",
