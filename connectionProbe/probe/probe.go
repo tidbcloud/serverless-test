@@ -23,7 +23,7 @@ type DBConfig struct {
 	TiDBPool  string `yaml:"tidb_pool"`
 }
 
-const probeTimeoutSec = 10
+const probeTimeoutSec = 5
 
 func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (err error) {
 	start := time.Now()
@@ -35,8 +35,8 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 			notifyCh <- &NotifyInfo{db, false, latencyMS, err.Error()}
 		} else {
 			if latencyMS > probeTimeoutSec*1000 {
-				fmt.Printf("[%s] Probe timeout: %s(%d) start time: %s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"))
-				notifyCh <- &NotifyInfo{db, false, latencyMS, fmt.Sprintf("probe timeout(%ds)", latencyMS/1000)}
+				fmt.Printf("[%s] Probe too much time: %s(%d) start time: %s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"))
+				notifyCh <- &NotifyInfo{db, true, latencyMS, fmt.Sprintf("probe more than %ds", latencyMS/1000)}
 			} else {
 				fmt.Printf("[%s] Probe success: %s(%d) start time: %s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"))
 				notifyCh <- &NotifyInfo{db, true, latencyMS, ""}
@@ -49,7 +49,7 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 		ServerName: db.Host,
 	})
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/test?tls=%s&timeout=%ds", db.User, db.Password, db.Host, db.Port, db.ClusterID, probeTimeoutSec)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/test?tls=%s&timeout=10s", db.User, db.Password, db.Host, db.Port, db.ClusterID)
 	conn, err := sql.Open("mysql", dsn)
 	if err != nil {
 		fmt.Printf("Failed to open mysql connection: %s(%d) error:%s\n", db.ClusterID, db.Port, err.Error())
