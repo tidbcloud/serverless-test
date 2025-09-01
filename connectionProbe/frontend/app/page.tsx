@@ -31,33 +31,20 @@ export default function Home() {
     console.info("refreshing data...");
     setLoading(true);
     try {
-      const [regionsRes, dataRes] = await Promise.all([
-        fetch('/api/probe-result/regions', {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate, proxy-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          },
-          next: { revalidate: 0 }
-        }),
-        fetch('/api/probe-result', {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate, proxy-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          },
-          next: { revalidate: 0 }
-        })
-      ]);
+      const response = await fetch('/api/probe-result', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store'
+      });
+      const allDataList = await response.json();
       
-      const regionsList = await regionsRes.json();
-      const allDataList = await dataRes.json();
+      const uniqueRegions = Array.from(new Set(allDataList.map((item: any) => item.region as string))).sort() as string[];
       
-      setRegions(regionsList);
-      if (!region && regionsList.length > 0) {
-        setRegion(regionsList[0]);
+      setRegions(uniqueRegions);
+      if (!region && uniqueRegions.length > 0) {
+        setRegion(uniqueRegions[0]);
       }
       setAllData(allDataList);
     } catch (error) {
