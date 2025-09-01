@@ -5,6 +5,7 @@ import (
 	"flag"
 	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -87,10 +88,13 @@ func main() {
 	}
 	close(jobs)
 
+	hasFailed := false
+
 	probeResult := make([]*storage.ProbeResult, 0, len(allDBs))
 	for i := 0; i < len(allDBs); i++ {
 		res := <-notifyCh
 		if !res.Success {
+			hasFailed = true
 			probe.NotifyFailure(res, larkWebhook, actionURL)
 		}
 		probeResult = append(probeResult, NotifyInfoToStorage(res))
@@ -107,6 +111,10 @@ func main() {
 
 	storage.InsertProbeResults(probeResult)
 	storage.CleanProbeResults()
+
+	if hasFailed {
+		os.Exit(1)
+	}
 }
 
 func NotifyInfoToStorage(res *probe.NotifyInfo) *storage.ProbeResult {
