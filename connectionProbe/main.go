@@ -5,6 +5,7 @@ import (
 	"flag"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"os"
 	"time"
 
@@ -70,6 +71,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
+
+	// Shuffle the allDBs slice
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	r.Shuffle(len(allDBs), func(i, j int) {
+		allDBs[i], allDBs[j] = allDBs[j], allDBs[i]
+	})
 
 	jobs := make(chan *probe.DBConfig, len(allDBs))
 	notifyCh := make(chan *probe.NotifyInfo, len(allDBs))
