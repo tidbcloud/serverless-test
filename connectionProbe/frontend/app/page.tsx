@@ -32,8 +32,24 @@ export default function Home() {
     setLoading(true);
     try {
       const [regionsRes, dataRes] = await Promise.all([
-        fetch('/api/probe-result/regions', { cache: 'no-store' }),
-        fetch('/api/probe-result', { cache: 'no-store' })
+        fetch('/api/probe-result/regions', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate, proxy-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          },
+          next: { revalidate: 0 }
+        }),
+        fetch('/api/probe-result', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate, proxy-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          },
+          next: { revalidate: 0 }
+        })
       ]);
       
       const regionsList = await regionsRes.json();

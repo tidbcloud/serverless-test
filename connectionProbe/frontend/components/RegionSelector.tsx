@@ -21,7 +21,8 @@ export default function RegionSelector({ regions, value, onChange }: Props) {
             <div className="flex items-center justify-between w-full">
               <Select.Value />
               <Select.Icon>
-                {/* <ChevronDownIcon className="h-4 w-4 text-gray-500 transition-transform duration-200 data-[state=open]:rotate-180" /> */}
+                <ChevronDownIcon style={{ height: '1rem', width: '1rem', color: '#6B7280', transition: 'transform 0.2s' }} 
+                  className="data-[state=open]:rotate-180" />
               </Select.Icon>
             </div>
           </Select.Trigger>
@@ -36,7 +37,8 @@ export default function RegionSelector({ regions, value, onChange }: Props) {
                   <Select.Item
                     key={region}
                     value={region}
-                    className="flex w-full select-none items-center rounded-md py-1.5 px-2 text-sm font-medium outline-none hover:bg-gray-50 data-[highlighted]:bg-blue-50/50 data-[highlighted]:text-blue-800 cursor-pointer"
+                    style={{ backgroundColor: '#F3F4F6', color: '#111827' }}
+                    className="flex w-full select-none items-center rounded-md py-1.5 px-2 text-sm font-medium outline-none cursor-pointer"
                   >
                     <Select.ItemText>{region}</Select.ItemText>
                   </Select.Item>
