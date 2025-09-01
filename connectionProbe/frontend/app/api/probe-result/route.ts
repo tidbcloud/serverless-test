@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
       COUNT(*) as total,
       SUM(success) as success_count,
       ROUND(100*SUM(success)/COUNT(*),2) as availability,
-      APPROX_PERCENTILE(latency_ms, 99) AS p99
+      APPROX_PERCENTILE(IF(success = 1, latency_ms, NULL), 99) AS p99
     FROM connection_probe_result
     WHERE create_time >= CURDATE() - INTERVAL 61 DAY
     GROUP BY region, plan, utc8_date`

@@ -2,7 +2,7 @@ name: Connection Probe
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0/5 * * * *'  # every 5 minutes
   workflow_dispatch:
 
 jobs:

@@ -106,6 +106,7 @@ func main() {
 	defer storage.Close()
 
 	storage.InsertProbeResults(probeResult)
+	storage.CleanProbeResults()
 }
 
 func NotifyInfoToStorage(res *probe.NotifyInfo) *storage.ProbeResult {

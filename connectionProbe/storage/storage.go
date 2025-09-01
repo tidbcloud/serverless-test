@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 	_ "github.com/go-sql-driver/mysql"
@@ -33,9 +34,8 @@ func NewStorage(dsn string) (*Storage, error) {
 	// Parse the DSN to extract the host
 	cfg, err := mysql.ParseDSN(dsn)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse DSN: %v", err)
+		return nil, fmt.Errorf("failed to parse DSN %s: %v", dsn, err)
 	}
-
 	// Register TLS config with the extracted host as ServerName
 	host := cfg.Addr
 	if idx := strings.Index(host, ":"); idx > 0 {
@@ -99,6 +99,36 @@ func (s *Storage) InsertProbeResult(result *ProbeResult) {
 	}
 	fmt.Printf("Insert probe success: %s(%d)\n", result.ClusterID, result.Port)
 	return
+}
+
+func (s *Storage) CleanProbeResults() {
+	if s == nil {
+		return
+	}
+
+	hour := time.Now().Hour()
+	minutes := time.Now().Minute()
+	// only clean between 3:00 and 3:30 AM
+	if hour != 3 || minutes > 30 {
+		return
+	}
+
+	query := `
+		DELETE FROM test.connection_probe_result 
+		WHERE create_time < DATE_SUB(NOW(), INTERVAL 100 DAY)
+	`
+	result, err := s.db.Exec(query)
+	if err != nil {
+		fmt.Printf("Failed to clean probe results: %v\n", err)
+		return
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		fmt.Printf("Failed to get affected rows: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Successfully cleaned %d probe results older than 100 days\n", rowsAffected)
 }
 
 func (s *Storage) InsertProbeResults(results []*ProbeResult) {
