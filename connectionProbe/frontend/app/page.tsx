@@ -27,14 +27,13 @@ export default function Home() {
   const lastNDays = getLastNDatesWithUTC8(60); 
 
 
-  // 刷新数据的函数
   const refreshData = async () => {
+    console.info("refreshing data...");
     setLoading(true);
     try {
-      // 并行获取region列表和所有数据
       const [regionsRes, dataRes] = await Promise.all([
-        fetch('/api/probe-result/regions'),
-        fetch('/api/probe-result')
+        fetch('/api/probe-result/regions', { cache: 'no-store' }),
+        fetch('/api/probe-result', { cache: 'no-store' })
       ]);
       
       const regionsList = await regionsRes.json();
@@ -65,16 +64,17 @@ export default function Home() {
               TiDB Cloud Connection Probe
             </h1>
           </div>
+          <div style={{ display: 'flex', justifyContent: 'right', width: '100%' }}>
+              <button
+                onClick={refreshData}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                disabled={loading}
+              >
+                {loading ? 'Refreshing...' : 'Refresh Data'}
+              </button>
+          </div>
           
-          {loading ? (
-            <div className="fixed inset-0 bg-white/50">
-              <div className="container mx-auto px-4 h-full flex items-center justify-center">
-                <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-                  <span className="text-3xl font-bold text-gray-800">Loading data...</span>
-                </div>
-              </div>
-            </div>
-          ) : (
+          {loading ? null : (
             <>
               <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                 <RegionSelector regions={regions} value={region} onChange={setRegion} />

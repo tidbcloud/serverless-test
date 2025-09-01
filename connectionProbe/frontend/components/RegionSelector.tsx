@@ -12,7 +12,7 @@ export default function RegionSelector({ regions, value, onChange }: Props) {
   return (
     <div className="flex justify-end w-full mb-8">
       <div className="flex items-center gap-3">
-        <span className="font-medium text-gray-700 text-sm">Region:</span>
+        <span className="font-medium text-gray-700 text-sm">region </span>
         <Select.Root value={value} onValueChange={onChange}>
           <Select.Trigger
             className="inline-flex h-8 items-center gap-1 rounded-md border border-gray-200 bg-white px-3 text-sm font-medium text-gray-800 shadow-sm transition-all hover:bg-gray-50/70 focus:outline-none focus:ring-2 focus:ring-blue-100 min-w-[140px]"
@@ -21,7 +21,7 @@ export default function RegionSelector({ regions, value, onChange }: Props) {
             <div className="flex items-center justify-between w-full">
               <Select.Value />
               <Select.Icon>
-                <ChevronDownIcon className="h-4 w-4 text-gray-500 transition-transform duration-200 data-[state=open]:rotate-180" />
+                {/* <ChevronDownIcon className="h-4 w-4 text-gray-500 transition-transform duration-200 data-[state=open]:rotate-180" /> */}
               </Select.Icon>
             </div>
           </Select.Trigger>
