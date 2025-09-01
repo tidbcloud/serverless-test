@@ -10,9 +10,9 @@ interface Props {
 
 export default function RegionSelector({ regions, value, onChange }: Props) {
   return (
-    <div className="flex justify-end w-full mb-8">
-      <div className="flex items-center gap-3">
-        <span className="font-medium text-gray-700 text-sm">region </span>
+    <div className="flex justify-left w-full">
+      <div className="flex items-center gap-2">
+        <span className="font-medium text-gray-700 text-sm">region</span>
         <Select.Root value={value} onValueChange={onChange}>
           <Select.Trigger
             className="inline-flex h-8 items-center gap-1 rounded-md border border-gray-200 bg-white px-3 text-sm font-medium text-gray-800 shadow-sm transition-all hover:bg-gray-50/70 focus:outline-none focus:ring-2 focus:ring-blue-100 min-w-[140px]"
@@ -37,8 +37,8 @@ export default function RegionSelector({ regions, value, onChange }: Props) {
                   <Select.Item
                     key={region}
                     value={region}
-                    style={{ backgroundColor: '#F3F4F6', color: '#111827' }}
-                    className="flex w-full select-none items-center rounded-md py-1.5 px-2 text-sm font-medium outline-none cursor-pointer"
+                    style={{ backgroundColor: '#FFFFFF', color: '#111827' }}
+                    className="flex w-full select-none items-center rounded-md py-1.5 px-2 text-sm font-medium outline-none cursor-pointer hover:bg-gray-50"
                   >
                     <Select.ItemText>{region}</Select.ItemText>
                   </Select.Item>

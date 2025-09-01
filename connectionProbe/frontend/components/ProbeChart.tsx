@@ -9,6 +9,7 @@ interface DataItem {
   availability?: number;
   p99?: number;
   total?: number;
+  failed_count?: number;
 }
 
 interface Props {
@@ -17,7 +18,6 @@ interface Props {
 }
 
 export default function ProbeChart({ data = [], lastNDays = [] }: Props) {
-  window.console.log("-----");
   const plans = ['starter', 'essential'];
   const planColors: Record<string, string> = {
     starter: '#4ade80',
@@ -40,25 +40,25 @@ export default function ProbeChart({ data = [], lastNDays = [] }: Props) {
             availability: existingData?.availability,
             p99: existingData?.p99,
             count: existingData?.total,
+            failed_count: existingData?.failed_count
           };
         });
         
         return (
-          <div key={plan} className={`w-full bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col px-6 py-6 sm:px-8 sm:py-8 ${plan === 'essential' ? 'mt-52' : ''}`}>
-            <div className="flex items-center justify-center w-full mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">
+          <div key={plan} className={`w-full bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col px-6 py-6 sm:px-8 sm:py-8 ${plan === 'essential' ? 'mt-16' : ''}`}>
+            <div className="flex items-center justify-center w-full mb-3">
+              <h2 className="text-2xl font-normal text-gray-900">
                 {plan.charAt(0).toUpperCase() + plan.slice(1)}
               </h2>
             </div>
-            <div className="flex items-center w-full relative mt-6">
-              <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-12 bg-gray-200 rounded-xl z-0" />
-              <div className="flex-1 flex items-center relative z-10">
+            <div className="flex items-center w-full relative mt-3">
+              <div className="flex-1 flex items-center relative [&_*]:outline-none">
                 <ResponsiveContainer width="100%" height={150}>
                   <BarChart
                     data={fullData}
                     barGap={0}
                     barCategoryGap={0}
-                    margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+                    margin={{ top: 0, right: 30, left: 30, bottom: 0 }}
                   >
                     <XAxis dataKey="date" hide />
                     <YAxis domain={[0, 100]} hide />
@@ -79,13 +79,13 @@ export default function ProbeChart({ data = [], lastNDays = [] }: Props) {
 
                         return (
                           <div className="rounded-lg shadow bg-white px-3 py-2 text-xs text-gray-800">
-                            <div className="font-medium">{formattedDate}</div>
+                            <div className="font-medium text-center border-b pb-1 mb-1">{formattedDate}</div>
                             {dataPoint.isEmpty ? (
                               <div className="text-gray-500 mt-1">No data</div>
                             ) : (
                               <>
                                 <div className="mt-1">availability: <b>{dataPoint.availability}%</b></div>
-                                <div>probe times: <b>{dataPoint.count || '-'}</b></div>
+                                <div>success/fail: <b>{dataPoint.count || '-'}/{dataPoint.failed_count || '-'}</b></div>
                                 <div>p99: <b>{dataPoint.p99 !== undefined ? dataPoint.p99 + ' ms' : '-'}</b></div>
                               </>
                             )}
@@ -100,7 +100,7 @@ export default function ProbeChart({ data = [], lastNDays = [] }: Props) {
                       minPointSize={2}
                       maxBarSize={16}
                       isAnimationActive={false}
-                      name="可用性"
+                      name="availability"
                       background={{
                         fill: '#f3f4f6',
                         radius: 6
@@ -125,6 +125,10 @@ export default function ProbeChart({ data = [], lastNDays = [] }: Props) {
                 </ResponsiveContainer>
 
               </div>
+            </div>
+            <div className="flex justify-between mt-2 text-sm text-gray-500" style={{ marginLeft: '30px', marginRight: '30px' }}>
+              <span>{lastNDays[0]}</span>
+              <span>Today</span>
             </div>
           </div>
         );

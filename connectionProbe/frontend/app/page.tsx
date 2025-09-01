@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import RegionSelector from '@/components/RegionSelector';
 import ProbeChart from '@/components/ProbeChart';
+import './globals.css';
 
 import { DateTime } from 'luxon';
 
@@ -61,28 +62,30 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4 py-12 max-w-7xl">
-        <div className="space-y-8">
-          <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-              TiDB Cloud Connection Probe
+        <div className="space-y-10">
+          <div className="flex justify-center w-full">
+            <h1 className="relative text-4xl font-normal tracking-tight text-gray-700 sm:text-5xl pb-3">
+              TiDB Cloud Probe
+              <span className="absolute bottom-0 left-0 w-full h-px bg-gray-200"></span>
             </h1>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'right', width: '100%' }}>
-              <button
-                onClick={refreshData}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                disabled={loading}
-              >
-                {loading ? 'Refreshing...' : 'Refresh Data'}
-              </button>
-          </div>
-          
-          {loading ? null : (
+          {loading ? (
+            <div className="flex justify-center items-center min-h-[calc(100vh-250px)]">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-dashed border-gray-300 border-t-transparent"></div>
+            </div>
+          ) : (
             <>
-              <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+              <div className="flex items-center justify-between mb-8">
                 <RegionSelector regions={regions} value={region} onChange={setRegion} />
+                <button
+                  onClick={refreshData}
+                  className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
+                  disabled={loading}
+                >
+                  Refresh
+                </button>
               </div>
-              <div className="mt-8">
+              <div>
                 <ProbeChart data={filteredData} lastNDays={lastNDays}/>
               </div>
             </>
