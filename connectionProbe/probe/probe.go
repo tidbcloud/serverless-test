@@ -29,11 +29,12 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 	start := time.Now()
 	defer func() {
 		latencyMS := time.Since(start).Milliseconds()
+		now := time.Now().Format("2006-01-02 15:04:05")
 		if err != nil {
-			fmt.Printf("Probe failed: %s(%d) error:%s\n", db.ClusterID, db.Port, err.Error())
+			fmt.Printf("[%s] Probe failed: %s(%d) error:%s\n", now, db.ClusterID, db.Port, err.Error())
 			notifyCh <- &NotifyInfo{db, false, latencyMS, err.Error()}
 		} else {
-			fmt.Printf("Probe success: %s(%d)\n", db.ClusterID, db.Port)
+			fmt.Printf("[%s] Probe success: %s(%d)\n", now, db.ClusterID, db.Port)
 			notifyCh <- &NotifyInfo{db, true, latencyMS, ""}
 		}
 	}()
@@ -46,7 +47,7 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/test?tls=%s&timeout=%ds", db.User, db.Password, db.Host, db.Port, db.ClusterID, probeTimeoutSec)
 	conn, err := sql.Open("mysql", dsn)
 	if err != nil {
-		println("Failed to open mysql connection:", err.Error())
+		fmt.Printf("Failed to open mysql connection: %s(%d) error:%s\n", db.ClusterID, db.Port, err.Error())
 		return err
 	}
 	defer conn.Close()
