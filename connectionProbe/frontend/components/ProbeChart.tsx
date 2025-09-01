@@ -44,12 +44,27 @@ export default function ProbeChart({ data = [], lastNDays = [] }: Props) {
           };
         });
         
+        const validData = fullData.filter(d => !d.isEmpty);
+        const totalRequests = validData.reduce((sum, d) => sum + (d.count || 0), 0);
+        const totalFailed = validData.reduce((sum, d) => sum + (d.failed_count || 0), 0);
+        
+        const overallAvailability = totalRequests > 0
+          ? Number(((totalRequests - totalFailed) / totalRequests * 100).toFixed(2))
+          : null;
+        const isHealthy = overallAvailability != null && overallAvailability >= 90;
+
         return (
           <div key={plan} className={`w-full bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col px-6 py-6 sm:px-8 sm:py-8 ${plan === 'essential' ? 'mt-16' : ''}`}>
-            <div className="flex items-center justify-center w-full mb-3">
+            <div className="flex items-center justify-between w-full mb-3">
               <h2 className="text-2xl font-normal text-gray-900">
                 {plan.charAt(0).toUpperCase() + plan.slice(1)}
               </h2>
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${isHealthy ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                <span className="text-sm text-gray-600">
+                  Availability: {overallAvailability === null ? 'No Data' : `${overallAvailability}%`}
+                </span>
+              </div>
             </div>
             <div className="flex items-center w-full relative mt-3">
               <div className="flex-1 flex items-center relative [&_*]:outline-none">
