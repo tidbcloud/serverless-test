@@ -53,4 +53,4 @@ npm run dev
 # User guide
 
 1. To manage probe clusters, edit the `connectionProbe/db_config.yaml` file to add or remove TiDB Cloud clusters.
-2. To view the probe results, see the [deployed frontend]()
+2. To view the probe results, see the [deployed frontend](https://tidbcloud-connection-probe.netlify.app/)
