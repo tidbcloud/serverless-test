@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 type LarkCard struct {
@@ -32,7 +33,7 @@ func NotifyFailure(notify *NotifyInfo, webhook string, actionURL string) (err er
 		key   string
 		value string
 	}{
-		{"Cluster_ID", db.ClusterID},
+		{"Cluster_ID", fmt.Sprintf("%s(%s)", db.ClusterID, strings.Split(db.User, ".")[0])},
 		{"Region", db.Region},
 		{"Plan", db.Plan},
 		{"Port", fmt.Sprintf("%d", db.Port)},
@@ -65,15 +66,25 @@ func NotifyFailure(notify *NotifyInfo, webhook string, actionURL string) (err er
 					"type":  "primary",
 					"value": map[string]interface{}{},
 				},
+				map[string]interface{}{
+					"tag": "button",
+					"text": map[string]interface{}{
+						"content": "Dashboard",
+						"tag":     "lark_md",
+					},
+					"url":   "https://tidbcloud-connection-probe.netlify.app/",
+					"type":  "default",
+					"value": map[string]interface{}{},
+				},
 			},
 		},
 	}
 
 	card := map[string]interface{}{
 		"elements": elements,
-		"card_link": map[string]interface{}{
-			"url": "https://tidbcloud-connection-probe.netlify.app/",
-		},
+		// "card_link": map[string]interface{}{
+		// 	"url": "https://tidbcloud-connection-probe.netlify.app/",
+		// },
 		"header": map[string]interface{}{
 			"title": map[string]interface{}{
 				"content": "TiDB Cloud Probe Alert",
