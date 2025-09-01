@@ -38,12 +38,12 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 		}
 	}()
 
-	mysql.RegisterTLSConfig(db.Host, &tls.Config{
+	mysql.RegisterTLSConfig(db.ClusterID, &tls.Config{
 		MinVersion: tls.VersionTLS12,
 		ServerName: db.Host,
 	})
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/test?tls=%s", db.User, db.Password, db.Host, db.Port, db.Host)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/test?tls=%s&timeout=%ds", db.User, db.Password, db.Host, db.Port, db.ClusterID, probeTimeoutSec)
 	conn, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return err
