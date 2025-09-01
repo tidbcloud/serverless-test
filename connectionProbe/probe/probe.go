@@ -23,7 +23,7 @@ type DBConfig struct {
 	TiDBPool  string `yaml:"tidb_pool"`
 }
 
-const probeTimeoutSec = 8
+const probeTimeoutSec = 10
 
 func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (err error) {
 	start := time.Now()
@@ -34,8 +34,13 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 			fmt.Printf("[%s] Probe failed: %s(%d) start time: %s error:%s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"), err.Error())
 			notifyCh <- &NotifyInfo{db, false, latencyMS, err.Error()}
 		} else {
-			fmt.Printf("[%s] Probe success: %s(%d) start time: %s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"))
-			notifyCh <- &NotifyInfo{db, true, latencyMS, ""}
+			if latencyMS > probeTimeoutSec*1000 {
+				fmt.Printf("[%s] Probe timeout: %s(%d) start time: %s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"))
+				notifyCh <- &NotifyInfo{db, false, latencyMS, fmt.Sprintf("probe timeout(%ds)", latencyMS/1000)}
+			} else {
+				fmt.Printf("[%s] Probe success: %s(%d) start time: %s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"))
+				notifyCh <- &NotifyInfo{db, true, latencyMS, ""}
+			}
 		}
 	}()
 
@@ -54,14 +59,14 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 
 	conn.SetMaxIdleConns(0)
 
-	// probe the connection with a timeout context
-	cancelCtx, cancel := context.WithTimeout(ctx, probeTimeoutSec*time.Second)
-	defer cancel()
-	if err := conn.PingContext(cancelCtx); err != nil {
-		if cancelCtx.Err() == context.DeadlineExceeded {
-			return fmt.Errorf("connection timeout(%ds)", probeTimeoutSec)
-		}
-		return err
-	}
-	return nil
+	return conn.Ping()
+	// // probe the connection with a timeout context
+	// cancelCtx, cancel := context.WithTimeout(ctx, probeTimeoutSec*time.Second)
+	// defer cancel()
+	// if err := conn.PingContext(cancelCtx); err != nil {
+	// 	if cancelCtx.Err() == context.DeadlineExceeded {
+	// 		return fmt.Errorf("connection timeout(%ds)", probeTimeoutSec)
+	// 	}
+	// 	return err
+	// }
 }
