@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 
 export async function GET(req: NextRequest) {
+  console.log("Fetching data from meta db...");
   const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
     port: 4000,
