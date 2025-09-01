@@ -34,7 +34,7 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (er
 			fmt.Printf("[%s] Probe failed: %s(%d) start time: %s error:%s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"), err.Error())
 			notifyCh <- &NotifyInfo{db, false, latencyMS, err.Error()}
 		} else {
-			fmt.Printf("[%s] Probe success: %s(%d)\n", now, db.ClusterID, db.Port)
+			fmt.Printf("[%s] Probe success: %s(%d) start time: %s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"))
 			notifyCh <- &NotifyInfo{db, true, latencyMS, ""}
 		}
 	}()
