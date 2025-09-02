@@ -58,28 +58,28 @@ aws-us-west-2:
     plan: starter
     tidb_pool: vip-tidb-pool
 
-alicloud-ap-northeast-1:
-  - name: alicloud-ap-northeast-1
-    cluster_id: "10273860165262092872"
-    host: gateway01.ap-northeast-1.prod.alicloud.tidbcloud.com
-    user: 434GNm1LhvHAMKs.probe
-    plan: essential
-    tidb_pool: vip-tidb-pool
+# alicloud-ap-northeast-1:
+#   - name: alicloud-ap-northeast-1
+#     cluster_id: "10273860165262092872"
+#     host: gateway01.ap-northeast-1.prod.alicloud.tidbcloud.com
+#     user: 434GNm1LhvHAMKs.probe
+#     plan: essential
+#     tidb_pool: vip-tidb-pool
 
-alicloud-ap-southeast-5:
-  - name: alicloud-ap-southeast-5
-    cluster_id: "10453954736310892630"
-    host: gateway01.ap-southeast-5.prod.alicloud.tidbcloud.com
-    user: 7y1Y2VPC4DwMW5G.probe
-    plan: essential
-    tidb_pool: vip-tidb-pool
+# alicloud-ap-southeast-5:
+#   - name: alicloud-ap-southeast-5
+#     cluster_id: "10453954736310892630"
+#     host: gateway01.ap-southeast-5.prod.alicloud.tidbcloud.com
+#     user: 7y1Y2VPC4DwMW5G.probe
+#     plan: essential
+#     tidb_pool: vip-tidb-pool
 
-alicloud-na-south-1:
-  - name: alicloud-na-south-1
-    cluster_id: "10933269332957074868"
-    host: gateway01.na-south-1.prod.alicloud.tidbcloud.com
-    user: 4ZeH2SnPgqQPdqj.probe
-    plan: essential
-    tidb_pool: vip-tidb-pool
+# alicloud-na-south-1:
+#   - name: alicloud-na-south-1
+#     cluster_id: "10933269332957074868"
+#     host: gateway01.na-south-1.prod.alicloud.tidbcloud.com
+#     user: 4ZeH2SnPgqQPdqj.probe
+#     plan: essential
+#     tidb_pool: vip-tidb-pool
 
 
