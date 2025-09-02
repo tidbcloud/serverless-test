@@ -10,6 +10,7 @@ interface DataItem {
   p99?: number;
   total?: number;
   failed_count?: number;
+  success_count?: number;
 }
 
 interface Props {
@@ -40,16 +41,20 @@ export default function ProbeChart({ data = [], lastNDays = [] }: Props) {
             availability: existingData?.availability,
             p99: existingData?.p99,
             count: existingData?.total,
-            failed_count: existingData?.failed_count
+            failed_count: existingData?.failed_count,
+            succeed_count: existingData?.success_count
           };
         });
         
         const validData = fullData.filter(d => !d.isEmpty);
-        const totalRequests = validData.reduce((sum, d) => sum + (d.count || 0), 0);
-        const totalFailed = validData.reduce((sum, d) => sum + (d.failed_count || 0), 0);
-        
+        const totalRequests = validData.reduce((sum, d) => sum + +(d.count || 0), 0);
+        // don't know why sum + (d.failed_count || 0) will concatenate as string, for example: failed_count 3 and 4 results in "034". 
+        // so we use +(d.failed_count || 0) to force it to be number. The + means convert to number.
+        const totalFails = validData.reduce((sum, d) => sum + +(d.failed_count || 0), 0);
+
+              
         const overallAvailability = totalRequests > 0
-          ? Number(((totalRequests - totalFailed) / totalRequests * 100).toFixed(2))
+          ? Number(((totalRequests - totalFails) / totalRequests * 100).toFixed(2))
           : null;
         const isHealthy = overallAvailability != null && overallAvailability >= 99;
 
@@ -100,7 +105,7 @@ export default function ProbeChart({ data = [], lastNDays = [] }: Props) {
                             ) : (
                               <>
                                 <div className="mt-1">availability: <b>{dataPoint.availability}%</b></div>
-                                <div>success/fail: <b>{dataPoint.count || '-'}/{dataPoint.failed_count || '-'}</b></div>
+                                <div>success/fail: <b>{dataPoint.succeed_count || '-'}/{dataPoint.failed_count || '-'}</b></div>
                                 <div>p99: <b>{dataPoint.p99 !== undefined ? dataPoint.p99 + ' ms' : '-'}</b></div>
                               </>
                             )}
