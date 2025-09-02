@@ -23,23 +23,24 @@ type DBConfig struct {
 	TiDBPool  string `yaml:"tidb_pool"`
 }
 
-const probeTimeoutSec = 5
+const probeTimeoutSec = 10
 
-func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo) (err error) {
+func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo, jobIdex int) (err error) {
 	start := time.Now()
+	fmt.Printf("Job %d start probing %s(%d) at %s\n", jobIdex, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"))
 	defer func() {
 		latencyMS := time.Since(start).Milliseconds()
 		now := time.Now().Format("2006-01-02 15:04:05")
 		if err != nil {
-			fmt.Printf("[%s] Probe failed: %s(%d) start time: %s error:%s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"), err.Error())
-			notifyCh <- &NotifyInfo{db, false, latencyMS, err.Error()}
+			fmt.Printf("[%s] Probe failed: %s(%d) error:%s\n", now, db.ClusterID, db.Port, err.Error())
+			notifyCh <- &NotifyInfo{db, false, latencyMS, err.Error(), true, start.Format("2006-01-02 15:04:05"), now}
 		} else {
 			if latencyMS > probeTimeoutSec*1000 {
-				fmt.Printf("[%s] Probe too much time: %s(%d) start time: %s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"))
-				notifyCh <- &NotifyInfo{db, true, latencyMS, fmt.Sprintf("probe more than %ds", latencyMS/1000)}
+				fmt.Printf("[%s] Probe too much time: %s(%d)\n", now, db.ClusterID, db.Port)
+				notifyCh <- &NotifyInfo{db, true, latencyMS, fmt.Sprintf("probe more than %ds", latencyMS/1000), true, start.Format("2006-01-02 15:04:05"), now}
 			} else {
-				fmt.Printf("[%s] Probe success: %s(%d) start time: %s\n", now, db.ClusterID, db.Port, start.Format("2006-01-02 15:04:05"))
-				notifyCh <- &NotifyInfo{db, true, latencyMS, ""}
+				fmt.Printf("[%s] Probe success: %s(%d)\n", now, db.ClusterID, db.Port)
+				notifyCh <- &NotifyInfo{db, true, latencyMS, "", false, start.Format("2006-01-02 15:04:05"), now}
 			}
 		}
 	}()

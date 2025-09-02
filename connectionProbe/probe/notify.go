@@ -14,10 +14,13 @@ type LarkCard struct {
 }
 
 type NotifyInfo struct {
-	DBConfig  *DBConfig
-	Success   bool
-	LatencyMs int64
-	ErrorMsg  string
+	DBConfig   *DBConfig
+	Success    bool
+	LatencyMs  int64
+	ErrorMsg   string
+	NeedNotify bool
+	StartTime  string
+	EndTime    string
 }
 
 func NotifyFailure(notify *NotifyInfo, webhook string, actionURL string) (err error) {
@@ -33,11 +36,11 @@ func NotifyFailure(notify *NotifyInfo, webhook string, actionURL string) (err er
 		key   string
 		value string
 	}{
-		{"Cluster_ID", fmt.Sprintf("%s(%s)", db.ClusterID, strings.Split(db.User, ".")[0])},
 		{"Region", db.Region},
-		{"Plan", db.Plan},
+		{"Cluster ID", fmt.Sprintf("%s(%s)", db.ClusterID, strings.Split(db.User, ".")[0])},
+		{"Plan", fmt.Sprintf("%s(%s)", db.Plan, db.TiDBPool)},
+		{"Probe Time", fmt.Sprintf("%s ~ %s", notify.StartTime, notify.EndTime)},
 		{"Port", fmt.Sprintf("%d", db.Port)},
-		{"Pool", db.TiDBPool},
 		{"Error", notify.ErrorMsg},
 	}
 	var contentBuilder bytes.Buffer

@@ -85,7 +85,7 @@ func main() {
 	for i := 0; i < concurrency; i++ {
 		go func() {
 			for db := range jobs {
-				probe.ProbeDB(ctx, db, notifyCh)
+				probe.ProbeDB(ctx, db, notifyCh, i)
 			}
 		}()
 	}
@@ -96,12 +96,13 @@ func main() {
 	close(jobs)
 
 	hasFailed := false
-
 	probeResult := make([]*storage.ProbeResult, 0, len(allDBs))
 	for i := 0; i < len(allDBs); i++ {
 		res := <-notifyCh
 		if !res.Success {
 			hasFailed = true
+		}
+		if res.NeedNotify {
 			probe.NotifyFailure(res, larkWebhook, actionURL)
 		}
 		probeResult = append(probeResult, NotifyInfoToStorage(res))
