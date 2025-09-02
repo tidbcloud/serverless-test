@@ -13,12 +13,12 @@ alicloud-ap-southeast-1:
     user: 3NiskATQkYM4uuN.probe
     plan: starter
     tidb_pool: vip-tidb-pool
-  - name: alicloud-ap-southeast-1-essential
-    cluster_id: "10591234496270249760"
-    host: gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com
-    user: 2m7aiSL7YgC9hdk.probe
-    plan: essential
-    tidb_pool: vip-tidb-pool
+  # - name: alicloud-ap-southeast-1-essential
+  #   cluster_id: "10591234496270249760"
+  #   host: gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com
+  #   user: 2m7aiSL7YgC9hdk.probe
+  #   plan: essential
+  #   tidb_pool: vip-tidb-pool
 
 aws-eu-central-1:
   - name: aws-eu-central-1
@@ -33,6 +33,12 @@ aws-ap-southeast-1:
     cluster_id: "10801139632124539502"
     host: gateway01.ap-southeast-1.prod.aws.tidbcloud.com
     user: 2U91Fpb4yPuXJW5.probe
+    plan: starter
+    tidb_pool: vip-tidb-pool
+  - name: aws-ap-southeast-1-temp
+    cluster_id: "10765808004496530617"
+    host: gateway01.ap-southeast-1.prod.aws.tidbcloud.com
+    user: FZT6qeid8JkcuUs.probe
     plan: starter
     tidb_pool: vip-tidb-pool
 
