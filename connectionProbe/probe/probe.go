@@ -32,7 +32,7 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo, job
 		latencyMS := time.Since(start).Milliseconds()
 		now := time.Now().Format("2006-01-02 15:04:05")
 		if err != nil {
-			fmt.Printf("[%s] Probe failed: %s(%d) error:%s\n", now, db.ClusterID, db.Port, err.Error())
+			fmt.Printf("[%s] Probe failed: %s(%d) error:%v\n", now, db.ClusterID, db.Port, err)
 			notifyCh <- &NotifyInfo{db, false, latencyMS, err.Error(), true, start.Format("2006-01-02 15:04:05"), now}
 		} else {
 			if latencyMS > probeTimeoutSec*1000 {
@@ -62,8 +62,6 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo, job
 
 	_, err = conn.Query("SHOW DATABASES;")
 	return err
-
-	// return conn.Ping()
 	// // probe the connection with a timeout context
 	// cancelCtx, cancel := context.WithTimeout(ctx, probeTimeoutSec*time.Second)
 	// defer cancel()
