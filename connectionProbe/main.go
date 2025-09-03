@@ -15,7 +15,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-const concurrency = 5
+const concurrency = 1
 
 var (
 	password    string
@@ -56,11 +56,11 @@ func loadConfig(path string) ([]*probe.DBConfig, error) {
 			dbs[i].Password = password
 
 			db1 := dbs[i]
-			//db2 := dbs[i]
+			db2 := dbs[i]
 			db1.Port = 4000
-			//db2.Port = 3306
+			db2.Port = 3306
 			allDBs = append(allDBs, &db1)
-			//allDBs = append(allDBs, &db2)
+			allDBs = append(allDBs, &db2)
 		}
 	}
 	return allDBs, nil
