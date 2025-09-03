@@ -60,7 +60,10 @@ func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo, job
 
 	conn.SetMaxIdleConns(0)
 
-	return conn.Ping()
+	_, err = conn.Query("SHOW DATABASES;")
+	return err
+
+	// return conn.Ping()
 	// // probe the connection with a timeout context
 	// cancelCtx, cancel := context.WithTimeout(ctx, probeTimeoutSec*time.Second)
 	// defer cancel()
