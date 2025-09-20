@@ -96,7 +96,7 @@ func CreateCluster(projectId, clusterName string) (*cluster.TidbCloudOpenApiserv
 	}
 
 	// Create the cluster
-	resp, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceCreateCluster(ctx).
+	resp, h, err := clusterClient.ClusterServiceAPI.ClusterServiceCreateCluster(ctx).
 		Cluster(clusterBody).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		return nil, fmt.Errorf("failed to create cluster: %w", err)
@@ -113,7 +113,7 @@ func CreateCluster(projectId, clusterName string) (*cluster.TidbCloudOpenApiserv
 
 // cleanupExistingCluster removes any existing test cluster with the given project ID and cluster name
 func cleanupExistingCluster(ctx context.Context, projectId, clusterName string) error {
-	req := clusterClient.ServerlessServiceAPI.ServerlessServiceListClusters(ctx).PageSize(100)
+	req := clusterClient.ClusterServiceAPI.ClusterServiceListClusters(ctx).PageSize(100)
 
 	if projectId != "" {
 		projectFilter := fmt.Sprintf("projectId=%s", projectId)
@@ -186,7 +186,7 @@ func waitForClusterActive(ctx context.Context, clusterID string) (*cluster.TidbC
 	for {
 		select {
 		case <-ticker.C:
-			c, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceGetCluster(ctx, clusterID).Execute()
+			c, h, err := clusterClient.ClusterServiceAPI.ClusterServiceGetCluster(ctx, clusterID).Execute()
 			if err := util.ParseError(err, h); err != nil {
 				log.Printf("Failed to get cluster status: %v", err)
 				continue
@@ -206,7 +206,7 @@ func waitForClusterActive(ctx context.Context, clusterID string) (*cluster.TidbC
 func DeleteCluster(clusterID string) {
 	ctx := context.Background()
 
-	_, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceDeleteCluster(ctx, clusterID).Execute()
+	_, h, err := clusterClient.ClusterServiceAPI.ClusterServiceDeleteCluster(ctx, clusterID).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		log.Printf("Failed to delete cluster %s: %v", clusterID, err)
 	} else {

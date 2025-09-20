@@ -14,7 +14,7 @@ require (
 	github.com/spf13/pflag v1.0.7
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.11.1
-	github.com/tidbcloud/tidbcloud-cli/pkg v0.0.0-20250827074157-244da13768f2
+	github.com/tidbcloud/tidbcloud-cli/pkg v0.0.0-20250920180852-7e2821a324ec
 	go.uber.org/zap v1.27.0
 	gopkg.in/yaml.v2 v2.4.0
 )
