@@ -61,7 +61,7 @@ func TestCreateCluster(t *testing.T) {
 		clusterBody.Labels = &map[string]string{"tidb.cloud/project": projectId}
 	}
 
-	resp, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceCreateCluster(ctx).
+	resp, h, err := clusterClient.ClusterServiceAPI.ClusterServiceCreateCluster(ctx).
 		Cluster(clusterBody).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		t.Fatalf("Failed to create cluster: %v", err)
@@ -86,7 +86,7 @@ func TestCreateCluster(t *testing.T) {
 
 // cleanupExistingCluster removes any existing test cluster with the given cluster name prefix
 func cleanupExistingCluster(ctx context.Context, projectId, clusterNamePrefix string) error {
-	req := clusterClient.ServerlessServiceAPI.ServerlessServiceListClusters(ctx).PageSize(100)
+	req := clusterClient.ClusterServiceAPI.ClusterServiceListClusters(ctx).PageSize(100)
 
 	if projectId != "" {
 		projectFilter := fmt.Sprintf("projectId=%s", projectId)
@@ -113,7 +113,7 @@ func cleanupExistingCluster(ctx context.Context, projectId, clusterNamePrefix st
 func deleteCluster(clusterID string) {
 	ctx := context.Background()
 
-	_, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceDeleteCluster(ctx, clusterID).Execute()
+	_, h, err := clusterClient.ClusterServiceAPI.ClusterServiceDeleteCluster(ctx, clusterID).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		fmt.Printf("Failed to delete cluster %s: %v\n", clusterID, err)
 	} else {
@@ -125,7 +125,7 @@ func TestGetCluster(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 
-	resp, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceGetCluster(ctx, testClusterId).Execute()
+	resp, h, err := clusterClient.ClusterServiceAPI.ClusterServiceGetCluster(ctx, testClusterId).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		t.Fatalf("Failed to get cluster: %v", err)
 	}
@@ -146,14 +146,14 @@ func TestUpdateCluster(t *testing.T) {
 
 	// 1. Update displayName
 	newDisplayName := "ClusterTest-" + shortuuid.New()
-	updateDisplayNameBody := cluster.V1beta1ServerlessServicePartialUpdateClusterBody{
-		Cluster: &cluster.RequiredTheClusterToBeUpdated{
+	updateDisplayNameBody := cluster.V1beta1ClusterServicePartialUpdateClusterBody{
+		Cluster: &cluster.V1beta1ClusterServicePartialUpdateClusterBodyCluster{
 			DisplayName: &newDisplayName,
 		},
 		UpdateMask: "displayName",
 	}
 
-	resp, h, err := clusterClient.ServerlessServiceAPI.ServerlessServicePartialUpdateCluster(ctx, testClusterId).
+	resp, h, err := clusterClient.ClusterServiceAPI.ClusterServicePartialUpdateCluster(ctx, testClusterId).
 		Body(updateDisplayNameBody).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		t.Fatalf("Failed to update cluster display name: %v", err)
@@ -162,7 +162,7 @@ func TestUpdateCluster(t *testing.T) {
 	assert.Equal(newDisplayName, resp.DisplayName)
 
 	// Verify the update
-	getResp, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceGetCluster(ctx, testClusterId).Execute()
+	getResp, h, err := clusterClient.ClusterServiceAPI.ClusterServiceGetCluster(ctx, testClusterId).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		t.Fatalf("Failed to get cluster after display name update: %v", err)
 	}
@@ -171,15 +171,15 @@ func TestUpdateCluster(t *testing.T) {
 
 	// 2. Update spendingLimit
 	newSpendLimit := int32(200)
-	updateSpendingLimitBody := cluster.V1beta1ServerlessServicePartialUpdateClusterBody{
-		Cluster: &cluster.RequiredTheClusterToBeUpdated{
+	updateSpendingLimitBody := cluster.V1beta1ClusterServicePartialUpdateClusterBody{
+		Cluster: &cluster.V1beta1ClusterServicePartialUpdateClusterBodyCluster{
 			SpendingLimit: &cluster.ClusterSpendingLimit{
 				Monthly: &newSpendLimit,
 			},
 		},
 		UpdateMask: "spendingLimit",
 	}
-	resp, h, err = clusterClient.ServerlessServiceAPI.ServerlessServicePartialUpdateCluster(ctx, testClusterId).
+	resp, h, err = clusterClient.ClusterServiceAPI.ClusterServicePartialUpdateCluster(ctx, testClusterId).
 		Body(updateSpendingLimitBody).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		t.Fatalf("Failed to update cluster spending limit: %v", err)
@@ -189,7 +189,7 @@ func TestUpdateCluster(t *testing.T) {
 	assert.Equal(newSpendLimit, *resp.SpendingLimit.Monthly)
 
 	// Verify the update
-	getResp, h, err = clusterClient.ServerlessServiceAPI.ServerlessServiceGetCluster(ctx, testClusterId).Execute()
+	getResp, h, err = clusterClient.ClusterServiceAPI.ClusterServiceGetCluster(ctx, testClusterId).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		t.Fatalf("Failed to get cluster after spending limit update: %v", err)
 	}
@@ -199,8 +199,8 @@ func TestUpdateCluster(t *testing.T) {
 	// 3. Update automatedBackupPolicy
 	backupRetentionDays := int32(7)
 	backupTime := "02:00"
-	updateBackupPolicyBody := cluster.V1beta1ServerlessServicePartialUpdateClusterBody{
-		Cluster: &cluster.RequiredTheClusterToBeUpdated{
+	updateBackupPolicyBody := cluster.V1beta1ClusterServicePartialUpdateClusterBody{
+		Cluster: &cluster.V1beta1ClusterServicePartialUpdateClusterBodyCluster{
 			AutomatedBackupPolicy: &cluster.V1beta1ClusterAutomatedBackupPolicy{
 				RetentionDays: &backupRetentionDays,
 				StartTime:     &backupTime,
@@ -208,7 +208,7 @@ func TestUpdateCluster(t *testing.T) {
 		},
 		UpdateMask: "automatedBackupPolicy",
 	}
-	resp, h, err = clusterClient.ServerlessServiceAPI.ServerlessServicePartialUpdateCluster(ctx, testClusterId).
+	resp, h, err = clusterClient.ClusterServiceAPI.ClusterServicePartialUpdateCluster(ctx, testClusterId).
 		Body(updateBackupPolicyBody).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		t.Fatalf("Failed to update cluster automated backup policy: %v", err)
@@ -218,7 +218,7 @@ func TestUpdateCluster(t *testing.T) {
 	assert.Equal(backupRetentionDays, *resp.AutomatedBackupPolicy.RetentionDays)
 
 	// Verify the update
-	getResp, h, err = clusterClient.ServerlessServiceAPI.ServerlessServiceGetCluster(ctx, testClusterId).Execute()
+	getResp, h, err = clusterClient.ClusterServiceAPI.ClusterServiceGetCluster(ctx, testClusterId).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		t.Fatalf("Failed to get cluster after automated backup policy update: %v", err)
 	}
@@ -231,13 +231,13 @@ func TestUpdateCluster(t *testing.T) {
 		"test-label":  "test-value",
 		"environment": "testing",
 	}
-	updateLabelsBody := cluster.V1beta1ServerlessServicePartialUpdateClusterBody{
-		Cluster: &cluster.RequiredTheClusterToBeUpdated{
+	updateLabelsBody := cluster.V1beta1ClusterServicePartialUpdateClusterBody{
+		Cluster: &cluster.V1beta1ClusterServicePartialUpdateClusterBodyCluster{
 			Labels: &newLabels,
 		},
 		UpdateMask: "labels",
 	}
-	resp, h, err = clusterClient.ServerlessServiceAPI.ServerlessServicePartialUpdateCluster(ctx, testClusterId).
+	resp, h, err = clusterClient.ClusterServiceAPI.ClusterServicePartialUpdateCluster(ctx, testClusterId).
 		Body(updateLabelsBody).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		t.Fatalf("Failed to update cluster labels: %v", err)
@@ -248,7 +248,7 @@ func TestUpdateCluster(t *testing.T) {
 	assert.Equal("testing", (*resp.Labels)["environment"])
 
 	// Verify the update
-	getResp, h, err = clusterClient.ServerlessServiceAPI.ServerlessServiceGetCluster(ctx, testClusterId).Execute()
+	getResp, h, err = clusterClient.ClusterServiceAPI.ClusterServiceGetCluster(ctx, testClusterId).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		t.Fatalf("Failed to get cluster after labels update: %v", err)
 	}
@@ -262,13 +262,13 @@ func TestDeleteCluster(t *testing.T) {
 	ctx := context.Background()
 	assert := require.New(t)
 
-	_, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceDeleteCluster(ctx, testClusterId).Execute()
+	_, h, err := clusterClient.ClusterServiceAPI.ClusterServiceDeleteCluster(ctx, testClusterId).Execute()
 	if err := util.ParseError(err, h); err != nil {
 		t.Fatalf("Failed to delete cluster: %v", err)
 	}
 	t.Logf("Cluster deleted successfully: %s", testClusterId)
 
 	// Verify the cluster is deleted by trying to get it
-	_, h, err = clusterClient.ServerlessServiceAPI.ServerlessServiceGetCluster(ctx, testClusterId).Execute()
+	_, h, err = clusterClient.ClusterServiceAPI.ClusterServiceGetCluster(ctx, testClusterId).Execute()
 	assert.Error(err, "Cluster should not exist after deletion")
 }

@@ -69,7 +69,7 @@ func waitForClusterActive(ctx context.Context, clusterID string) (*cluster.TidbC
 	for {
 		select {
 		case <-ticker.C:
-			c, h, err := clusterClient.ServerlessServiceAPI.ServerlessServiceGetCluster(ctx, clusterID).Execute()
+			c, h, err := clusterClient.ClusterServiceAPI.ClusterServiceGetCluster(ctx, clusterID).Execute()
 			if err := util.ParseError(err, h); err != nil {
 				log.Printf("Failed to get cluster status: %v", err)
 				continue
