@@ -3,11 +3,11 @@ package branch
 import (
 	"context"
 	"errors"
-	"github.com/lithammer/shortuuid/v4"
 	"os"
 	"testing"
 	"time"
 
+	"github.com/lithammer/shortuuid/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/branch"
@@ -93,6 +93,33 @@ func TestSpecifyTimestamp(t *testing.T) {
 	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
 	// only check second
 	assert.Equal(t, parentTimeStamp.Truncate(time.Second), *bran.ParentTimestamp.Get())
+}
+
+func TestSetRootPassword(t *testing.T) {
+	ctx := context.Background()
+
+	name := "test-set-password-" + shortuuid.New()
+	rootPassword := "TestPassword123!"
+
+	t.Logf("create branch: %s with root password", name)
+	body := &branch.Branch{
+		DisplayName:  name,
+		RootPassword: &rootPassword,
+	}
+	bran, err := createBranch(ctx, clusterId, body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Wait for branch to be ready
+	bran, err = checkBranchState(ctx, clusterId, *bran.BranchId, t)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
+
+	assert.Zero(t, bran.GetRootPassword(), "root password should be empty in response")
+	assert.Equal(t, "true", bran.GetAnnotations()["tidb.cloud/has-set-password"], "annotation tidb.cloud/has-set-password should be 'true'")
 }
 
 func createBranch(ctx context.Context, clusterId string, body *branch.Branch) (*branch.Branch, error) {
