@@ -10,6 +10,7 @@ on:
       - "Import Console Api Test"
       - "Import Console Api Test Alicloud"
       - "Cluster Scene Test"
+      - "Changefeed Scene Test"
     types:
       - completed
 
