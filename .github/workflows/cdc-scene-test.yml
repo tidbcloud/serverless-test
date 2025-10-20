@@ -5,7 +5,7 @@ on:
     branches:
       - master
   schedule:
-    - cron: '0/30 * * * *'  # every 30 minutes
+    - cron: '0/10 * * * *'  # every 10 minutes
   workflow_dispatch:
     inputs:
       testCase:

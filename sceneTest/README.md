@@ -1,6 +1,6 @@
-# CDC Sync Test
+# CDC Scene Test
 
-This directory tests if changefeeds can sync data from TiDB Cloud clusters to downstreams.
+The cdc_sync-test.go tests if changefeeds can sync data from TiDB Cloud clusters to downstreams.
 The upstream TiDB Cloud clusters and downstreams are created manually before running the tests.
 
 - MySQL
