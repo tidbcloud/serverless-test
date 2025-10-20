@@ -84,16 +84,8 @@ func TestKafkaSync(t *testing.T) {
 }
 
 func executeDB(ctx context.Context, dsn string, query string) (err error) {
-	cfg, err := mysql.ParseDSN(dsn)
-	if err != nil {
-		fmt.Printf("Failed to parse DSN %s error:%s\n", dsn, err.Error())
-		return err
-	}
-	host := strings.Split(cfg.Addr, ":")[0]
-
 	mysql.RegisterTLSConfig("tidb", &tls.Config{
 		MinVersion: tls.VersionTLS12,
-		ServerName: host,
 	})
 
 	conn, err := sql.Open("mysql", dsn)
@@ -114,23 +106,14 @@ func executeDB(ctx context.Context, dsn string, query string) (err error) {
 		return err
 	}
 	if rowAffect == 0 {
-		fmt.Printf("No rows affected\n")
 		return errors.New("no rows affected")
 	}
 	return nil
 }
 
 func queryDB(ctx context.Context, dsn string, query string) (exist bool, err error) {
-	cfg, err := mysql.ParseDSN(dsn)
-	if err != nil {
-		fmt.Printf("Failed to parse DSN %s error:%s\n", dsn, err.Error())
-		return false, err
-	}
-	host := strings.Split(cfg.Addr, ":")[0]
-
 	mysql.RegisterTLSConfig("tidb", &tls.Config{
 		MinVersion: tls.VersionTLS12,
-		ServerName: host,
 	})
 
 	conn, err := sql.Open("mysql", dsn)
