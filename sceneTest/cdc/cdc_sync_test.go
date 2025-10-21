@@ -61,25 +61,30 @@ func TestMySQLSync(t *testing.T) {
 
 // TestMySQLSync tests if the Kafka changefeed can sync within 1 minute on alicloud-ap-southeast-1
 func TestKafkaSync(t *testing.T) {
-	// ctx := context.Background()
+	ctx := context.Background()
 
-	// cfg := config.LoadConfig().Changefeed.Kafka
-	// t.Log(fmt.Sprintf("start to test kafka changefeed sync, changefeed_id: %s, cluster_id:%s, region:%s",
-	// 	cfg.ChangefeedID,
-	// 	cfg.ClusterID,
-	// 	cfg.Region))
+	cfg := config.LoadConfig().Changefeed.Kafka
+	t.Log(fmt.Sprintf("start to test kafka changefeed sync, changefeed_id: %s, cluster_id:%s, region:%s",
+		cfg.ChangefeedID,
+		cfg.ClusterID,
+		cfg.Region))
+	cf, err := getChangefeed(ctx, cfg.ClusterID, cfg.ChangefeedID)
+	if err != nil {
+		t.Fatalf("failed to get changefeed: %v", err)
+	}
+	if *cf.State != cdc.CHANGEFEEDSTATEENUM_RUNNING {
+		t.Fatalf("changefeed is not running, current state: %s", *cf.State)
+	}
 
-	// ts := time.Now().UnixMilli()
-	// t.Log("start to insert into upstream tidb cloud cluster")
-	// err := executeDB(ctx, cfg.ClusterDSN, fmt.Sprintf("insert into test.cdc (id, name) values (%d, 'cdc')", ts))
-	// if err != nil {
-	// 	t.Fatalf("failed to insert into upstream tidb cloud cluster: %v", err)
-	// }
+	ts := time.Now().UnixMilli()
 
-	// t.Log("wait for 1 minute for data to sync")
-	// time.Sleep(1 * time.Minute)
+	t.Log("consume kafka topic to check if data exists")
 
-	// t.Log("start to check kafka sync")
+	t.Log("start to insert into upstream tidb cloud cluster")
+	err = executeDB(ctx, cfg.ClusterDSN, fmt.Sprintf("insert into kafka.cdc (id, name) values (%d, 'cdc')", ts))
+	if err != nil {
+		t.Fatalf("failed to insert into upstream tidb cloud cluster: %v", err)
+	}
 }
 
 func executeDB(ctx context.Context, dsn string, query string) (err error) {
