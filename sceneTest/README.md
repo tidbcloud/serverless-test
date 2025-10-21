@@ -6,6 +6,4 @@ The upstream TiDB Cloud clusters and downstreams are created manually before run
 - MySQL
   - upstream: 10735492773134730885(alicloud-ap-southeast-1)
   - downstream: 10978086209882933443(alicloud-ap-southeast-1)
-- Kafka
-  - upstream: 10735492773134730885(alicloud-ap-southeast-1)
-  - downstream: msk
+  - changefeed ID: cfd-lyzks35w7jf6db3vnt4p4is7du

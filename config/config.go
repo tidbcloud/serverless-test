@@ -91,11 +91,11 @@ type MySQLChangefeed struct {
 }
 
 type KafkaChangefeed struct {
-	ChangefeedID  string `mapstructure:"changefeed-id"`
-	ClusterID     string `mapstructure:"cluster-id"`
-	Region        string `mapstructure:"region"`
-	ClusterDSN    string `mapstructure:"cluster-dsn"`
-	KafkaEndpoint string `mapstructure:"kafka-endpoint"`
+	ChangefeedID   string `mapstructure:"changefeed-id"`
+	ClusterID      string `mapstructure:"cluster-id"`
+	Region         string `mapstructure:"region"`
+	ClusterDSN     string `mapstructure:"cluster-dsn"`
+	KafkaEndpoints string `mapstructure:"kafka-endpoints"`
 }
 
 type Config struct {

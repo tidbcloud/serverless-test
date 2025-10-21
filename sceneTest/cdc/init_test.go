@@ -19,7 +19,7 @@ func setup() {
 	}
 }
 
-// NewExportClient creates a new export API client with the given configuration
+// NewCDCClient creates a new export API client with the given configuration
 func NewCDCClient(cfg *config.Config) (*cdc.APIClient, error) {
 	httpClient := &http.Client{
 		Transport: util.NewDigestTransport(cfg.PublicKey, cfg.PrivateKey),
