@@ -18,7 +18,7 @@ alicloud-ap-southeast-1:
     host: gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com
     user: 3iptnrt6iYW7rvc.probe
     plan: essential
-    tidb_pool: vip-tidb-pool
+    tidb_pool: super-vip-tidb-pool
 
 aws-eu-central-1:
   - name: aws-eu-central-1
@@ -58,7 +58,7 @@ alicloud-ap-northeast-1:
     host: gateway01.ap-northeast-1.prod.alicloud.tidbcloud.com
     user: 3UynjWUe2ZvRKJr.probe
     plan: essential
-    tidb_pool: vip-tidb-pool
+    tidb_pool: super-vip-tidb-pool
 
 alicloud-ap-southeast-5:
   - name: alicloud-ap-southeast-5
@@ -66,7 +66,7 @@ alicloud-ap-southeast-5:
     host: gateway01.ap-southeast-5.prod.alicloud.tidbcloud.com
     user: 4M48DcEdAzJz9t4.probe
     plan: essential
-    tidb_pool: vip-tidb-pool
+    tidb_pool: super-vip-tidb-pool
 
 alicloud-na-south-1:
   - name: alicloud-na-south-1
@@ -74,7 +74,7 @@ alicloud-na-south-1:
     host: gateway01.na-south-1.prod.alicloud.tidbcloud.com
     user: 2CEiN1tVwvMmuKf.probe
     plan: essential
-    tidb_pool: vip-tidb-pool
+    tidb_pool: super-vip-tidb-pool
 
 aws-us-east-1-f02:
   - name: aws-us-east-1-f02
@@ -88,4 +88,4 @@ aws-us-east-1-f02:
     host: gateway02.us-east-1.prod.aws.tidbcloud.com
     user: 7RPD7Zae5o9m9Ze.probe
     plan: essential
-    tidb_pool: vip-tidb-pool
+    tidb_pool: super-vip-tidb-pool
