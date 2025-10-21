@@ -62,7 +62,6 @@ func TestMySQLSync(t *testing.T) {
 // TestMySQLSync tests if the Kafka changefeed can sync within 1 minute on alicloud-ap-southeast-1
 func TestKafkaSync(t *testing.T) {
 	ctx := context.Background()
-
 	cfg := config.LoadConfig().Changefeed.Kafka
 	t.Log(fmt.Sprintf("start to test kafka changefeed sync, changefeed_id: %s, cluster_id:%s, region:%s",
 		cfg.ChangefeedID,
