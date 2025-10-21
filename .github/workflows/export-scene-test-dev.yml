@@ -33,8 +33,8 @@ jobs:
           run: |
             if [ -z ${{ github.event.inputs.testCase }} ]; then
               echo "Running all tests"
-              go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/export/* -timeout 20m -args --cid 10852726743740295541 --config "${{ secrets.TEST_CONFIG_DEV }}" --test.timeout 20m
+              go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/export/* -timeout 20m -args --cid 10876257815109865310 --config "${{ secrets.TEST_CONFIG_DEV }}" --test.timeout 20m
             else
               echo "Running test ${{ github.event.inputs.testCase }}"
-              go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/export/* -args --cid 10852726743740295541 --config "${{ secrets.TEST_CONFIG_DEV }}" --test.run ${{ github.event.inputs.testCase }}
+              go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/export/* -args --cid 10876257815109865310 --config "${{ secrets.TEST_CONFIG_DEV }}" --test.run ${{ github.event.inputs.testCase }}
             fi 
