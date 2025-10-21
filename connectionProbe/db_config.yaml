@@ -43,7 +43,7 @@ aws-us-east-1:
     user: DvQ7ki1tB3CTq26.probe
     plan: starter
     tidb_pool: vip-tidb-pool
-
+    
 aws-us-west-2:
   - name: aws-us-west-2
     cluster_id: "10925915939244576672"
@@ -76,4 +76,16 @@ alicloud-na-south-1:
     plan: essential
     tidb_pool: vip-tidb-pool
 
-
+aws-us-east-1-f02:
+  - name: aws-us-east-1-f02
+    cluster_id: "10099427792474276498"
+    host: gateway02.us-east-1.prod.aws.tidbcloud.com
+    user: 46dGUitwmvELdjz.probe
+    plan: starter
+    tidb_pool: vip-tidb-pool
+  - name: aws-us-east-1-f02
+    cluster_id: "10849008254506931650"
+    host: gateway02.us-east-1.prod.aws.tidbcloud.com
+    user: 7RPD7Zae5o9m9Ze.probe
+    plan: essential
+    tidb_pool: vip-tidb-pool
