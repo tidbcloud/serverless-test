@@ -99,6 +99,12 @@ type KafkaChangefeed struct {
 	KafkaSASLSCRAMPassword string `mapstructure:"kafka-sasl-scram-password"`
 }
 
+type AuditLog struct {
+	ClusterID  string `mapstructure:"cluster-id"`
+	Region     string `mapstructure:"region"`
+	ClusterDSN string `mapstructure:"cluster-dsn"`
+}
+
 type Config struct {
 	PublicKey  string   `mapstructure:"public-key"`
 	PrivateKey string   `mapstructure:"private-key"`
@@ -116,6 +122,7 @@ type Config struct {
 	ProjectID  string     `mapstructure:"project-id"`
 	Import     Import     `mapstructure:"import"`
 	Changefeed Changefeed `mapstructure:"changefeed"`
+	AuditLog   AuditLog   `mapstructure:"auditlog"`
 }
 
 var (
