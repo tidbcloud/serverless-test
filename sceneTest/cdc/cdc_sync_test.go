@@ -27,7 +27,7 @@ func TestMain(m *testing.M) {
 
 const (
 	kafkaTopic     = "cdc-test"
-	kafkaEndpoints = "b-2-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9198,b-1-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9198,b-3-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9198"
+	kafkaEndpoints = "b-2-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9196,b-1-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9196,b-3-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9196"
 )
 
 // TestMySQLSync tests if the MySQL changefeed can sync within 1 minute on alicloud-ap-southeast-1
