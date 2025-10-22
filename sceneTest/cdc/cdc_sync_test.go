@@ -99,7 +99,10 @@ func TestKafkaSync(t *testing.T) {
 	messages := make(chan string, 100)
 	defer close(messages)
 	endpoints := strings.Split(kafkaEndpoints, ",")
-	err = kafkaConsume(endpoints, kafkaTopic, kafkaSASLScramAuth(cfg.KafkaSASLSCRAMUser, cfg.KafkaSASLSCRAMPassword), messages)
+	consumer, err := kafkaConsume(endpoints, kafkaTopic, kafkaSASLScramAuth(cfg.KafkaSASLSCRAMUser, cfg.KafkaSASLSCRAMPassword), messages)
+	if consumer != nil {
+		defer consumer.Close()
+	}
 	if err != nil {
 		t.Fatalf("failed to consume kafka topic: %v", err)
 	}
@@ -193,21 +196,21 @@ func getChangefeed(ctx context.Context, clusterId, changefeedId string) (*cdc.Ch
 	return res, util.ParseError(err, h)
 }
 
-func kafkaConsume(endpoints []string, topic string, config *sarama.Config, messages chan<- string) error {
+func kafkaConsume(endpoints []string, topic string, config *sarama.Config, messages chan<- string) (sarama.Consumer, error) {
 	consumer, err := sarama.NewConsumer(endpoints, config)
 	if err != nil {
-		return fmt.Errorf("Failed to start consumer: %v", err)
+		return nil, fmt.Errorf("Failed to start consumer: %v", err)
 	}
 
 	partitions, err := consumer.Partitions(topic)
 	if err != nil {
-		return fmt.Errorf("Failed to get the list of partitions: %v", err)
+		return consumer, fmt.Errorf("Failed to get the list of partitions: %v", err)
 	}
 
 	for _, partition := range partitions {
 		pc, err := consumer.ConsumePartition(topic, partition, sarama.OffsetNewest)
 		if err != nil {
-			return fmt.Errorf("Failed to get the list of partitions: %v", err)
+			return consumer, fmt.Errorf("Failed to get the list of partitions: %v", err)
 		}
 		go func(pc sarama.PartitionConsumer) {
 			defer pc.Close()
@@ -221,7 +224,7 @@ func kafkaConsume(endpoints []string, topic string, config *sarama.Config, messa
 			}
 		}(pc)
 	}
-	return nil
+	return consumer, nil
 }
 
 func kafkaSASLScramAuth(username, password string) *sarama.Config {
