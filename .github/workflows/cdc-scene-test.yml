@@ -1,9 +1,6 @@
 name: Changefeed Scene Test
 
 on:
-  pull_request:
-    branches:
-      - master
   schedule:
     - cron: '0/10 * * * *'  # every 10 minutes
   workflow_dispatch:

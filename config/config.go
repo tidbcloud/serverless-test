@@ -192,6 +192,7 @@ func initializeConfig(cfg *Config) error {
 	// need to act this like since testing.Run will call flag.Parse() if not parsed
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
+	// flag priority is higher than config file
 	viper.BindPFlags(pflag.CommandLine)
 
 	viper.SetConfigType("toml")
