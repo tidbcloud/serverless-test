@@ -77,6 +77,28 @@ type Import struct {
 	OSS             ImportOSS   `mapstructure:"oss"`
 }
 
+type Changefeed struct {
+	MySQL MySQLChangefeed `mapstructure:"mysql"`
+	Kafka KafkaChangefeed `mapstructure:"kafka"`
+}
+
+type MySQLChangefeed struct {
+	ChangefeedID string `mapstructure:"changefeed-id"`
+	ClusterID    string `mapstructure:"cluster-id"`
+	Region       string `mapstructure:"region"`
+	ClusterDSN   string `mapstructure:"cluster-dsn"`
+	MySQLDSN     string `mapstructure:"mysql-dsn"`
+}
+
+type KafkaChangefeed struct {
+	ChangefeedID           string `mapstructure:"changefeed-id"`
+	ClusterID              string `mapstructure:"cluster-id"`
+	Region                 string `mapstructure:"region"`
+	ClusterDSN             string `mapstructure:"cluster-dsn"`
+	KafkaSASLSCRAMUser     string `mapstructure:"kafka-sasl-scram-user"`
+	KafkaSASLSCRAMPassword string `mapstructure:"kafka-sasl-scram-password"`
+}
+
 type Config struct {
 	PublicKey  string   `mapstructure:"public-key"`
 	PrivateKey string   `mapstructure:"private-key"`
@@ -88,11 +110,12 @@ type Config struct {
 	Auth0ClientSecret string `mapstructure:"auth0-client-secret"`
 	UserEmail         string `mapstructure:"user-email"`
 
-	Azure     Azure  `mapstructure:"azure"`
-	S3        S3     `mapstructure:"s3"`
-	GCS       GCS    `mapstructure:"gcs"`
-	ProjectID string `mapstructure:"project-id"`
-	Import    Import `mapstructure:"import"`
+	Azure      Azure      `mapstructure:"azure"`
+	S3         S3         `mapstructure:"s3"`
+	GCS        GCS        `mapstructure:"gcs"`
+	ProjectID  string     `mapstructure:"project-id"`
+	Import     Import     `mapstructure:"import"`
+	Changefeed Changefeed `mapstructure:"changefeed"`
 }
 
 var (
@@ -169,6 +192,7 @@ func initializeConfig(cfg *Config) error {
 	// need to act this like since testing.Run will call flag.Parse() if not parsed
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
+	// flag priority is higher than config file
 	viper.BindPFlags(pflag.CommandLine)
 
 	viper.SetConfigType("toml")
