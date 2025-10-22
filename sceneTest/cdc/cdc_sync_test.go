@@ -30,7 +30,7 @@ const (
 	mysqlSyncTable = "test.cdc"
 	kafkaSyncTable = "kafka.cdc"
 	kafkaTopic     = "cdc-test"
-	kafkaEndpoints = "b-2-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9196,b-1-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9196,b-3-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9196"
+	kafkaEndpoints = "b-2-public.cdctest.pht5v6.c3.kafka.ap-southeast-1.amazonaws.com:9196,b-1-public.cdctest.pht5v6.c3.kafka.ap-southeast-1.amazonaws.com:9196"
 )
 
 // TestMySQLSync tests if the MySQL changefeed can sync within 1 minute on alicloud-ap-southeast-1
