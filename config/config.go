@@ -95,7 +95,6 @@ type KafkaChangefeed struct {
 	ClusterID              string `mapstructure:"cluster-id"`
 	Region                 string `mapstructure:"region"`
 	ClusterDSN             string `mapstructure:"cluster-dsn"`
-	KafkaEndpoints         string `mapstructure:"kafka-endpoints"`
 	KafkaSASLSCRAMUser     string `mapstructure:"kafka-sasl-scram-user"`
 	KafkaSASLSCRAMPassword string `mapstructure:"kafka-sasl-scram-password"`
 }

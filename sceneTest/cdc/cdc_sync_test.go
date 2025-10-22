@@ -7,13 +7,16 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/IBM/sarama"
 	"github.com/go-sql-driver/mysql"
 	"github.com/tidbcloud/serverless-test/config"
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/cdc"
+	"github.com/xdg-go/scram"
 )
 
 func TestMain(m *testing.M) {
@@ -21,6 +24,11 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 	os.Exit(code)
 }
+
+const (
+	kafkaTopic     = "cdc-test"
+	kafkaEndpoints = "b-2-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9198,b-1-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9198,b-3-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9198"
+)
 
 // TestMySQLSync tests if the MySQL changefeed can sync within 1 minute on alicloud-ap-southeast-1
 func TestMySQLSync(t *testing.T) {
@@ -46,8 +54,8 @@ func TestMySQLSync(t *testing.T) {
 		t.Fatalf("failed to insert into upstream tidb cloud cluster: %v", err)
 	}
 
-	t.Log("wait for 1 minute for data to sync")
-	time.Sleep(1 * time.Minute)
+	t.Log("wait for 2 minute for data to sync")
+	time.Sleep(2 * time.Minute)
 
 	t.Log("start to check mysql sync")
 	exist, err := queryDB(ctx, cfg.MySQLDSN, fmt.Sprintf("select id, name from test.cdc where id = %d", ts))
@@ -78,11 +86,40 @@ func TestKafkaSync(t *testing.T) {
 	ts := time.Now().UnixMilli()
 
 	t.Log("consume kafka topic to check if data exists")
+	messages := make(chan string, 100)
+	defer close(messages)
+	endpoints := strings.Split(kafkaEndpoints, ",")
+	err = kafkaConsume(endpoints, kafkaTopic, kafkaSASLScramAuth(cfg.KafkaSASLSCRAMUser, cfg.KafkaSASLSCRAMPassword), messages)
+	if err != nil {
+		t.Fatalf("failed to consume kafka topic: %v", err)
+	}
 
 	t.Log("start to insert into upstream tidb cloud cluster")
 	err = executeDB(ctx, cfg.ClusterDSN, fmt.Sprintf("insert into kafka.cdc (id, name) values (%d, 'cdc')", ts))
 	if err != nil {
 		t.Fatalf("failed to insert into upstream tidb cloud cluster: %v", err)
+	}
+
+	t.Log("wait for 2 minute for data to sync")
+	consumeTimeout := time.After(2 * time.Minute)
+	found := false
+	for {
+		select {
+		case msg := <-messages:
+			t.Logf("received kafka message: %s", msg)
+			if strings.Contains(msg, fmt.Sprintf("%d", ts)) {
+				found = true
+				t.Logf("find kafka message: %s", msg)
+				goto Done
+			}
+		case <-consumeTimeout:
+			t.Log("stopping message consumption after timeout")
+			goto Done
+		}
+	}
+Done:
+	if !found {
+		t.Fatal("data not synced in 2 minutes")
 	}
 }
 
@@ -143,4 +180,72 @@ func getChangefeed(ctx context.Context, clusterId, changefeedId string) (*cdc.Ch
 	r := cdcClient.ChangefeedServiceAPI.ChangefeedServiceGetChangefeed(ctx, clusterId, changefeedId)
 	res, h, err := r.Execute()
 	return res, util.ParseError(err, h)
+}
+
+func kafkaConsume(endpoints []string, topic string, config *sarama.Config, messages chan<- string) error {
+	consumer, err := sarama.NewConsumer(endpoints, config)
+	if err != nil {
+		return fmt.Errorf("Failed to start consumer: %v", err)
+	}
+
+	partitions, err := consumer.Partitions(topic)
+	if err != nil {
+		return fmt.Errorf("Failed to get the list of partitions: %v", err)
+	}
+
+	for _, partition := range partitions {
+		pc, err := consumer.ConsumePartition(topic, partition, sarama.OffsetNewest)
+		if err != nil {
+			return fmt.Errorf("Failed to get the list of partitions: %v", err)
+		}
+		go func(pc sarama.PartitionConsumer) {
+			defer pc.Close()
+			for {
+				select {
+				case msg := <-pc.Messages():
+					if messages != nil {
+						messages <- string(msg.Value)
+					}
+				}
+			}
+		}(pc)
+	}
+	return nil
+}
+
+func kafkaSASLScramAuth(username, password string) *sarama.Config {
+	config := sarama.NewConfig()
+	config.Net.SASL.Enable = true
+	config.Net.SASL.User = username
+	config.Net.SASL.Password = password
+	config.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA512
+	config.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient {
+		return &XDGSCRAMClient{HashGeneratorFcn: scram.SHA512}
+	}
+	config.Net.TLS.Enable = true
+	return config
+}
+
+type XDGSCRAMClient struct {
+	*scram.Client
+	conv             *scram.ClientConversation
+	HashGeneratorFcn scram.HashGeneratorFcn
+}
+
+func (x *XDGSCRAMClient) Begin(user, password, authzID string) error {
+	c, err := scram.SHA512.NewClient(user, password, authzID)
+	if err != nil {
+		return err
+	}
+	x.Client = c
+	x.conv = c.NewConversation()
+	return nil
+}
+
+func (x *XDGSCRAMClient) Step(challenge string) (string, error) {
+	return x.conv.Step(challenge)
+}
+
+func (x *XDGSCRAMClient) Done() bool {
+	return x.conv.Done()
 }
