@@ -95,7 +95,7 @@ func TestKafkaSync(t *testing.T) {
 	}
 
 	t.Log("start to insert into upstream tidb cloud cluster")
-	err = executeDB(ctx, cfg.ClusterDSN, fmt.Sprintf("insert into kafka.test (id, name) values (%d, 'cdc')", ts))
+	err = executeDB(ctx, cfg.ClusterDSN, fmt.Sprintf("insert into kafka.cdc (id, name) values (%d, 'cdc')", ts))
 	if err != nil {
 		t.Fatalf("failed to insert into upstream tidb cloud cluster: %v", err)
 	}
