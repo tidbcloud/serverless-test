@@ -36,6 +36,7 @@ const (
 // TestMySQLSync tests if the MySQL changefeed can sync within 1 minute on alicloud-ap-southeast-1
 func TestMySQLSync(t *testing.T) {
 	ctx := context.Background()
+	log.Println("test mysql sync start")
 
 	cfg := config.LoadConfig().Changefeed.MySQL
 	t.Logf("start to test mysql changefeed sync, changefeed_id: %s, cluster_id:%s, region:%s",
@@ -58,22 +59,27 @@ func TestMySQLSync(t *testing.T) {
 	}
 
 	t.Log("wait for 2 minute for data to sync")
-	time.Sleep(2 * time.Minute)
-
-	t.Log("start to check mysql sync")
-	exist, err := queryDB(ctx, cfg.MySQLDSN, fmt.Sprintf("select id, name from test.cdc where id = %d", ts))
-	if err != nil {
-		t.Fatalf("failed to query downstream mysql: %v", err)
+	st := time.Now()
+	for {
+		if time.Since(st) > 2*time.Minute {
+			t.Fatalf("data not synced to downstream mysql after 2 minute")
+		}
+		exist, err := queryDB(ctx, cfg.MySQLDSN, fmt.Sprintf("select id, name from test.cdc where id = %d", ts))
+		if err != nil {
+			t.Fatalf("failed to query downstream mysql: %v", err)
+		}
+		if exist {
+			log.Println("test mysql sync success")
+			return
+		}
+		time.Sleep(20 * time.Second)
 	}
-	if !exist {
-		t.Fatalf("data not synced to downstream mysql after 1 minute")
-	}
-	log.Println("test mysql sync success")
 }
 
 // TestMySQLSync tests if the Kafka changefeed can sync within 1 minute on alicloud-ap-southeast-1
 func TestKafkaSync(t *testing.T) {
 	ctx := context.Background()
+	log.Println("test kafka sync start")
 	cfg := config.LoadConfig().Changefeed.Kafka
 	t.Log(fmt.Sprintf("start to test kafka changefeed sync, changefeed_id: %s, cluster_id:%s, region:%s",
 		cfg.ChangefeedID,
