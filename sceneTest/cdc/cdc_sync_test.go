@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"testing"
@@ -26,6 +27,8 @@ func TestMain(m *testing.M) {
 }
 
 const (
+	mysqlSyncTable = "test.cdc"
+	kafkaSyncTable = "kafka.cdc"
 	kafkaTopic     = "cdc-test"
 	kafkaEndpoints = "b-2-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9196,b-1-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9196,b-3-public.cdcdownstream.n3h9jt.c3.kafka.ap-southeast-1.amazonaws.com:9196"
 )
@@ -49,7 +52,7 @@ func TestMySQLSync(t *testing.T) {
 
 	ts := time.Now().UnixMilli()
 	t.Log("start to insert into upstream tidb cloud cluster")
-	err = executeDB(ctx, cfg.ClusterDSN, fmt.Sprintf("insert into test.cdc (id, name) values (%d, 'cdc')", ts))
+	err = executeDB(ctx, cfg.ClusterDSN, fmt.Sprintf("insert into %s (id, name) values (%d, 'cdc')", mysqlSyncTable, ts))
 	if err != nil {
 		t.Fatalf("failed to insert into upstream tidb cloud cluster: %v", err)
 	}
@@ -65,6 +68,7 @@ func TestMySQLSync(t *testing.T) {
 	if !exist {
 		t.Fatalf("data not synced to downstream mysql after 1 minute")
 	}
+	log.Println("test mysql sync success")
 }
 
 // TestMySQLSync tests if the Kafka changefeed can sync within 1 minute on alicloud-ap-southeast-1
@@ -95,7 +99,7 @@ func TestKafkaSync(t *testing.T) {
 	}
 
 	t.Log("start to insert into upstream tidb cloud cluster")
-	err = executeDB(ctx, cfg.ClusterDSN, fmt.Sprintf("insert into kafka.cdc (id, name) values (%d, 'cdc')", ts))
+	err = executeDB(ctx, cfg.ClusterDSN, fmt.Sprintf("insert into %s (id, name) values (%d, 'cdc')", kafkaSyncTable, ts))
 	if err != nil {
 		t.Fatalf("failed to insert into upstream tidb cloud cluster: %v", err)
 	}
@@ -109,7 +113,7 @@ func TestKafkaSync(t *testing.T) {
 			t.Logf("received kafka message: %s", msg)
 			if strings.Contains(msg, fmt.Sprintf("%d", ts)) {
 				found = true
-				t.Logf("find kafka message: %s", msg)
+				log.Printf("find kafka message: %s", msg)
 				goto Done
 			}
 		case <-consumeTimeout:
@@ -121,6 +125,7 @@ Done:
 	if !found {
 		t.Fatal("data not synced in 2 minutes")
 	}
+	log.Println("test kafka sync success")
 }
 
 func executeDB(ctx context.Context, dsn string, query string) (err error) {
