@@ -25,11 +25,11 @@ The upstream TiDB Cloud clusters and downstreams are created manually before run
 - MySQL
   - upstream: 10735492773134730885(alicloud-ap-southeast-1)
   - downstream: TiDB Starter 10978086209882933443(alicloud-ap-southeast-1)
-  - changefeed ID: cfd-lyzks35w7jf6db3vnt4p4is7du
+  - changefeed ID: cfd-lyzks35w7jf6db3vnt4p4is7du(filter test.*)
 - Kafka
   - upstream: 10735492773134730885(alicloud-ap-southeast-1)
   - downstream: MSK cluster in ap-southeast-1
-  - changefeed ID: cfd-lid7svbc3jeinjxpz3m7qwmhyu
+  - changefeed ID: cfd-lid7svbc3jeinjxpz3m7qwmhyu(filter kafka.*)
 
 ## How to Contribute
 
