@@ -31,6 +31,7 @@ func NewStorage(dsn string) (*Storage, error) {
 	if dsn == "" {
 		return nil, errors.New("empty DSN for storage")
 	}
+	println("dsn ", dsn)
 	// Parse the DSN to extract the host
 	cfg, err := mysql.ParseDSN(dsn)
 	if err != nil {
