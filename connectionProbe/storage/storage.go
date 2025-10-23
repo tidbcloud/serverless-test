@@ -31,7 +31,6 @@ func NewStorage(dsn string) (*Storage, error) {
 	if dsn == "" {
 		return nil, errors.New("empty DSN for storage")
 	}
-	println("dsn ", dsn)
 	// Parse the DSN to extract the host
 	cfg, err := mysql.ParseDSN(dsn)
 	if err != nil {
@@ -47,6 +46,9 @@ func NewStorage(dsn string) (*Storage, error) {
 		ServerName: host,
 	})
 	dsn = fmt.Sprintf("%s?tls=meta", dsn)
+
+	printDsn := dsn
+	println(fmt.Sprintf("dns: %s", printDsn))
 
 	// // Update DSN to use the TLS config
 	// cfg.TLSConfig = "meta"
