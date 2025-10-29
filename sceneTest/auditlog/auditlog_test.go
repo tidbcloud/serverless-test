@@ -35,8 +35,8 @@ func TestAuditLogGeneration(t *testing.T) {
 	if file == nil {
 		t.Fatalf("no audit log files found for cluster in last 24 hour %s", cfg.ClusterID)
 	}
-	if time.Since(*file.CreateTime) > 30*time.Minute {
-		t.Fatalf("no audit log files found in last 30 minutes, the recent file generate at: %s", file.CreateTime.Format(time.DateTime))
+	if time.Since(*file.CreateTime) > 20*time.Minute {
+		t.Fatalf("no audit log files found in last 20 minutes, the recent file generate at: %s", file.CreateTime.Format(time.DateTime))
 	}
 	log.Println(fmt.Sprintf("audit log file found at %s", file.CreateTime.Format(time.DateTime)))
 }

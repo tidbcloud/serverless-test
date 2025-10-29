@@ -1,7 +1,6 @@
 name: Audit Log Scene Test
 
 on:
-  pull_request:
   schedule:
     - cron: '0/10 * * * *'  # every 10 minutes
   workflow_dispatch:

@@ -34,7 +34,7 @@ The upstream TiDB Cloud clusters and downstreams are created manually before run
 
 ### Database Audit Log Scene Test
 
-The test check if the 1379661944646254647 cluster can generate audit log files in 30 minutes.
+The test check if the 1379661944646254647 cluster can generate audit log files in 20 minutes.
 This cluster is a shadow cluster of serverless-svc rds, which has audit log enabled (rotation period is 10 minute).
 
 ## How to Contribute
