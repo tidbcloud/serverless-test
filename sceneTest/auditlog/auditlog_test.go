@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"testing"
 	"time"
 
@@ -11,6 +12,12 @@ import (
 	"github.com/tidbcloud/serverless-test/util"
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/auditlog"
 )
+
+func TestMain(m *testing.M) {
+	setup()
+	code := m.Run()
+	os.Exit(code)
+}
 
 func TestAuditLogGeneration(t *testing.T) {
 	ctx := context.Background()
@@ -43,7 +50,7 @@ func getLatestAuditLogFile(ctx context.Context, clusterID string) (*auditlog.Aud
 		return nil, err
 	}
 	if len(resp.AuditLogFiles) > 0 {
-		return &resp.AuditLogFiles[0], nil
+		return &resp.AuditLogFiles[len(resp.AuditLogFiles)-1], nil
 	}
 
 	yesterday := now.AddDate(0, 0, -1).UTC().Format("2006-01-02")
@@ -52,13 +59,13 @@ func getLatestAuditLogFile(ctx context.Context, clusterID string) (*auditlog.Aud
 		return nil, err
 	}
 	if len(resp.AuditLogFiles) > 0 {
-		return &resp.AuditLogFiles[0], nil
+		return &resp.AuditLogFiles[len(resp.AuditLogFiles)-1], nil
 	}
 	return nil, nil
 }
 
 func getAuditLogFiles(ctx context.Context, clusterID, date string) (*auditlog.ListAuditLogFilesResponse, error) {
-	r := auditLogClient.DatabaseAuditLogServiceAPI.DatabaseAuditLogServiceListAuditLogFiles(ctx, clusterID).Date(date)
+	r := auditLogClient.DatabaseAuditLogServiceAPI.DatabaseAuditLogServiceListAuditLogFiles(ctx, clusterID).Date(date).PageSize(1000)
 	res, h, err := r.Execute()
 	return res, util.ParseError(err, h)
 }
