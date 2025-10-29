@@ -194,8 +194,8 @@ func initializeConfig(cfg *Config) error {
 	flag.StringVar(&cfg.Import.OSS.RoleARN, "import.oss.role-arn", "", "")
 	flag.StringVar(&cfg.Import.OSS.RoleARNNoPrivilege, "import.oss.role-arn-no-privilege", "", "")
 	flag.StringVar(&cfg.Import.OSS.RoleARNDiffExternalID, "import.oss.role-arn-diff-external-id", "", "")
-	flag.StringVar(&cfg.AuditLog.ClusterID, "audit-log.cluster-id", "1379661944646254647", "")
-	flag.StringVar(&cfg.AuditLog.Region, "audit-log.region", "aws-us-west-2", "")
+	flag.StringVar(&cfg.AuditLog.ClusterID, "auditlog.cluster-id", "1379661944646254647", "")
+	flag.StringVar(&cfg.AuditLog.Region, "auditlog.region", "aws-us-west-2", "")
 
 	// need to act this like since testing.Run will call flag.Parse() if not parsed
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
