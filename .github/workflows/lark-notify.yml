@@ -11,6 +11,7 @@ on:
       - "Import Console Api Test Alicloud"
       - "Cluster Scene Test"
       - "Changefeed Scene Test"
+      - "Audit Log Scene Test"
     types:
       - completed
 

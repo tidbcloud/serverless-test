@@ -16,6 +16,7 @@ The following features are tested in the serverless-test:
 - Branch
 - Cluster
 - Changefeed
+- DatabaseAuditLog
 
 ### Changefeed Scene Test
 
@@ -30,6 +31,11 @@ The upstream TiDB Cloud clusters and downstreams are created manually before run
   - upstream: 10735492773134730885(alicloud-ap-southeast-1)
   - downstream: MSK cluster in ap-southeast-1
   - changefeed ID: cfd-lid7svbc3jeinjxpz3m7qwmhyu(filter kafka.*)
+
+### Database Audit Log Scene Test
+
+The test check if the 1379661944646254647 cluster can generate audit log files in 20 minutes.
+This cluster is a shadow cluster of serverless-svc rds, which has audit log enabled (rotation period is 10 minute).
 
 ## How to Contribute
 
