@@ -26,20 +26,20 @@ func TestAuditLogGeneration(t *testing.T) {
 		cfg.ClusterID,
 		cfg.Region)
 
-	file, err := getLatestAuditLogFile(ctx, cfg.ClusterID, cfg.Region)
+	file, err := getLatestAuditLogFile(ctx, cfg.ClusterID)
 	if err != nil {
 		t.Fatalf("failed to get audit log files: %v", err)
 	}
 	if file == nil {
 		t.Fatalf("no audit log files found for cluster in last 24 hour %s", cfg.ClusterID)
 	}
-	if time.Since(*file.CreateTime) > 1*time.Hour {
-		t.Fatalf("no audit log files found in last 1 hour, the recent file generate at: %s", file.CreateTime.Format(time.DateTime))
+	if time.Since(*file.CreateTime) > 30*time.Minute {
+		t.Fatalf("no audit log files found in last 30 minutes, the recent file generate at: %s", file.CreateTime.Format(time.DateTime))
 	}
 	log.Println(fmt.Sprintf("audit log file found at %s", file.CreateTime.Format(time.DateTime)))
 }
 
-func getLatestAuditLogFile(ctx context.Context, clusterID, region string) (*auditlog.AuditLogFile, error) {
+func getLatestAuditLogFile(ctx context.Context, clusterID string) (*auditlog.AuditLogFile, error) {
 	now := time.Now().UTC()
 
 	today := now.Format("2006-01-02")
