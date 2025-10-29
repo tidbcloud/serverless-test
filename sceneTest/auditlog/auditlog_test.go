@@ -12,11 +12,6 @@ import (
 	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/auditlog"
 )
 
-const (
-	clusterID = "1379661944646254647"
-	region    = "aws-us-west-2"
-)
-
 func TestAuditLogGeneration(t *testing.T) {
 	ctx := context.Background()
 	log.Println("test audit log generation")
