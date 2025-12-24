@@ -48,7 +48,7 @@ func TestOSSAccessKeyNoPrivilegeImport(t *testing.T) {
 	t.Log("Starting OSS import test with no privilege access key")
 
 	// Create import and expect failure
-	_, err := createOSSImport(ctx, true)
+	importID, err := createOSSImport(ctx, true)
 	if err != nil {
 		// Check if failure is expected
 		if expectErr := expectFail(err, "OSS access deny"); expectErr != nil {
@@ -58,7 +58,7 @@ func TestOSSAccessKeyNoPrivilegeImport(t *testing.T) {
 		return
 	}
 
-	t.Fatal("Import should have failed but succeeded")
+	t.Fatalf("Import %s should have failed but succeeded", importID)
 }
 
 // createOSSImport creates an OSS import with the specified configuration

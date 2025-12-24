@@ -63,7 +63,7 @@ func TestGcsNoPrivilegeImport(t *testing.T) {
 		return
 	}
 
-	t.Fatal("Import should have failed but succeeded")
+	t.Fatalf("Import %s should have failed but succeeded", importID)
 }
 
 // createGcsImport creates a Google Cloud Storage import with the specified configuration
