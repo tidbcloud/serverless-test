@@ -24,6 +24,12 @@ func TestS3ArnImport(t *testing.T) {
 
 	// Build S3 source with valid role ARN
 	cfg := config.LoadConfig()
+	importOptions := imp.ImportOptions{
+		FileType: imp.IMPORTFILETYPEENUM_CSV,
+		CsvFormat: &imp.CSVFormat{
+			Separator: pointer.ToString(";"),
+		},
+	}
 	s3Source := &imp.S3Source{
 		Uri:      cfg.Import.S3.URI,
 		AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
@@ -31,7 +37,7 @@ func TestS3ArnImport(t *testing.T) {
 	}
 
 	// Create and execute import
-	importID, err := createS3Import(ctx, s3Source)
+	importID, err := createS3Import(ctx, importOptions, s3Source)
 	if err != nil {
 		t.Fatalf("Failed to create S3 import: %v", err)
 	}
@@ -57,6 +63,12 @@ func TestS3AccessKeyImport(t *testing.T) {
 
 	// Build S3 source with valid access key
 	cfg := config.LoadConfig()
+	importOptions := imp.ImportOptions{
+		FileType: imp.IMPORTFILETYPEENUM_CSV,
+		CsvFormat: &imp.CSVFormat{
+			Separator: pointer.ToString(";"),
+		},
+	}
 	s3Source := &imp.S3Source{
 		Uri:      cfg.Import.S3.URI,
 		AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
@@ -67,7 +79,7 @@ func TestS3AccessKeyImport(t *testing.T) {
 	}
 
 	// Create and execute import
-	importID, err := createS3Import(ctx, s3Source)
+	importID, err := createS3Import(ctx, importOptions, s3Source)
 	if err != nil {
 		t.Fatalf("Failed to create S3 import: %v", err)
 	}
@@ -93,6 +105,12 @@ func TestS3ArnNoPrivilegeImport(t *testing.T) {
 
 	// Build S3 source with no privilege role ARN
 	cfg := config.LoadConfig()
+	importOptions := imp.ImportOptions{
+		FileType: imp.IMPORTFILETYPEENUM_CSV,
+		CsvFormat: &imp.CSVFormat{
+			Separator: pointer.ToString(";"),
+		},
+	}
 	s3Source := &imp.S3Source{
 		Uri:      cfg.Import.S3.URI,
 		AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
@@ -100,7 +118,7 @@ func TestS3ArnNoPrivilegeImport(t *testing.T) {
 	}
 
 	// Create import and expect failure
-	importID, err := createS3Import(ctx, s3Source)
+	importID, err := createS3Import(ctx, importOptions, s3Source)
 	if err != nil {
 		t.Fatalf("Failed to create S3 import: %v", err)
 	}
@@ -115,7 +133,7 @@ func TestS3ArnNoPrivilegeImport(t *testing.T) {
 		return
 	}
 
-	t.Fatal("Import should have failed but succeeded")
+	t.Fatalf("Import %s should have failed but succeeded", importID)
 }
 
 // TestS3ArnDiffExternalIDImport tests S3 import with different external ID
@@ -131,6 +149,12 @@ func TestS3ArnDiffExternalIDImport(t *testing.T) {
 
 	// Build S3 source with different external ID role ARN
 	cfg := config.LoadConfig()
+	importOptions := imp.ImportOptions{
+		FileType: imp.IMPORTFILETYPEENUM_CSV,
+		CsvFormat: &imp.CSVFormat{
+			Separator: pointer.ToString(";"),
+		},
+	}
 	s3Source := &imp.S3Source{
 		Uri:      cfg.Import.S3.URI,
 		AuthType: imp.IMPORTS3AUTHTYPEENUM_ROLE_ARN,
@@ -138,7 +162,7 @@ func TestS3ArnDiffExternalIDImport(t *testing.T) {
 	}
 
 	// Create import and expect failure
-	importID, err := createS3Import(ctx, s3Source)
+	importID, err := createS3Import(ctx, importOptions, s3Source)
 	if err != nil {
 		t.Fatalf("Failed to create S3 import: %v", err)
 	}
@@ -153,7 +177,7 @@ func TestS3ArnDiffExternalIDImport(t *testing.T) {
 		return
 	}
 
-	t.Fatal("Import should have failed but succeeded")
+	t.Fatalf("Import %s should have failed but succeeded", importID)
 }
 
 // TestS3AccessKeyNoPrivilegeImport tests S3 import with insufficient access key privileges
@@ -169,6 +193,12 @@ func TestS3AccessKeyNoPrivilegeImport(t *testing.T) {
 
 	// Build S3 source with no privilege access key
 	cfg := config.LoadConfig()
+	importOptions := imp.ImportOptions{
+		FileType: imp.IMPORTFILETYPEENUM_CSV,
+		CsvFormat: &imp.CSVFormat{
+			Separator: pointer.ToString(";"),
+		},
+	}
 	s3Source := &imp.S3Source{
 		Uri:      cfg.Import.S3.URI,
 		AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
@@ -179,7 +209,7 @@ func TestS3AccessKeyNoPrivilegeImport(t *testing.T) {
 	}
 
 	// Create import and expect failure
-	importID, err := createS3Import(ctx, s3Source)
+	importID, err := createS3Import(ctx, importOptions, s3Source)
 	if err != nil {
 		t.Fatalf("Failed to create S3 import: %v", err)
 	}
@@ -194,23 +224,18 @@ func TestS3AccessKeyNoPrivilegeImport(t *testing.T) {
 		return
 	}
 
-	t.Fatal("Import should have failed but succeeded")
+	t.Fatalf("Import %s should have failed but succeeded", importID)
 }
 
-// createS3Import creates an S3 import with the provided S3 source configuration
-func createS3Import(ctx context.Context, s3Source *imp.S3Source) (string, error) {
+// createS3Import creates an import with the provided options and S3 source configuration
+func createS3Import(ctx context.Context, importOptions imp.ImportOptions, s3Source *imp.S3Source) (string, error) {
 	// Set timeout for import creation
 	startImportContext, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
 	// Build import request body
 	body := imp.ImportServiceCreateImportBody{
-		ImportOptions: imp.ImportOptions{
-			FileType: imp.IMPORTFILETYPEENUM_CSV,
-			CsvFormat: &imp.CSVFormat{
-				Separator: pointer.ToString(";"),
-			},
-		},
+		ImportOptions: importOptions,
 		Source: imp.ImportSource{
 			Type: imp.IMPORTSOURCETYPEENUM_S3,
 			S3:   s3Source,

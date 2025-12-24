@@ -37,6 +37,7 @@ type ImportS3 struct {
 	SchemaCompressURI               string `mapstructure:"schema-compress-uri"`
 	SchemaTypeMismatchedURI         string `mapstructure:"schema-type-mismatched-uri"`
 	SchemaColumnNumberMismatchedURI string `mapstructure:"schema-column-number-mismatched-uri"`
+	ZeroDateURI                     string `mapstructure:"zero-date-uri"`
 	URI                             string `mapstructure:"uri"`
 	RoleARNNoPrivilege              string `mapstructure:"role-arn-no-privilege"`
 	RoleARNDiffExternalID           string `mapstructure:"role-arn-diff-external-id"`
@@ -175,6 +176,7 @@ func initializeConfig(cfg *Config) error {
 	flag.StringVar(&cfg.Import.S3.SchemaCompressURI, "import.s3.schema-compress-uri", "", "")
 	flag.StringVar(&cfg.Import.S3.SchemaTypeMismatchedURI, "import.s3.schema-type-mismatched-uri", "", "")
 	flag.StringVar(&cfg.Import.S3.SchemaColumnNumberMismatchedURI, "import.s3.schema-column-number-mismatched-uri", "", "")
+	flag.StringVar(&cfg.Import.S3.ZeroDateURI, "import.s3.zero-date-uri", "", "")
 	flag.StringVar(&cfg.Import.Azure.URI, "import.azure.uri", "", "")
 	flag.StringVar(&cfg.Import.Azure.SASToken, "import.azure.sas-token", "", "")
 	flag.StringVar(&cfg.Import.Azure.SASTokenNoPrivilege, "import.azure.sas-token-no-privilege", "", "")

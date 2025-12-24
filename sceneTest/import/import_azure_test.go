@@ -63,7 +63,7 @@ func TestAzureNoPrivilegeImport(t *testing.T) {
 		return
 	}
 
-	t.Fatal("Import should have failed but succeeded")
+	t.Fatalf("Import %s should have failed but succeeded", importID)
 }
 
 // createAzureImport creates an Azure Blob import with the specified configuration
