@@ -183,7 +183,7 @@ func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 func TestZeroDateImport(t *testing.T) {
 	ctx := context.Background()
 
-	if _, err := db.ExecContext(ctx, "DROP TABLE IF EXISTS `test`.`zero_date_import`"); err != nil {
+	if _, err := db.ExecContext(ctx, "DROP TABLE IF EXISTS `test`.`zero_date`"); err != nil {
 		t.Fatalf("Failed to drop zero date import table: %v", err)
 	}
 
