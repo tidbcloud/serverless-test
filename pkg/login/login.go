@@ -71,11 +71,11 @@ func (ctx *WebApiLoginContext) Login(c context.Context) (error) {
 		}
 		ctx.HTTPClient = &http.Client{Jar: jar}
 	}
-	ctx.HTTPClient.Transport = util.NewBearerTransport(ctx.BearerToken)
 
 	if err := ctx.loginConfirm(c, ctx.BearerToken); err != nil {
 		return err
 	}
+	ctx.HTTPClient.Transport = util.NewBearerTransport(ctx.BearerToken)
 
 	return nil
 }
