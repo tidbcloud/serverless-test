@@ -1,9 +1,16 @@
 package tidbcloudlogin
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
+	"net/http/cookiejar"
+	"net/url"
+	"strings"
 	"sync"
 
 	"github.com/tidbcloud/serverless-test/pkg/coreportalapi"
@@ -17,29 +24,31 @@ type WebApiLoginContext struct {
 	Auth0ClientSecret string
 	UserEmail         string
 	BearerToken       string
+	HTTPClient        *http.Client
+	CookieHeader      string
 
 	mu sync.Mutex
 }
 
-func (ctx *WebApiLoginContext) LoginAndGetToken(c context.Context) (string, error) {
+func (ctx *WebApiLoginContext) Login(c context.Context) (error) {
 	ctx.mu.Lock()
 	defer ctx.mu.Unlock()
 
 	if ctx.Host == "" {
-		return "", errors.New("login context is not complete: empty host")
+		return errors.New("login context is not complete: empty host")
 	}
 
 	if ctx.Auth0Domain == "" {
-		return "", errors.New("login context is not complete: empty auth0 domain")
+		return errors.New("login context is not complete: empty auth0 domain")
 	}
 	if ctx.Auth0ClientID == "" {
-		return "", errors.New("login context is not complete: empty auth0 client id")
+		return errors.New("login context is not complete: empty auth0 client id")
 	}
 	if ctx.Auth0ClientSecret == "" {
-		return "", errors.New("login context is not complete: empty auth0 client secret")
+		return errors.New("login context is not complete: empty auth0 client secret")
 	}
 	if ctx.UserEmail == "" {
-		return "", errors.New("login context is not complete: empty user email")
+		return errors.New("login context is not complete: empty user email")
 	}
 
 	var err error
@@ -52,10 +61,76 @@ func (ctx *WebApiLoginContext) LoginAndGetToken(c context.Context) (string, erro
 		ctx.UserEmail,
 	)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return ctx.BearerToken, nil
+	if ctx.HTTPClient == nil {
+		jar, err := cookiejar.New(nil)
+		if err != nil {
+			return fmt.Errorf("failed to init cookie jar: %w", err)
+		}
+		ctx.HTTPClient = &http.Client{Jar: jar}
+	}
+	ctx.HTTPClient.Transport = util.NewBearerTransport(ctx.BearerToken)
+
+	if err := ctx.loginConfirm(c, ctx.BearerToken); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type loginConfirmReq struct {
+	IDToken string `json:"id_token"`
+}
+
+func (ctx *WebApiLoginContext) loginConfirm(c context.Context, idToken string) error {
+	loginConfirmURL := (&url.URL{
+		Scheme: "https",
+		Host:   ctx.Host,
+		Path:   "/login_confirm",
+	}).String()
+
+	bodyBytes, err := json.Marshal(loginConfirmReq{IDToken: idToken})
+	if err != nil {
+		return fmt.Errorf("failed to marshal login_confirm payload: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(c, http.MethodPost, loginConfirmURL, bytes.NewReader(bodyBytes))
+	if err != nil {
+		return fmt.Errorf("failed to create login_confirm request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := ctx.HTTPClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("login_confirm request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		b, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("login_confirm failed: status=%d body=%s", resp.StatusCode, strings.TrimSpace(string(b)))
+	}
+
+	if ctx.HTTPClient.Jar == nil {
+		return errors.New("login_confirm succeeded but http client has no cookie jar")
+	}
+
+	u, _ := url.Parse(loginConfirmURL)
+	cookies := ctx.HTTPClient.Jar.Cookies(u)
+	if len(cookies) == 0 {
+		return errors.New("login_confirm succeeded but no cookies were set")
+	}
+
+	parts := make([]string, 0, len(cookies))
+	for _, ck := range cookies {
+		parts = append(parts, ck.Name+"="+ck.Value)
+
+	}
+	ctx.CookieHeader = strings.Join(parts, "; ")
+
+	return nil
 }
 
 // getToken requests a token from tidbcloud test api `POST /api/v1/test-token`.

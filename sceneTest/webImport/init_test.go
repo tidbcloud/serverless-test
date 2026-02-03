@@ -7,7 +7,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"net/http"
 	"os"
 	"strings"
 	"testing"
@@ -85,14 +84,12 @@ func NewImportConsoleClient(cfg *config.Config) (*consoleimportapi.APIClient, er
 		UserEmail:         cfg.UserEmail,
 	}
 
-	token, err := loginCtx.LoginAndGetToken(context.Background())
+	err := loginCtx.Login(context.Background())
 	if err != nil {
 		return nil, fmt.Errorf("failed to login and get token: %w", err)
 	}
 
-	httpClient := &http.Client{
-		Transport: util.NewBearerTransport(token),
-	}
+	httpClient := loginCtx.HTTPClient
 
 	importCfg := consoleimportapi.NewConfiguration()
 	importCfg.HTTPClient = httpClient
