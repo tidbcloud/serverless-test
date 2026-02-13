@@ -256,6 +256,7 @@ func TestExportToS3AccessKey(t *testing.T) {
 	} else {
 		exportS3Uri = exportS3Uri + "/" + shortuuid.New()
 	}
+	exportS3Uri = exportS3Uri + "/"
 
 	body := export.NewExportServiceCreateExportBody()
 	body.Target = &export.ExportTarget{
@@ -295,6 +296,7 @@ func TestExportToS3RoleArn(t *testing.T) {
 	} else {
 		exportS3Uri = exportS3Uri + "/" + shortuuid.New()
 	}
+	exportS3Uri = exportS3Uri + "/"
 
 	body := export.NewExportServiceCreateExportBody()
 	body.Target = &export.ExportTarget{
@@ -334,6 +336,7 @@ func TestExportToAzure(t *testing.T) {
 	} else {
 		azureUri = azureUri + "/" + shortuuid.New()
 	}
+	azureUri = azureUri + "/"
 
 	body := export.NewExportServiceCreateExportBody()
 	body.Target = &export.ExportTarget{
@@ -373,6 +376,7 @@ func TestExportToGCS(t *testing.T) {
 	} else {
 		gcsUri = gcsUri + "/" + shortuuid.New()
 	}
+	gcsUri = gcsUri + "/"
 
 	body := export.NewExportServiceCreateExportBody()
 	body.Target = &export.ExportTarget{
