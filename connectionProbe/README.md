@@ -5,6 +5,9 @@ This project is used to probe the connection status of TiDB Cloud Starter & Esse
 1. To manage probe clusters, edit the `connectionProbe/db_config.yaml` file to add or remove TiDB Cloud clusters.
 2. View the [probe dashboard](https://tidbcloud-connection-probe.netlify.app/)
 
+<img width="2698" height="1710" alt="image" src="https://github.com/user-attachments/assets/f8659273-295a-4141-8653-d7ceb2ec561b" />
+
+
 # Dev Guide
 
 The project consists of:
