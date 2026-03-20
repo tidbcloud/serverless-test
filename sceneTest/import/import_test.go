@@ -123,7 +123,7 @@ func TestSchemaTypeMismatchedImport(t *testing.T) {
 	// Wait for import and expect failure
 	if err := waitImport(ctx, importID); err != nil {
 		// Check if failure is expected
-		if expectErr := expectFail(err, "failed to cast value as int(11) for column `name`"); expectErr != nil {
+		if expectErr := expectFail(err, "CastValueError: when encoding 1-th data row in file test.a.csv:0"); expectErr != nil {
 			t.Fatalf("Test failed, importId: %s, err: %v", importID, expectErr)
 		}
 		t.Log("Import failed as expected")
