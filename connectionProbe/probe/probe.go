@@ -23,7 +23,7 @@ type DBConfig struct {
 	TiDBPool  string `yaml:"tidb_pool"`
 }
 
-const probeTimeoutSec = 10
+const probeTimeoutSec = 20
 
 func ProbeDB(ctx context.Context, db *DBConfig, notifyCh chan<- *NotifyInfo, jobIdex int) (err error) {
 	start := time.Now()
