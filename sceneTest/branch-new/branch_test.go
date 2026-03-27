@@ -1,0 +1,157 @@
+package branchnew
+
+import (
+	"context"
+	"errors"
+	"log"
+	"os"
+	"testing"
+	"time"
+
+	"github.com/lithammer/shortuuid/v4"
+	"github.com/stretchr/testify/assert"
+	"github.com/tidbcloud/serverless-test/util"
+	"github.com/tidbcloud/tidbcloud-cli/pkg/tidbcloud/v1beta1/serverless/branch"
+)
+
+// go test -v ./sceneTest/branch-new -cid {cluster-id} -config {config}
+func TestMain(m *testing.M) {
+	setup()
+	if err := cleanupAllBranches(context.Background(), clusterId); err != nil {
+		log.Printf("branch-new cleanup failed for cluster %s: %v", clusterId, err)
+	}
+
+	code := m.Run()
+	os.Exit(code)
+}
+
+func TestResetAndCreateFromBranch(t *testing.T) {
+	ctx := context.Background()
+
+	name := "test-" + shortuuid.New()
+	t.Logf("create branch: %s", name)
+	body := &branch.Branch{DisplayName: name}
+	bran, err := createBranch(ctx, clusterId, body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bran, err = checkBranchState(ctx, clusterId, *bran.BranchId, t)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
+
+	t.Log("reset branch")
+	bran, h, err := branchClient.BranchServiceAPI.BranchServiceResetBranch(ctx, clusterId, *bran.BranchId).Execute()
+	err = util.ParseError(err, h)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bran, err = checkBranchState(ctx, clusterId, *bran.BranchId, t)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
+
+	parentId := *bran.BranchId
+	name2 := "test-" + shortuuid.New()
+	t.Logf("create branch %s from branch", name2)
+	bran, err = createBranch(ctx, clusterId, &branch.Branch{
+		DisplayName: name2,
+		ParentId:    &parentId,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	bran, err = checkBranchState(ctx, clusterId, *bran.BranchId, t)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
+	assert.Equal(t, *bran.ParentId, parentId)
+}
+
+func TestSpecifyTimestamp(t *testing.T) {
+	ctx := context.Background()
+
+	parentTimeStamp := time.Now().UTC()
+	time.Sleep(time.Second)
+	name := "test-" + shortuuid.New()
+	body := &branch.Branch{DisplayName: name}
+	body.SetParentTimestamp(parentTimeStamp)
+	t.Logf("create branch: %s with timestap %s", name, parentTimeStamp.String())
+	bran, err := createBranch(ctx, clusterId, body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bran, err = checkBranchState(ctx, clusterId, *bran.BranchId, t)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
+	assert.Equal(t, parentTimeStamp.Truncate(time.Second), *bran.ParentTimestamp.Get())
+}
+
+func TestSetRootPassword(t *testing.T) {
+	ctx := context.Background()
+
+	name := "test-set-password-" + shortuuid.New()
+	rootPassword := "TestPassword123!"
+
+	t.Logf("create branch: %s with root password", name)
+	body := &branch.Branch{
+		DisplayName:  name,
+		RootPassword: &rootPassword,
+	}
+	bran, err := createBranch(ctx, clusterId, body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bran, err = checkBranchState(ctx, clusterId, *bran.BranchId, t)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, *bran.State, branch.BRANCHSTATE_ACTIVE)
+
+	assert.Zero(t, bran.GetRootPassword(), "root password should be empty in response")
+	assert.Equal(t, "true", bran.GetAnnotations()["tidb.cloud/has-set-password"], "annotation tidb.cloud/has-set-password should be 'true'")
+}
+
+func createBranch(ctx context.Context, clusterId string, body *branch.Branch) (*branch.Branch, error) {
+	req := branchClient.BranchServiceAPI.BranchServiceCreateBranch(ctx, clusterId)
+	if body != nil {
+		req = req.Branch(*body)
+	} else {
+		req = req.Branch(branch.Branch{})
+	}
+	resp, h, err := req.Execute()
+	err = util.ParseError(err, h)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func checkBranchState(ctx context.Context, clusterId, branchId string, t *testing.T) (*branch.Branch, error) {
+	ticker := time.NewTicker(time.Second * 10)
+	defer ticker.Stop()
+
+	timeout := time.After(time.Minute * 5)
+	for {
+		select {
+		case <-ticker.C:
+			res, h, err := branchClient.BranchServiceAPI.BranchServiceGetBranch(ctx, clusterId, branchId).Execute()
+			if err := util.ParseError(err, h); err != nil {
+				t.Logf("get branch failed: %s", err.Error())
+				continue
+			}
+			t.Logf("get branch with state %s", *res.State)
+			if *res.State == branch.BRANCHSTATE_ACTIVE {
+				return res, nil
+			}
+		case <-timeout:
+			return nil, errors.New("create branch timeout")
+		}
+	}
+}

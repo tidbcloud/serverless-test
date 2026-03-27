@@ -1,6 +1,8 @@
 name: Branch Scene Test (Dev)
 
 on:
+  schedule:
+    - cron: '0/30 * * * *'  # every 30 minutes
   workflow_dispatch:
     inputs:
       testCase:
@@ -33,8 +35,8 @@ jobs:
           run: |
             if [ -z ${{ github.event.inputs.testCase }} ]; then
               echo "Running all tests"
-              go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/branch/* -timeout 20m -args --project-id 3200488 --config "${{ secrets.TEST_CONFIG_DEV }}" --test.timeout 20m
+              go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/branch-new/* -timeout 20m -args --cluster-id 10623578664148369534 --config "${{ secrets.TEST_CONFIG_DEV }}" --test.timeout 20m
             else
               echo "Running test ${{ github.event.inputs.testCase }}"
-              go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/branch/* -args --project-id 3200488 --config "${{ secrets.TEST_CONFIG_DEV }}" --test.run ${{ github.event.inputs.testCase }}
+              go run gotest.tools/gotestsum@latest --format standard-verbose -- sceneTest/branch-new/* -args --cluster-id 10623578664148369534 --config "${{ secrets.TEST_CONFIG_DEV }}" --test.run ${{ github.event.inputs.testCase }}
             fi 
