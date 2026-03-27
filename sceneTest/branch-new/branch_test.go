@@ -137,7 +137,7 @@ func checkBranchState(ctx context.Context, clusterId, branchId string, t *testin
 	ticker := time.NewTicker(time.Second * 10)
 	defer ticker.Stop()
 
-	timeout := time.After(time.Minute * 5)
+	timeout := time.After(time.Minute * 3)
 	for {
 		select {
 		case <-ticker.C:
