@@ -12,6 +12,7 @@ on:
       - "Cluster Scene Test"
       - "Changefeed Scene Test"
       - "Audit Log Scene Test"
+      - "Branch Scene Test (Dev)"
     types:
       - completed
 

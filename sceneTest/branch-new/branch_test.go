@@ -17,12 +17,11 @@ import (
 // go test -v ./sceneTest/branch-new -cid {cluster-id} -config {config}
 func TestMain(m *testing.M) {
 	setup()
-	code := m.Run()
-
 	if err := cleanupAllBranches(context.Background(), clusterId); err != nil {
 		log.Printf("branch-new cleanup failed for cluster %s: %v", clusterId, err)
 	}
 
+	code := m.Run()
 	os.Exit(code)
 }
 
