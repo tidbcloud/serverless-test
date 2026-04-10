@@ -52,13 +52,13 @@ aws-us-west-2:
     plan: starter
     tidb_pool: vip-tidb-pool
 
-alicloud-ap-northeast-1:
-  - name: alicloud-ap-northeast-1
-    cluster_id: "10312408252929644465"
-    host: gateway01.ap-northeast-1.prod.alicloud.tidbcloud.com
-    user: 3UynjWUe2ZvRKJr.probe
-    plan: essential
-    tidb_pool: super-vip-tidb-pool
+# alicloud-ap-northeast-1:
+#   - name: alicloud-ap-northeast-1
+#     cluster_id: "10312408252929644465"
+#     host: gateway01.ap-northeast-1.prod.alicloud.tidbcloud.com
+#     user: 3UynjWUe2ZvRKJr.probe
+#     plan: essential
+#     tidb_pool: super-vip-tidb-pool
 
 alicloud-ap-southeast-5:
   - name: alicloud-ap-southeast-5
