@@ -68,13 +68,13 @@ alicloud-ap-southeast-5:
     plan: essential
     tidb_pool: super-vip-tidb-pool
 
-alicloud-na-south-1:
-  - name: alicloud-na-south-1
-    cluster_id: "10903236587268854792"
-    host: gateway01.na-south-1.prod.alicloud.tidbcloud.com
-    user: 2CEiN1tVwvMmuKf.probe
-    plan: essential
-    tidb_pool: super-vip-tidb-pool
+# alicloud-na-south-1:
+#  - name: alicloud-na-south-1
+#    cluster_id: "10903236587268854792"
+#    host: gateway01.na-south-1.prod.alicloud.tidbcloud.com
+#    user: 2CEiN1tVwvMmuKf.probe
+#    plan: essential
+#    tidb_pool: super-vip-tidb-pool
 
 aws-us-east-1-f02:
   - name: aws-us-east-1-f02
