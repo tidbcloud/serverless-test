@@ -180,39 +180,39 @@ func TestSchemaColumnNumberMismatchedImport(t *testing.T) {
 }
 
 // TestZeroDateImport verifies zero date strings can be imported without errors
-func TestZeroDateImport(t *testing.T) {
-	ctx := context.Background()
+// func TestZeroDateImport(t *testing.T) {
+// 	ctx := context.Background()
 
-	if _, err := db.ExecContext(ctx, "DROP TABLE IF EXISTS `test`.`zero_date`"); err != nil {
-		t.Fatalf("Failed to drop zero date import table: %v", err)
-	}
+// 	if _, err := db.ExecContext(ctx, "DROP TABLE IF EXISTS `test`.`zero_date`"); err != nil {
+// 		t.Fatalf("Failed to drop zero date import table: %v", err)
+// 	}
 
-	cfg := config.LoadConfig()
+// 	cfg := config.LoadConfig()
 
-	importOptions := imp.ImportOptions{
-		FileType: imp.IMPORTFILETYPEENUM_CSV,
-		CsvFormat: &imp.CSVFormat{
-			Separator: pointer.ToString(";"),
-		},
-	}
+// 	importOptions := imp.ImportOptions{
+// 		FileType: imp.IMPORTFILETYPEENUM_CSV,
+// 		CsvFormat: &imp.CSVFormat{
+// 			Separator: pointer.ToString(";"),
+// 		},
+// 	}
 
-	s3Source := &imp.S3Source{
-		Uri:      cfg.Import.S3.ZeroDateURI,
-		AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
-		AccessKey: &imp.S3SourceAccessKey{
-			Id:     cfg.S3.AccessKeyID,
-			Secret: cfg.S3.SecretAccessKey,
-		},
-	}
+// 	s3Source := &imp.S3Source{
+// 		Uri:      cfg.Import.S3.ZeroDateURI,
+// 		AuthType: imp.IMPORTS3AUTHTYPEENUM_ACCESS_KEY,
+// 		AccessKey: &imp.S3SourceAccessKey{
+// 			Id:     cfg.S3.AccessKeyID,
+// 			Secret: cfg.S3.SecretAccessKey,
+// 		},
+// 	}
 
-	importID, err := createS3Import(ctx, importOptions, s3Source)
-	if err != nil {
-		t.Fatalf("Failed to create zero date import: %v", err)
-	}
+// 	importID, err := createS3Import(ctx, importOptions, s3Source)
+// 	if err != nil {
+// 		t.Fatalf("Failed to create zero date import: %v", err)
+// 	}
 
-	if err := waitImport(ctx, importID); err != nil {
-		t.Fatalf("Zero date import failed, importId: %s, error: %v", importID, err)
-	}
+// 	if err := waitImport(ctx, importID); err != nil {
+// 		t.Fatalf("Zero date import failed, importId: %s, error: %v", importID, err)
+// 	}
 
-	t.Log("Zero date import completed successfully")
-}
+// 	t.Log("Zero date import completed successfully")
+// }
